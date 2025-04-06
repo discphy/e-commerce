@@ -1,0 +1,44 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= 항해 플러스 이커머스 REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== 응답 코드
+
+[%header%autowidth]
+|===
+|Code|Message|Description
+|200|SUCCESS|성공
+|400|BAD_REQUEST|잘못된 요청
+|===
+
+[[Balance-API]]
+== 잔액 API
+
+include::balance/balance.adoc[]
+
+[[Coupon-API]]
+== 쿠폰 API
+
+include::coupon/coupon.adoc[]
+
+[[Order-API]]
+== 주문/결제 API
+
+include::order/order.adoc[]
+
+[[Product-API]]
+== 상품 API
+
+include::product/product.adoc[]
+
+[[Rank-API]]
+== 랭킹 API
+
+include::rank/rank.adoc[]

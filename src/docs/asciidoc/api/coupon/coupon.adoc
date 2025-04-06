@@ -1,0 +1,22 @@
+[[get-coupons]]
+=== 보유 쿠폰 목록 조회
+
+==== HTTP Request
+include::{snippets}/get-coupons/http-request.adoc[]
+include::{snippets}/get-coupons/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/get-coupons/http-response.adoc[]
+include::{snippets}/get-coupons/response-fields.adoc[]
+
+[[publish-coupon]]
+=== 쿠폰 발급
+
+==== HTTP Request
+include::{snippets}/publish-coupon/http-request.adoc[]
+include::{snippets}/publish-coupon/path-parameters.adoc[]
+include::{snippets}/publish-coupon/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/publish-coupon/http-response.adoc[]
+include::{snippets}/publish-coupon/response-fields.adoc[]

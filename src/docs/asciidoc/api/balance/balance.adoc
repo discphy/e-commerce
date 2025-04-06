@@ -1,0 +1,22 @@
+[[get-balance]]
+=== 잔액 조회
+
+==== HTTP Request
+include::{snippets}/get-balance/http-request.adoc[]
+include::{snippets}/get-balance/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/get-balance/http-response.adoc[]
+include::{snippets}/get-balance/response-fields.adoc[]
+
+[[update-balance]]
+=== 잔액 충전
+
+==== HTTP Request
+include::{snippets}/update-balance/http-request.adoc[]
+include::{snippets}/update-balance/path-parameters.adoc[]
+include::{snippets}/update-balance/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/update-balance/http-response.adoc[]
+include::{snippets}/update-balance/response-fields.adoc[]

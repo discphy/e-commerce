@@ -1,0 +1,14 @@
+### 보유 쿠폰 목록 조회 API
+
+GET http://127.0.0.1:8080/api/v1/users/1/coupons
+
+<> 2025-04-03T190036.200.json
+
+### 쿠폰 발급 API
+
+POST http://127.0.0.1:8080/api/v1/users/1/coupons
+Content-Type: application/json
+
+{
+  "couponId": 1
+}

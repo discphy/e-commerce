@@ -1,11 +1,10 @@
-package kr.hhplus.be.server;
+package kr.hhplus.be.ecommerce;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
 @SpringBootTest
-class ServerApplicationTests {
+class EcommerceApplicationTests {
 
 	@Test
 	void contextLoads() {

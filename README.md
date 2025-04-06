@@ -18,3 +18,7 @@
 + [4️⃣ ERD 문서](docs/architecture/04.ERD.md)
 
 + [5️⃣ API 명세](docs/architecture/05.ApiDocument.md)
+
+### 🍀 Spring REST Docs 
+
++ [항해 플러스 이커머스 REST API 문서](https://discphy.github.io/)
