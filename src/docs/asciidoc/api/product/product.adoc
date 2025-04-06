@@ -1,0 +1,9 @@
+[[get-products]]
+=== 상품 목록 조회
+
+==== HTTP Request
+include::{snippets}/get-products/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/get-products/http-response.adoc[]
+include::{snippets}/get-products/response-fields.adoc[]

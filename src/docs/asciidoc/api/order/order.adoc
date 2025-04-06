@@ -1,0 +1,10 @@
+[[create-order]]
+=== 주문 결제 완료
+
+==== HTTP Request
+include::{snippets}/create-order/http-request.adoc[]
+include::{snippets}/create-order/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/create-order/http-response.adoc[]
+include::{snippets}/create-order/response-fields.adoc[]
