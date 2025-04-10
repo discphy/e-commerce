@@ -39,6 +39,22 @@ public class Coupon {
         this.expiredAt = expiredAt;
     }
 
+    public static Coupon create(String name, double discountRate, int quantity, CouponStatus status, LocalDateTime expiredAt) {
+        validateName(name);
+        validateDiscountRate(discountRate);
+        validateQuantity(quantity);
+        validateStatus(status);
+        validateExpiredAt(expiredAt);
+
+        return Coupon.builder()
+                .name(name)
+                .discountRate(discountRate)
+                .quantity(quantity)
+                .status(status)
+                .expiredAt(expiredAt)
+                .build();
+    }
+
     public Coupon publish() {
         if (status.cannotPublishable()) {
             throw new IllegalStateException("쿠폰을 발급할 수 없습니다.");
@@ -54,5 +70,35 @@ public class Coupon {
 
         this.quantity--;
         return this;
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("쿠폰 이름은 필수입니다.");
+        }
+    }
+
+    private static void validateDiscountRate(double discountRate) {
+        if (discountRate < 0 || discountRate > 1) {
+            throw new IllegalArgumentException("쿠폰 할인율이 올바르지 않습니다.");
+        }
+    }
+
+    private static void validateQuantity(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("쿠폰 수량은 0 이상이어야 합니다.");
+        }
+    }
+
+    private static void validateStatus(CouponStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("쿠폰 상태는 필수입니다.");
+        }
+    }
+
+    private static void validateExpiredAt(LocalDateTime expiredAt) {
+        if (expiredAt == null || expiredAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("쿠폰 만료일은 현재 시간 이후여야 합니다.");
+        }
     }
 }

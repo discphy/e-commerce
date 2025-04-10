@@ -13,7 +13,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     public void pay(PaymentCommand.Payment command) {
-        Payment payment = Payment.create(command.getUserId(), command.getOrderId(), command.getAmount());
+        Payment payment = Payment.create(command.getOrderId(), command.getAmount());
         payment.pay();
 
         paymentRepository.save(payment);

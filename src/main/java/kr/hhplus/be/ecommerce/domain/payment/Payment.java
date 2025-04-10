@@ -18,8 +18,6 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
-
     private Long orderId;
 
     private long amount;
@@ -32,14 +30,12 @@ public class Payment {
 
     @Builder
     private Payment(Long id,
-                    Long userId,
                     Long orderId,
                     long amount,
                     PaymentMethod paymentMethod,
                     PaymentStatus paymentStatus,
                     LocalDateTime paidAt) {
         this.id = id;
-        this.userId = userId;
         this.orderId = orderId;
         this.amount = amount;
         this.paymentMethod = paymentMethod;
@@ -47,9 +43,10 @@ public class Payment {
         this.paidAt = paidAt;
     }
 
-    public static Payment create(Long userId, Long orderId, long amount) {
+    public static Payment create(Long orderId, long amount) {
+        validateAmount(amount);
+
         return Payment.builder()
-            .userId(userId)
             .orderId(orderId)
             .amount(amount)
             .paymentMethod(PaymentMethod.UNKNOWN)
@@ -64,5 +61,11 @@ public class Payment {
 
         this.paymentStatus = PaymentStatus.COMPLETED;
         this.paidAt = LocalDateTime.now();
+    }
+
+    private static void validateAmount(long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("결제 금액은 0보다 커야 합니다.");
+        }
     }
 }

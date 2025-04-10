@@ -24,7 +24,7 @@ public class User {
         this.username = username;
     }
 
-    public static User of(String username) {
+    public static User create(String username) {
         return User.builder()
             .username(username)
             .build();

@@ -13,44 +13,30 @@ public class ProductService {
 
     public ProductInfo.OrderProducts getOrderProducts(ProductCommand.OrderProducts command) {
         List<ProductInfo.OrderProduct> orderProducts = command.getProducts().stream()
-            .map(this::getOrderProduct)
+            .map(this::toOrderProductInfo)
             .toList();
 
         return ProductInfo.OrderProducts.of(orderProducts);
     }
 
     public ProductInfo.Products getSellingProducts() {
-        return ProductInfo.Products.of(
-            productRepository.findSellingStatusIn(ProductSellingStatus.forCelling())
-                .stream()
-                .map(product -> ProductInfo.Product.builder()
-                    .productId(product.getId())
-                    .productName(product.getName())
-                    .productPrice(product.getPrice())
-                    .build()
-                ).toList()
-        );
+        List<ProductInfo.Product> products = productRepository.findSellingStatusIn(ProductSellingStatus.forSelling()).stream()
+            .map(this::toProductInfo)
+            .toList();
+
+        return ProductInfo.Products.of(products);
     }
 
     public ProductInfo.Products getProducts(ProductCommand.Products command) {
-        return ProductInfo.Products.of(
-            productRepository.findByIds(command.getProductIds())
-                .stream()
-                .map(product -> ProductInfo.Product.builder()
-                    .productId(product.getId())
-                    .productName(product.getName())
-                    .productPrice(product.getPrice())
-                    .build()
-                ).toList()
-        );
+        List<ProductInfo.Product> products = productRepository.findByIds(command.getProductIds()).stream()
+            .map(this::toProductInfo)
+            .toList();
+
+        return ProductInfo.Products.of(products);
     }
 
-    private ProductInfo.OrderProduct getOrderProduct(ProductCommand.OrderProduct command) {
-        Product product = productRepository.findById(command.getProductId());
-
-        if (product.cannotSelling()) {
-            throw new IllegalStateException("주문 불가한 상품이 포함되어 있습니다.");
-        }
+    private ProductInfo.OrderProduct toOrderProductInfo(ProductCommand.OrderProduct command) {
+        Product product = getProduct(command);
 
         return ProductInfo.OrderProduct.builder()
             .productId(product.getId())
@@ -58,5 +44,23 @@ public class ProductService {
             .productPrice(product.getPrice())
             .quantity(command.getQuantity())
             .build();
+    }
+
+    private ProductInfo.Product toProductInfo(Product product) {
+        return ProductInfo.Product.builder()
+            .productId(product.getId())
+            .productName(product.getName())
+            .productPrice(product.getPrice())
+            .build();
+    }
+
+    private Product getProduct(ProductCommand.OrderProduct command) {
+        Product product = productRepository.findById(command.getProductId());
+
+        if (product.cannotSelling()) {
+            throw new IllegalStateException("주문 불가한 상품이 포함되어 있습니다.");
+        }
+
+        return product;
     }
 }

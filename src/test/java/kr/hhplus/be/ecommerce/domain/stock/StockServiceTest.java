@@ -55,7 +55,7 @@ class StockServiceTest extends MockTestSupport {
             .thenReturn(List.of(orderProduct, orderProduct));
 
         when(stockRepository.findByProductId(anyLong()))
-            .thenReturn(Stock.of(1L, 0));
+            .thenReturn(Stock.create(1L, 0));
 
         // when
         assertThatThrownBy(() -> stockService.deductStock(command))
@@ -76,7 +76,7 @@ class StockServiceTest extends MockTestSupport {
         when(command.getProducts())
             .thenReturn(List.of(orderProduct));
 
-        Stock stock = Stock.of(1L, 10);
+        Stock stock = Stock.create(1L, 10);
         when(stockRepository.findByProductId(anyLong()))
             .thenReturn(stock, stock);
 
@@ -92,7 +92,7 @@ class StockServiceTest extends MockTestSupport {
     void getStock() {
         // given
         when(stockRepository.findByProductId(anyLong()))
-            .thenReturn(Stock.of(1L, 10));
+            .thenReturn(Stock.create(1L, 10));
 
         // when
         StockInfo.Stock stock = stockService.getStock(1L);

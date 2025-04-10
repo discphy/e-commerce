@@ -31,7 +31,11 @@ public class Product {
         this.sellStatus = sellStatus;
     }
 
-    public static Product of(String name, long price, ProductSellingStatus sellStatus) {
+    public static Product create(String name, long price, ProductSellingStatus sellStatus) {
+        validateName(name);
+        validatePrice(price);
+        validateSellStatus(sellStatus);
+
         return Product.builder()
             .name(name)
             .price(price)
@@ -41,5 +45,23 @@ public class Product {
 
     public boolean cannotSelling() {
         return sellStatus.cannotSelling();
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("상품 이름은 필수입니다.");
+        }
+    }
+
+    private static void validatePrice(long price) {
+        if (price <= 0) {
+            throw new IllegalArgumentException("상품 가격은 0보다 커야 합니다.");
+        }
+    }
+
+    private static void validateSellStatus(ProductSellingStatus sellStatus) {
+        if (sellStatus == null) {
+            throw new IllegalArgumentException("상품 판매 상태는 필수입니다.");
+        }
     }
 }

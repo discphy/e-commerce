@@ -24,7 +24,7 @@ class PaymentServiceTest extends MockTestSupport {
     @Test
     void pay() {
         // given
-        PaymentCommand.Payment command = mock(PaymentCommand.Payment.class);
+        PaymentCommand.Payment command = PaymentCommand.Payment.of(1L, 1L, 1_000L);
 
         // when
         paymentService.pay(command);

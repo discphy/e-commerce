@@ -15,9 +15,9 @@ public enum CouponStatus {
     ;
     private final String description;
 
-    private static final List<CouponStatus> NON_PUBLISHABLE_STATUSES = List.of(REGISTERED, CANCELED);
+    private static final List<CouponStatus> CANNOT_PUBLISHABLE_STATUSES = List.of(REGISTERED, CANCELED);
 
     public boolean cannotPublishable() {
-        return NON_PUBLISHABLE_STATUSES.contains(this);
+        return CANNOT_PUBLISHABLE_STATUSES.contains(this);
     }
 }

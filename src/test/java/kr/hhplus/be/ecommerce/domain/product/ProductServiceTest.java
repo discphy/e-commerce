@@ -99,11 +99,11 @@ class ProductServiceTest extends MockTestSupport {
     void getSellingProducts() {
         // given
         List<Product> sellingProducts = List.of(
-            Product.of("상품명1", 10_000L, ProductSellingStatus.SELLING),
-            Product.of("상품명3", 15_000L, ProductSellingStatus.SELLING),
-            Product.of("상품명5", 30_000L, ProductSellingStatus.SELLING),
-            Product.of("상품명7", 18_000L, ProductSellingStatus.SELLING),
-            Product.of("상품명9", 35_000L, ProductSellingStatus.SELLING)
+            Product.create("상품명1", 10_000L, ProductSellingStatus.SELLING),
+            Product.create("상품명3", 15_000L, ProductSellingStatus.SELLING),
+            Product.create("상품명5", 30_000L, ProductSellingStatus.SELLING),
+            Product.create("상품명7", 18_000L, ProductSellingStatus.SELLING),
+            Product.create("상품명9", 35_000L, ProductSellingStatus.SELLING)
         );
 
         when(productRepository.findSellingStatusIn(anyList()))
@@ -131,9 +131,9 @@ class ProductServiceTest extends MockTestSupport {
         ProductCommand.Products command = mock(ProductCommand.Products.class);
 
         List<Product> products = List.of(
-            Product.of("상품명1", 10_000L, ProductSellingStatus.SELLING),
-            Product.of("상품명3", 15_000L, ProductSellingStatus.SELLING),
-            Product.of("상품명5", 30_000L, ProductSellingStatus.SELLING)
+            Product.create("상품명1", 10_000L, ProductSellingStatus.SELLING),
+            Product.create("상품명3", 15_000L, ProductSellingStatus.SELLING),
+            Product.create("상품명5", 30_000L, ProductSellingStatus.SELLING)
         );
 
         when(productRepository.findByIds(anyList()))

@@ -41,6 +41,7 @@ class CouponServiceTest extends MockTestSupport {
         Coupon coupon = Coupon.builder()
             .name("쿠폰명")
             .status(CouponStatus.REGISTERED)
+            .expiredAt(LocalDateTime.now().plusDays(1))
             .build();
 
         when(couponRepository.findById(anyLong()))

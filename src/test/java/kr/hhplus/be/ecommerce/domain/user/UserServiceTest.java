@@ -37,7 +37,7 @@ class UserServiceTest extends MockTestSupport {
     void getUser() {
         // given
         when(userRepository.findById(anyLong()))
-            .thenReturn(User.of("항플"));
+            .thenReturn(User.create("항플"));
 
         // when
         UserInfo.User user = userService.getUser(anyLong());

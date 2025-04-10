@@ -21,7 +21,7 @@ public enum ProductSellingStatus {
         return NON_SELLING_STATUSES.contains(this);
     }
 
-    public static List<ProductSellingStatus> forCelling() {
+    public static List<ProductSellingStatus> forSelling() {
         return List.of(SELLING);
     }
 }

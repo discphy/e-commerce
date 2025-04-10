@@ -30,10 +30,6 @@ public class Balance {
 
     @Builder
     private Balance(Long id, Long userId, long amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("초기 금액은 0보다 커야 합니다.");
-        }
-
         this.id = id;
         this.userId = userId;
         this.amount = amount;
@@ -42,6 +38,7 @@ public class Balance {
     }
 
     public static Balance create(Long userId, Long amount) {
+        validateAmount(amount);
         return Balance.builder()
             .userId(userId)
             .amount(amount)
@@ -82,5 +79,11 @@ public class Balance {
     private void addUseTransaction(long amount) {
         BalanceTransaction transaction = BalanceTransaction.ofUse(this, amount);
         this.balanceTransactions.add(transaction);
+    }
+
+    private static void validateAmount(long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("초기 금액은 0보다 커야 합니다.");
+        }
     }
 }

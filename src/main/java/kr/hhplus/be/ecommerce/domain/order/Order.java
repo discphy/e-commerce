@@ -49,6 +49,8 @@ public class Order {
     }
 
     public static Order create(Long userId, Long userCouponId, double discountRate, List<OrderProduct> orderProducts) {
+        validateOrderProducts(orderProducts);
+
         return Order.builder()
             .userId(userId)
             .userCouponId(userCouponId)
@@ -74,5 +76,11 @@ public class Order {
     private void addOrderProduct(OrderProduct orderProduct) {
         this.orderProducts.add(orderProduct);
         orderProduct.setOrder(this);
+    }
+
+    private static void validateOrderProducts(List<OrderProduct> orderProducts) {
+        if (orderProducts == null || orderProducts.isEmpty()) {
+            throw new IllegalArgumentException("주문 상품이 없습니다.");
+        }
     }
 }
