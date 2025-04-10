@@ -105,4 +105,34 @@ class BalanceServiceTest extends MockTestSupport {
         // then
         assertThat(balance.getAmount()).isZero();
     }
+
+    @DisplayName("잔고가 없으면 0을 반환한다.")
+    @Test
+    void getBalanceWithNotExist() {
+        // given
+        when(balanceRepository.findOptionalByUserId(anyLong()))
+            .thenReturn(Optional.empty());
+
+        // when
+        BalanceInfo.Balance balanceInfo = balanceService.getBalance(1L);
+
+        // then
+        assertThat(balanceInfo.getAmount()).isZero();
+    }
+
+    @DisplayName("잔고를 존재할 때, 조회한다.")
+    @Test
+    void getBalanceWithExist() {
+        // given
+        Balance balance = Balance.create(1L, 10_000L);
+
+        when(balanceRepository.findOptionalByUserId(anyLong()))
+            .thenReturn(Optional.of(balance));
+
+        // when
+        BalanceInfo.Balance balanceInfo = balanceService.getBalance(1L);
+
+        // then
+        assertThat(balanceInfo.getAmount()).isEqualTo(10_000L);
+    }
 }

@@ -1,11 +1,11 @@
-package kr.hhplus.be.ecommerce.domain.balance;
+package kr.hhplus.be.ecommerce.application.balance;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class BalanceInfo {
+public class BalanceResult {
 
     @Getter
     public static class Balance {

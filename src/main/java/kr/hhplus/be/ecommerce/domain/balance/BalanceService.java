@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public class BalanceService {
 
     private final BalanceRepository balanceRepository;
+    private static final long EMPTY_BALANCE_AMOUNT = 0L;
 
     public void chargeBalance(BalanceCommand.Charge command) {
         balanceRepository.findOptionalByUserId(command.getUserId())
@@ -28,5 +29,11 @@ public class BalanceService {
                     throw new IllegalArgumentException("잔액이 부족합니다.");
                 }
             );
+    }
+
+    public BalanceInfo.Balance getBalance(Long userId) {
+        return BalanceInfo.Balance.of(balanceRepository.findOptionalByUserId(userId)
+            .map(Balance::getAmount)
+            .orElse(EMPTY_BALANCE_AMOUNT));
     }
 }
