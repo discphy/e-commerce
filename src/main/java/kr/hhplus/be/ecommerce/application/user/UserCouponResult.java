@@ -37,5 +37,13 @@ public class UserCouponResult {
             this.couponName = couponName;
             this.discountRate = discountRate;
         }
+
+        public static Coupon of(Long userCouponId, String couponName, double discountRate) {
+            return Coupon.builder()
+                .userCouponId(userCouponId)
+                .couponName(couponName)
+                .discountRate(discountRate)
+                .build();
+        }
     }
 }

@@ -39,5 +39,14 @@ public class ProductResult {
             this.productPrice = productPrice;
             this.quantity = quantity;
         }
+
+        public static Product of(Long productId, String productName, Long productPrice, int quantity) {
+            return Product.builder()
+                .productId(productId)
+                .productName(productName)
+                .productPrice(productPrice)
+                .quantity(quantity)
+                .build();
+        }
     }
 }
