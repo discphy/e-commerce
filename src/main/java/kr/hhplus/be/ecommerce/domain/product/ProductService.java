@@ -21,7 +21,7 @@ public class ProductService {
 
     public ProductInfo.Products getSellingProducts() {
         return ProductInfo.Products.of(
-            productRepository.findSellingStatusIn(ProductSellingStatus.SELLING_STATUSES)
+            productRepository.findSellingStatusIn(ProductSellingStatus.forCelling())
                 .stream()
                 .map(product -> ProductInfo.Product.builder()
                     .productId(product.getId())

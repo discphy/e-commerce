@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -134,5 +137,34 @@ class UserCouponServiceTest extends MockTestSupport {
 
         // then
         assertThat(userCoupon.getUsedStatus()).isEqualTo(UserCouponUsedStatus.USED);
+    }
+
+    @DisplayName("보유 쿠폰 목록을 가져온다.")
+    @Test
+    void getUserCoupons() {
+        // given
+        List<UserCoupon> userCoupons = List.of(
+            UserCoupon.builder()
+                .id(1L)
+                .couponId(1L)
+                .issuedAt(LocalDateTime.of(2025, 4, 1, 12, 0))
+                .build(),
+            UserCoupon.builder()
+                .id(2L)
+                .couponId(2L)
+                .issuedAt(LocalDateTime.of(2025, 4, 1, 12, 0))
+                .build()
+        );
+
+        when(userCouponRepository.findByUserIdAndUsableStatusIn(anyLong(), anyList()))
+            .thenReturn(userCoupons);
+
+        // when
+        UserCouponInfo.Coupons coupons = userCouponService.getUserCoupons(1L);
+
+        // then
+        assertThat(coupons.getCoupons()).hasSize(2)
+            .extracting("userCouponId")
+            .containsExactlyInAnyOrder(1L, 2L);
     }
 }

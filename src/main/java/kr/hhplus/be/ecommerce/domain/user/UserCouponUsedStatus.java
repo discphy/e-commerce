@@ -21,4 +21,7 @@ public enum UserCouponUsedStatus {
         return NON_USABLE.contains(this);
     }
 
+    public static List<UserCouponUsedStatus> forUsable() {
+        return List.of(UNUSED);
+    }
 }

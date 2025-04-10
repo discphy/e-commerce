@@ -54,11 +54,15 @@ public class UserCoupon {
     }
 
     public void use() {
+        if (cannotUse()) {
+            throw new IllegalStateException("사용할 수 없는 쿠폰입니다.");
+        }
+
         this.usedStatus = UserCouponUsedStatus.USED;
         this.usedAt = LocalDateTime.now();
     }
 
     public boolean cannotUse() {
-        return usedStatus != UserCouponUsedStatus.UNUSED;
+        return usedStatus.cannotUsable();
     }
 }

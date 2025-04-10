@@ -26,11 +26,17 @@ public class UserCouponService {
 
     public void useUserCoupon(Long userCouponId) {
         UserCoupon userCoupon = userCouponRepository.findById(userCouponId);
-
-        if (userCoupon.cannotUse()) {
-            throw new IllegalStateException("사용할 수 없는 쿠폰입니다.");
-        }
-
         userCoupon.use();
+    }
+
+    public UserCouponInfo.Coupons getUserCoupons(Long userId) {
+        return UserCouponInfo.Coupons.of(
+            userCouponRepository.findByUserIdAndUsableStatusIn(userId, UserCouponUsedStatus.forUsable()).stream()
+                .map(userCoupon -> UserCouponInfo.Coupon.builder()
+                    .userCouponId(userCoupon.getId())
+                    .couponId(userCoupon.getCouponId())
+                    .issuedAt(userCoupon.getIssuedAt())
+                    .build()
+                ).toList());
     }
 }
