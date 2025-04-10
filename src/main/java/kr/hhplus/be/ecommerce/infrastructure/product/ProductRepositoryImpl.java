@@ -19,4 +19,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     public List<Product> findSellingStatusIn(List<ProductSellingStatus> statuses) {
         return List.of();
     }
+
+    @Override
+    public List<Product> findByIds(List<Long> productIds) {
+        return List.of();
+    }
 }

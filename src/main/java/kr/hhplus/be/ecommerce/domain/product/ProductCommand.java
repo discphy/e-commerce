@@ -38,4 +38,18 @@ public class ProductCommand {
             return new OrderProduct(productId, quantity);
         }
     }
+
+    @Getter
+    public static class Products {
+
+        private final List<Long> productIds;
+
+        private Products(List<Long> productIds) {
+            this.productIds = productIds;
+        }
+
+        public static Products of(List<Long> productIds) {
+            return new Products(productIds);
+        }
+    }
 }

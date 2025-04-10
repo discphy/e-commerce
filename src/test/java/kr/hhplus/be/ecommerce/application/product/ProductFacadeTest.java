@@ -1,6 +1,10 @@
 package kr.hhplus.be.ecommerce.application.product;
 
 import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.domain.order.OrderProductInfo;
+import kr.hhplus.be.ecommerce.domain.order.OrderProductService;
+import kr.hhplus.be.ecommerce.domain.payment.PaymentInfo;
+import kr.hhplus.be.ecommerce.domain.payment.PaymentService;
 import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.domain.product.ProductService;
 import kr.hhplus.be.ecommerce.domain.stock.StockInfo;
@@ -28,6 +32,12 @@ class ProductFacadeTest extends MockTestSupport {
 
     @Mock
     private StockService stockService;
+
+    @Mock
+    private PaymentService paymentService;
+
+    @Mock
+    private OrderProductService orderProductService;
 
     @DisplayName("판매 가능 상품 목록을 조회한다.")
     @Test
@@ -70,6 +80,60 @@ class ProductFacadeTest extends MockTestSupport {
             .containsExactlyInAnyOrder(
                 tuple(1L, 10),
                 tuple(2L, 10)
+            );
+    }
+
+    @DisplayName("최근 3일 가장 많이 팔린 상위 상품 5개를 조회한다.")
+    @Test
+    void getPopularProducts() {
+        // given
+        PaymentInfo.Orders orders = PaymentInfo.Orders.of(List.of(1L, 2L, 3L));
+        when(paymentService.getCompletedOrdersBetweenDays(3))
+            .thenReturn(orders);
+
+        OrderProductInfo.TopPaidProducts topPaidProducts = OrderProductInfo.TopPaidProducts.of(List.of(6L, 5L, 4L));
+        when(orderProductService.getTopPaidProducts(any()))
+            .thenReturn(topPaidProducts);
+
+        ProductInfo.Products products = ProductInfo.Products.of(List.of(
+            ProductInfo.Product.builder()
+                .productId(6L)
+                .productName("상품명1")
+                .productPrice(1_000L)
+                .build(),
+            ProductInfo.Product.builder()
+                .productId(5L)
+                .productName("상품명2")
+                .productPrice(2_000L)
+                .build(),
+            ProductInfo.Product.builder()
+                .productId(4L)
+                .productName("상품명3")
+                .productPrice(3_000L)
+                .build()
+        ));
+
+        when(productService.getProducts(any()))
+            .thenReturn(products);
+
+        when(stockService.getStock(anyLong()))
+            .thenReturn(StockInfo.Stock.of(1L, 10));
+
+        // when
+        ProductResult.Products popularProducts = productFacade.getPopularProducts();
+
+        // then
+        InOrder inOrder = inOrder(paymentService, orderProductService, productService);
+        inOrder.verify(paymentService, times(1)).getCompletedOrdersBetweenDays(3);
+        inOrder.verify(orderProductService, times(1)).getTopPaidProducts(any());
+        inOrder.verify(productService, times(1)).getProducts(any());
+
+        assertThat(popularProducts.getProducts()).hasSize(3)
+            .extracting("productId", "productName", "productPrice")
+            .containsExactly(
+                tuple(6L, "상품명1", 1_000L),
+                tuple(5L, "상품명2", 2_000L),
+                tuple(4L, "상품명3", 3_000L)
             );
     }
 }

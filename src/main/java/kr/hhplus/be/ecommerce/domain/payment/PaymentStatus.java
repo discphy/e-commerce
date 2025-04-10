@@ -1,6 +1,5 @@
 package kr.hhplus.be.ecommerce.domain.payment;
 
-import kr.hhplus.be.ecommerce.domain.product.ProductSellingStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -23,5 +22,9 @@ public enum PaymentStatus {
 
     public boolean cannotPayable() {
         return NON_PAYABLE_STATUSES.contains(this);
+    }
+
+    public static List<PaymentStatus> forCompleted() {
+        return List.of(COMPLETED);
     }
 }

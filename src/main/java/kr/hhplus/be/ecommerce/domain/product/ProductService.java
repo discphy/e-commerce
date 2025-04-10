@@ -32,6 +32,19 @@ public class ProductService {
         );
     }
 
+    public ProductInfo.Products getProducts(ProductCommand.Products command) {
+        return ProductInfo.Products.of(
+            productRepository.findByIds(command.getProductIds())
+                .stream()
+                .map(product -> ProductInfo.Product.builder()
+                    .productId(product.getId())
+                    .productName(product.getName())
+                    .productPrice(product.getPrice())
+                    .build()
+                ).toList()
+        );
+    }
+
     private ProductInfo.OrderProduct getOrderProduct(ProductCommand.OrderProduct command) {
         Product product = productRepository.findById(command.getProductId());
 
