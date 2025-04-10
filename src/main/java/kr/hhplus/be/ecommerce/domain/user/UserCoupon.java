@@ -53,4 +53,12 @@ public class UserCoupon {
             .build();
     }
 
+    public void use() {
+        this.usedStatus = UserCouponUsedStatus.USED;
+        this.usedAt = LocalDateTime.now();
+    }
+
+    public boolean cannotUse() {
+        return usedStatus != UserCouponUsedStatus.UNUSED;
+    }
 }

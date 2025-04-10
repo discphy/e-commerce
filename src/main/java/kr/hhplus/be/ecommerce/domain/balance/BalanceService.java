@@ -19,4 +19,14 @@ public class BalanceService {
                 }
             );
     }
+
+    public void useBalance(BalanceCommand.Use command) {
+        balanceRepository.findOptionalByUserId(command.getUserId())
+            .ifPresentOrElse(
+                balance -> balance.use(command.getAmount()),
+                () -> {
+                    throw new IllegalArgumentException("잔액이 부족합니다.");
+                }
+            );
+    }
 }

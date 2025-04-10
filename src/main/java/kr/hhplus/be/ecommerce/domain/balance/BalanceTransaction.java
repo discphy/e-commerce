@@ -41,4 +41,12 @@ public class BalanceTransaction {
             .amount(amount)
             .build();
     }
+
+    public static BalanceTransaction ofUse(Balance balance, long amount) {
+        return BalanceTransaction.builder()
+            .balance(balance)
+            .transactionType(BalanceTransactionType.USE)
+            .amount(amount)
+            .build();
+    }
 }

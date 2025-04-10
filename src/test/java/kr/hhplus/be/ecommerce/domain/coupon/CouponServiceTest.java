@@ -112,5 +112,40 @@ class CouponServiceTest extends MockTestSupport {
         assertThat(coupon.getQuantity()).isZero();
     }
 
+    @DisplayName("유효한 ID로 쿠폰을 조회해야 한다.")
+    @Test
+    void getCouponWithInvalidId() {
+        // given
+        when(couponRepository.findById(anyLong()))
+            .thenThrow(new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
+
+        // when & then
+        assertThatThrownBy(() -> couponService.getCoupon(anyLong()))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("쿠폰을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("쿠폰을 조회한다.")
+    @Test
+    void getCoupon() {
+        // given
+        Coupon coupon = Coupon.builder()
+            .name("쿠폰명")
+            .status(CouponStatus.PUBLISHABLE)
+            .discountRate(0.1)
+            .quantity(1)
+            .expiredAt(LocalDateTime.now().plusDays(1))
+            .build();
+
+        when(couponRepository.findById(anyLong()))
+            .thenReturn(coupon);
+
+        // when
+        CouponInfo.Coupon couponInfo = couponService.getCoupon(anyLong());
+
+        // then
+        assertThat(couponInfo.getName()).isEqualTo("쿠폰명");
+        assertThat(couponInfo.getDiscountRate()).isEqualTo(0.1);
+    }
 
 }

@@ -10,8 +10,6 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class UserCouponFacadeTest extends MockTestSupport {
@@ -39,11 +37,8 @@ class UserCouponFacadeTest extends MockTestSupport {
 
         // then
         InOrder inOrder = inOrder(userService, couponService, userCouponService);
-        inOrder.verify(userService, times(1)).getUser(anyLong());
-        inOrder.verify(couponService, times(1)).publishCoupon(anyLong());
-        inOrder.verify(userCouponService, times(1)).createUserCoupon(any());
+        inOrder.verify(userService, times(1)).getUser(criteria.getUserId());
+        inOrder.verify(couponService, times(1)).publishCoupon(criteria.getCouponId());
+        inOrder.verify(userCouponService, times(1)).createUserCoupon(criteria.toCommand());
     }
-
-
-
 }

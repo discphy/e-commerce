@@ -13,4 +13,13 @@ public class CouponService {
         Coupon coupon = couponRepository.findById(couponId);
         coupon.publish();
     }
+
+    public CouponInfo.Coupon getCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId);
+        return CouponInfo.Coupon.builder()
+                .couponId(coupon.getId())
+                .name(coupon.getName())
+                .discountRate(coupon.getDiscountRate())
+                .build();
+    }
 }

@@ -53,8 +53,22 @@ public class Balance {
         addChargeTransaction(amount);
     }
 
+    public void use(long amount) {
+        if (this.amount < amount) {
+            throw new IllegalArgumentException("잔액이 부족합니다.");
+        }
+
+        this.amount -= amount;
+        addUseTransaction(amount);
+    }
+
     private void addChargeTransaction(long amount) {
         BalanceTransaction transaction = BalanceTransaction.ofCharge(this, amount);
+        this.balanceTransactions.add(transaction);
+    }
+
+    private void addUseTransaction(long amount) {
+        BalanceTransaction transaction = BalanceTransaction.ofUse(this, amount);
         this.balanceTransactions.add(transaction);
     }
 }
