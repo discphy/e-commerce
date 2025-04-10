@@ -1,14 +1,16 @@
-package kr.hhplus.be.ecommerce.docs.balance;
+package kr.hhplus.be.ecommerce.docs.user;
 
-import kr.hhplus.be.ecommerce.application.balance.BalanceFacade;
-import kr.hhplus.be.ecommerce.application.balance.BalanceResult;
-import kr.hhplus.be.ecommerce.interfaces.balance.BalanceController;
+import kr.hhplus.be.ecommerce.application.user.UserCouponFacade;
+import kr.hhplus.be.ecommerce.application.user.UserCouponResult;
 import kr.hhplus.be.ecommerce.docs.RestDocsSupport;
-import kr.hhplus.be.ecommerce.interfaces.balance.BalanceRequest;
+import kr.hhplus.be.ecommerce.interfaces.user.UserCouponController;
+import kr.hhplus.be.ecommerce.interfaces.user.UserCouponRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,29 +24,34 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class BalanceControllerDocsTest extends RestDocsSupport {
+class UserCouponControllerDocsTest extends RestDocsSupport {
 
-    private final BalanceFacade balanceFacade = mock(BalanceFacade.class);
+    private final UserCouponFacade userCouponFacade = mock(UserCouponFacade.class);
 
     @Override
     protected Object initController() {
-        return new BalanceController(balanceFacade);
+        return new UserCouponController(userCouponFacade);
     }
 
-    @DisplayName("잔액 조회 API")
+    @DisplayName("쿠폰 목록 조회 API")
     @Test
-    void getBalance() throws Exception {
+    void getCoupons() throws Exception {
         // given
-        when(balanceFacade.getBalance(1L))
-            .thenReturn(BalanceResult.Balance.of(1_000L));
+        when(userCouponFacade.getUserCoupons(1L))
+            .thenReturn(UserCouponResult.Coupons.of(
+                List.of(
+                    UserCouponResult.Coupon.of(1L, "쿠폰명", 0.1),
+                    UserCouponResult.Coupon.of(2L, "쿠폰명2", 0.2)
+                )
+            ));
 
         // when & then
         mockMvc.perform(
-            get("/api/v1/users/{id}/balance", 1L)
+            get("/api/v1/users/{id}/coupons", 1L)
         )
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("get-balance",
+            .andDo(document("get-coupons",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
@@ -54,33 +61,36 @@ class BalanceControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                     fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메세지"),
                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
-                    fieldWithPath("data.amount").type(JsonFieldType.NUMBER).description("잔액")
+                    fieldWithPath("data.coupons[]").type(JsonFieldType.ARRAY).description("쿠폰 목록"),
+                    fieldWithPath("data.coupons[].id").type(JsonFieldType.NUMBER).description("쿠폰 ID"),
+                    fieldWithPath("data.coupons[].name").type(JsonFieldType.STRING).description("쿠폰 이름"),
+                    fieldWithPath("data.coupons[].discountRate").type(JsonFieldType.NUMBER).description("쿠폰 할인율")
                 )
             ));
     }
 
-    @DisplayName("잔액 충전 API")
+    @DisplayName("쿠폰 발급 API")
     @Test
-    void updateBalance() throws Exception {
+    void publishCoupon() throws Exception {
         // given
-        BalanceRequest.Charge request = BalanceRequest.Charge.of(10_000L);
+        UserCouponRequest.Publish request = UserCouponRequest.Publish.of(1L);
 
         // when & then
         mockMvc.perform(
-                post("/api/v1/users/{id}/balance/charge", 1L)
+                post("/api/v1/users/{id}/coupons/publish", 1L)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("charge-balance",
+            .andDo(document("publish-coupon",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("id").description("사용자 ID")
                 ),
                 requestFields(
-                    fieldWithPath("amount").type(JsonFieldType.NUMBER).description("충전 금액")
+                    fieldWithPath("couponId").type(JsonFieldType.NUMBER).description("쿠폰 ID")
                 ),
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
