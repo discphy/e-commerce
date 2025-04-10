@@ -15,10 +15,10 @@ public enum ProductSellingStatus {
     ;
     private final String description;
 
-    private static final List<ProductSellingStatus> NON_SELLING_STATUSES = List.of(HOLD, STOP_SELLING);
+    private static final List<ProductSellingStatus> CANNOT_SELLING_STATUSES = List.of(HOLD, STOP_SELLING);
 
     public boolean cannotSelling() {
-        return NON_SELLING_STATUSES.contains(this);
+        return CANNOT_SELLING_STATUSES.contains(this);
     }
 
     public static List<ProductSellingStatus> forSelling() {

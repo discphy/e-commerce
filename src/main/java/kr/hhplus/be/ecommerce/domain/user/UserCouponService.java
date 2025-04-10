@@ -3,6 +3,8 @@ package kr.hhplus.be.ecommerce.domain.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserCouponService {
@@ -30,13 +32,18 @@ public class UserCouponService {
     }
 
     public UserCouponInfo.Coupons getUserCoupons(Long userId) {
-        return UserCouponInfo.Coupons.of(
-            userCouponRepository.findByUserIdAndUsableStatusIn(userId, UserCouponUsedStatus.forUsable()).stream()
-                .map(userCoupon -> UserCouponInfo.Coupon.builder()
-                    .userCouponId(userCoupon.getId())
-                    .couponId(userCoupon.getCouponId())
-                    .issuedAt(userCoupon.getIssuedAt())
-                    .build()
-                ).toList());
+        List<UserCoupon> coupons = userCouponRepository.findByUserIdAndUsableStatusIn(userId, UserCouponUsedStatus.forUsable());
+
+        return UserCouponInfo.Coupons.of(coupons.stream()
+                .map(UserCouponService::toCouponInfo)
+                .toList());
+    }
+
+    private static UserCouponInfo.Coupon toCouponInfo(UserCoupon userCoupon) {
+        return UserCouponInfo.Coupon.builder()
+            .userCouponId(userCoupon.getId())
+            .couponId(userCoupon.getCouponId())
+            .issuedAt(userCoupon.getIssuedAt())
+            .build();
     }
 }

@@ -52,7 +52,7 @@ class PaymentServiceTest extends MockTestSupport {
                 .build()
         );
 
-        when(paymentRepository.findPaymentStatusInAndBetweenPaidAt(anyList(), any(), any()))
+        when(paymentRepository.findCompletedPaymentsWithin(anyList(), any(), any()))
             .thenReturn(payments);
 
         // when

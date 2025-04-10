@@ -15,10 +15,10 @@ public enum UserCouponUsedStatus {
 
     private final String description;
 
-    private static final List<UserCouponUsedStatus> NON_USABLE = List.of(USED);
+    private static final List<UserCouponUsedStatus> CANNOT_USABLE_STATUSES = List.of(USED);
 
     public boolean cannotUsable() {
-        return NON_USABLE.contains(this);
+        return CANNOT_USABLE_STATUSES.contains(this);
     }
 
     public static List<UserCouponUsedStatus> forUsable() {

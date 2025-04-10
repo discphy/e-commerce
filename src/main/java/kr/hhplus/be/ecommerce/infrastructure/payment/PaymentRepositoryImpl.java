@@ -17,7 +17,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public List<Payment> findPaymentStatusInAndBetweenPaidAt(List<PaymentStatus> statuses, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public List<Payment> findCompletedPaymentsWithin(List<PaymentStatus> statuses, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return List.of();
     }
 

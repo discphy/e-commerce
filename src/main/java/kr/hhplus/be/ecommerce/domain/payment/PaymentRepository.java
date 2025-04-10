@@ -10,7 +10,7 @@ public interface PaymentRepository {
 
     Payment save(Payment payment);
 
-    List<Payment> findPaymentStatusInAndBetweenPaidAt(List<PaymentStatus> statuses,
-                                                      LocalDateTime startDateTime,
-                                                      LocalDateTime endDateTime);
+    List<Payment> findCompletedPaymentsWithin(List<PaymentStatus> statuses,
+                                              LocalDateTime startDateTime,
+                                              LocalDateTime endDateTime);
 }

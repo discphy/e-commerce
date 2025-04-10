@@ -18,12 +18,14 @@ public class UserCouponFacade {
 
     public void publishUserCoupon(UserCouponCriteria.Publish criteria) {
         userService.getUser(criteria.getUserId());
+
         couponService.publishCoupon(criteria.getCouponId());
         userCouponService.createUserCoupon(criteria.toCommand());
     }
 
     public UserCouponResult.Coupons getUserCoupons(Long userId) {
         userService.getUser(userId);
+
         return UserCouponResult.Coupons.of(
             userCouponService.getUserCoupons(userId).getCoupons().stream()
                 .map(this::getUserCoupon)

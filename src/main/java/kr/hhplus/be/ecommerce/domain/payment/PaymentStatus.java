@@ -18,10 +18,10 @@ public enum PaymentStatus {
 
     private final String description;
 
-    private static final List<PaymentStatus> NON_PAYABLE_STATUSES = List.of(COMPLETED, FAILED, CANCELLED);
+    private static final List<PaymentStatus> CANNOT_PAYABLE_STATUSES = List.of(COMPLETED, FAILED, CANCELLED);
 
     public boolean cannotPayable() {
-        return NON_PAYABLE_STATUSES.contains(this);
+        return CANNOT_PAYABLE_STATUSES.contains(this);
     }
 
     public static List<PaymentStatus> forCompleted() {

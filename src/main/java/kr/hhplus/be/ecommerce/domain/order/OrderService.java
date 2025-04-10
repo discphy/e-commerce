@@ -18,13 +18,7 @@ public class OrderService {
             .map(this::createOrderProduct)
             .toList();
 
-        Order order = Order.create(
-            command.getUserId(),
-            command.getUserCouponId(),
-            command.getDiscountRate(),
-            orderProducts
-        );
-
+        Order order = Order.create(command.getUserId(), command.getUserCouponId(), command.getDiscountRate(), orderProducts);
         orderRepository.save(order);
 
         return OrderInfo.Order.of(order.getId(), order.getTotalPrice(), order.getDiscountPrice());
@@ -40,18 +34,8 @@ public class OrderService {
     public OrderInfo.TopPaidProducts getTopPaidProducts(OrderCommand.TopOrders command) {
         List<OrderProduct> orderProducts = orderRepository.findOrderIdsIn(command.getOrderIds());
 
-        Map<Long, Integer> productQuantityMap = orderProducts.stream()
-            .collect(
-                Collectors.groupingBy(
-                    OrderProduct::getProductId,
-                    Collectors.summingInt(OrderProduct::getQuantity)
-                )
-            );
-
-        List<Long> sortedProductIds = productQuantityMap.entrySet().stream()
-            .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
-            .map(Map.Entry::getKey)
-            .toList();
+        Map<Long, Integer> productQuantityMap = groupingProductMap(orderProducts);
+        List<Long> sortedProductIds = sortedProducts(productQuantityMap);
 
         return OrderInfo.TopPaidProducts.of(sortedProductIds);
     }
@@ -63,5 +47,22 @@ public class OrderService {
             product.getProductPrice(),
             product.getQuantity()
         );
+    }
+
+    private Map<Long, Integer> groupingProductMap(List<OrderProduct> orderProducts) {
+        return orderProducts.stream()
+            .collect(
+                Collectors.groupingBy(
+                    OrderProduct::getProductId,
+                    Collectors.summingInt(OrderProduct::getQuantity)
+                )
+            );
+    }
+
+    private static List<Long> sortedProducts(Map<Long, Integer> productQuantityMap) {
+        return productQuantityMap.entrySet().stream()
+            .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+            .map(Map.Entry::getKey)
+            .toList();
     }
 }

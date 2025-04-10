@@ -24,7 +24,7 @@ public class PaymentService {
         LocalDateTime startDateTime = endDateTime.minusDays(recentDays);
 
         List<Payment> completedPayments = paymentRepository
-            .findPaymentStatusInAndBetweenPaidAt(PaymentStatus.forCompleted(), startDateTime, endDateTime);
+            .findCompletedPaymentsWithin(PaymentStatus.forCompleted(), startDateTime, endDateTime);
 
         return PaymentInfo.Orders.of(completedPayments.stream()
             .map(Payment::getOrderId)
