@@ -44,4 +44,33 @@ public class ProductInfo {
             return new OrderProduct(productId, productName, productPrice, quantity);
         }
     }
+
+    @Getter
+    public static class Products {
+
+        private final List<Product> products;
+
+        private Products(List<Product> products) {
+            this.products = products;
+        }
+
+        public static Products of(List<Product> products) {
+            return new Products(products);
+        }
+    }
+
+    @Getter
+    public static class Product {
+
+        private final Long productId;
+        private final String productName;
+        private final Long productPrice;
+
+        @Builder
+        private Product(Long productId, String productName, Long productPrice) {
+            this.productId = productId;
+            this.productName = productName;
+            this.productPrice = productPrice;
+        }
+    }
 }

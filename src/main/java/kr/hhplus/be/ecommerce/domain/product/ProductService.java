@@ -19,6 +19,19 @@ public class ProductService {
         return ProductInfo.OrderProducts.of(orderProducts);
     }
 
+    public ProductInfo.Products getSellingProducts() {
+        return ProductInfo.Products.of(
+            productRepository.findSellingStatusIn(ProductSellingStatus.SELLING_STATUSES)
+                .stream()
+                .map(product -> ProductInfo.Product.builder()
+                    .productId(product.getId())
+                    .productName(product.getName())
+                    .productPrice(product.getPrice())
+                    .build()
+                ).toList()
+        );
+    }
+
     private ProductInfo.OrderProduct getOrderProduct(ProductCommand.OrderProduct command) {
         Product product = productRepository.findById(command.getProductId());
 

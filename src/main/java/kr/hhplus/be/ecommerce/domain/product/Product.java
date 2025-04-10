@@ -31,6 +31,14 @@ public class Product {
         this.sellStatus = sellStatus;
     }
 
+    public static Product of(String name, long price, ProductSellingStatus sellStatus) {
+        return Product.builder()
+            .name(name)
+            .price(price)
+            .sellStatus(sellStatus)
+            .build();
+    }
+
     public boolean cannotSelling() {
         return sellStatus.cannotSelling();
     }

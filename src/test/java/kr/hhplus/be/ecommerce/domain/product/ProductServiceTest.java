@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -93,5 +94,34 @@ class ProductServiceTest extends MockTestSupport {
             );
     }
 
+    @DisplayName("판매 가능한 상품을 조회한다.")
+    @Test
+    void getSellingProducts() {
+        // given
+        List<Product> sellingProducts = List.of(
+            Product.of("상품명1", 10_000L, ProductSellingStatus.SELLING),
+            Product.of("상품명3", 15_000L, ProductSellingStatus.SELLING),
+            Product.of("상품명5", 30_000L, ProductSellingStatus.SELLING),
+            Product.of("상품명7", 18_000L, ProductSellingStatus.SELLING),
+            Product.of("상품명9", 35_000L, ProductSellingStatus.SELLING)
+        );
+
+        when(productRepository.findSellingStatusIn(anyList()))
+            .thenReturn(sellingProducts);
+
+        // when
+        ProductInfo.Products products = productService.getSellingProducts();
+
+        // then
+        assertThat(products.getProducts()).hasSize(5)
+            .extracting("productName", "productPrice")
+            .containsExactly(
+                tuple("상품명1", 10_000L),
+                tuple("상품명3", 15_000L),
+                tuple("상품명5", 30_000L),
+                tuple("상품명7", 18_000L),
+                tuple("상품명9", 35_000L)
+            );
+    }
 
 }

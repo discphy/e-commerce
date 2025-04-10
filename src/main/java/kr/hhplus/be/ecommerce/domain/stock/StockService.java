@@ -17,4 +17,9 @@ public class StockService {
         Stock stock = stockRepository.findByProductId(command.getProductId());
         stock.deduct(command.getQuantity());
     }
+
+    public StockInfo.Stock getStock(Long productId) {
+        Stock stock = stockRepository.findByProductId(productId);
+        return StockInfo.Stock.of(stock.getId(), stock.getQuantity());
+    }
 }

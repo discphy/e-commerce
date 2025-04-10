@@ -87,4 +87,17 @@ class StockServiceTest extends MockTestSupport {
          assertThat(stock.getQuantity()).isZero();
     }
 
+    @DisplayName("상품 ID로 재고를 조회한다.")
+    @Test
+    void getStock() {
+        // given
+        when(stockRepository.findByProductId(anyLong()))
+            .thenReturn(Stock.of(1L, 10));
+
+        // when
+        StockInfo.Stock stock = stockService.getStock(1L);
+
+        // then
+        assertThat(stock.getQuantity()).isEqualTo(10);
+    }
 }
