@@ -31,7 +31,6 @@ public class BalanceTransaction {
         this.balance = balance;
         this.transactionType = transactionType;
         this.amount = amount;
-        this.balance.getBalanceTransactions().add(this);
     }
 
     public static BalanceTransaction ofCharge(Balance balance, long amount) {
@@ -46,7 +45,7 @@ public class BalanceTransaction {
         return BalanceTransaction.builder()
             .balance(balance)
             .transactionType(BalanceTransactionType.USE)
-            .amount(amount)
+            .amount(-amount)
             .build();
     }
 }

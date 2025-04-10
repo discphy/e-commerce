@@ -8,6 +8,27 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BalanceTest {
 
+    @DisplayName("초기 금액은 0보다 커야한다.")
+    @Test
+    void ofWithNotPositiveAmount() {
+        // when & then
+        assertThatThrownBy(() -> Balance.create(1L, 0L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("초기 금액은 0보다 커야 합니다.");
+    }
+
+    @DisplayName("충전 금액은 0보다 커야한다.")
+    @Test
+    void chargeWithNotPositiveAmount() {
+        // given
+        Balance balance = Balance.create(1L, 10_000_000L);
+
+        // when & then
+        assertThatThrownBy(() -> balance.charge(0L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("충전 금액은 0보다 커야 합니다.");
+    }
+
     @DisplayName("충전 최대 금액을 넘을 수 없다.")
     @Test
     void chargeCannotExceedMaxAmount() {
@@ -31,6 +52,21 @@ class BalanceTest {
 
         // then
         assertThat(balance.getAmount()).isEqualTo(2_000_000L);
+        assertThat(balance.getBalanceTransactions()).hasSize(2)
+            .extracting("amount")
+            .containsExactly(1_000_000L, 1_000_000L);
+    }
+
+    @DisplayName("사용 금액은 0보다 커야한다.")
+    @Test
+    void useWithNotPositiveAmount() {
+        // given
+        Balance balance = Balance.create(1L, 1_000_000L);
+
+        // when & then
+        assertThatThrownBy(() -> balance.use(0L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("사용 금액은 0보다 커야 합니다.");
     }
 
     @DisplayName("잔고가 부족할 경우 차감할 수 없다.")
@@ -56,5 +92,8 @@ class BalanceTest {
 
         // then
         assertThat(balance.getAmount()).isZero();
+        assertThat(balance.getBalanceTransactions()).hasSize(2)
+            .extracting("amount")
+            .containsExactly(1_000_000L, -1_000_000L);
     }
 }

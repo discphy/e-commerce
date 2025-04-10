@@ -26,14 +26,16 @@ public class BalanceService {
             .ifPresentOrElse(
                 balance -> balance.use(command.getAmount()),
                 () -> {
-                    throw new IllegalArgumentException("잔액이 부족합니다.");
+                    throw new IllegalArgumentException("잔고가 존재하지 않습니다.");
                 }
             );
     }
 
     public BalanceInfo.Balance getBalance(Long userId) {
-        return BalanceInfo.Balance.of(balanceRepository.findOptionalByUserId(userId)
+        Long amount = balanceRepository.findOptionalByUserId(userId)
             .map(Balance::getAmount)
-            .orElse(EMPTY_BALANCE_AMOUNT));
+            .orElse(EMPTY_BALANCE_AMOUNT);
+        
+        return BalanceInfo.Balance.of(amount);
     }
 }

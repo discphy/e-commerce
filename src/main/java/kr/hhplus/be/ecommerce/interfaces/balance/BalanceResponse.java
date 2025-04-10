@@ -10,16 +10,16 @@ public class BalanceResponse {
 
     @Getter
     @NoArgsConstructor
-    public static class BalanceV1 {
+    public static class Balance {
 
         private Long amount;
 
-        private BalanceV1(Long amount) {
+        private Balance(Long amount) {
             this.amount = amount;
         }
 
-        public static BalanceV1 of(BalanceResult.Balance balance) {
-            return new BalanceV1(balance.getAmount());
+        public static Balance of(BalanceResult.Balance balance) {
+            return new Balance(balance.getAmount());
         }
     }
 }

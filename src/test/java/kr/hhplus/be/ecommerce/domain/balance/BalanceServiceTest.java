@@ -22,6 +22,38 @@ class BalanceServiceTest extends MockTestSupport {
     @Mock
     private BalanceRepository balanceRepository;
 
+    @DisplayName("잔고 충전 시, 충전 금액은 0보다 커야 한다.")
+    @Test
+    void chargeShouldPositiveAmount() {
+        // given
+        BalanceCommand.Charge command = BalanceCommand.Charge.of(1L, 0L);
+        Balance balance = Balance.create(1L, 10_000L);
+
+        when(balanceRepository.findOptionalByUserId(anyLong()))
+            .thenReturn(Optional.of(balance));
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.chargeBalance(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("충전 금액은 0보다 커야 합니다.");
+    }
+
+    @DisplayName("잔고 충전 시, 최대 금액을 넘을 수 없다.")
+    @Test
+    void chargeCannotExceedMaxAmount() {
+        // given
+        BalanceCommand.Charge command = BalanceCommand.Charge.of(1L, 1L);
+        Balance balance = Balance.create(1L, 10_000_000L);
+
+        when(balanceRepository.findOptionalByUserId(anyLong()))
+            .thenReturn(Optional.of(balance));
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.chargeBalance(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("최대 금액을 초과할 수 없습니다.");
+    }
+
     @DisplayName("잔고가 없으면, 잔고를 생성한다.")
     @Test
     void chargeBalanceIfNotExist() {
@@ -43,8 +75,8 @@ class BalanceServiceTest extends MockTestSupport {
     void chargeBalanceIfExist() {
         // given
         BalanceCommand.Charge command = mock(BalanceCommand.Charge.class);
-
         Balance balance = mock(Balance.class);
+
         when(balanceRepository.findOptionalByUserId(anyLong()))
             .thenReturn(Optional.of(balance));
 
@@ -68,7 +100,23 @@ class BalanceServiceTest extends MockTestSupport {
         // when & then
         assertThatThrownBy(() -> balanceService.useBalance(command))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("잔액이 부족합니다.");
+            .hasMessage("잔고가 존재하지 않습니다.");
+    }
+
+    @DisplayName("사용 금액이 0이면 잔고를 차감하지 못한다.")
+    @Test
+    void useBalanceWithZeroAmount() {
+        // given
+        BalanceCommand.Use command = BalanceCommand.Use.of(1L, 0L);
+        Balance balance = Balance.create(1L, 10_000L);
+
+        when(balanceRepository.findOptionalByUserId(anyLong()))
+            .thenReturn(Optional.of(balance));
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.useBalance(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("사용 금액은 0보다 커야 합니다.");
     }
 
     @DisplayName("잔고가 부족하면, 잔고를 차감하지 못한다.")
@@ -76,7 +124,6 @@ class BalanceServiceTest extends MockTestSupport {
     void useBalanceWithInsufficientBalance() {
         // given
         BalanceCommand.Use command = BalanceCommand.Use.of(1L, 10_001L);
-
         Balance balance = Balance.create(1L, 10_000L);
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
@@ -93,7 +140,6 @@ class BalanceServiceTest extends MockTestSupport {
     void useBalance() {
         // given
         BalanceCommand.Use command = BalanceCommand.Use.of(1L, 10_000L);
-
         Balance balance = Balance.create(1L, 10_000L);
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
@@ -120,9 +166,9 @@ class BalanceServiceTest extends MockTestSupport {
         assertThat(balanceInfo.getAmount()).isZero();
     }
 
-    @DisplayName("잔고를 존재할 때, 조회한다.")
+    @DisplayName("잔고를 조회한다.")
     @Test
-    void getBalanceWithExist() {
+    void getBalance() {
         // given
         Balance balance = Balance.create(1L, 10_000L);
 

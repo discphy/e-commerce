@@ -14,9 +14,9 @@ public class BalanceController {
     private final BalanceFacade balanceFacade;
 
     @GetMapping("/api/v1/users/{id}/balance")
-    public ApiResponse<BalanceResponse.BalanceV1> getBalance(@PathVariable("id") Long id) {
+    public ApiResponse<BalanceResponse.Balance> getBalance(@PathVariable("id") Long id) {
         BalanceResult.Balance balance = balanceFacade.getBalance(id);
-        return ApiResponse.success(BalanceResponse.BalanceV1.of(balance));
+        return ApiResponse.success(BalanceResponse.Balance.of(balance));
     }
 
     @PostMapping("/api/v1/users/{id}/balance/charge")
