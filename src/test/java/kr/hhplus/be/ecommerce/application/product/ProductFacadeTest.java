@@ -1,8 +1,8 @@
 package kr.hhplus.be.ecommerce.application.product;
 
 import kr.hhplus.be.ecommerce.MockTestSupport;
-import kr.hhplus.be.ecommerce.domain.order.OrderProductInfo;
-import kr.hhplus.be.ecommerce.domain.order.OrderProductService;
+import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
+import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.domain.payment.PaymentInfo;
 import kr.hhplus.be.ecommerce.domain.payment.PaymentService;
 import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
@@ -37,7 +37,7 @@ class ProductFacadeTest extends MockTestSupport {
     private PaymentService paymentService;
 
     @Mock
-    private OrderProductService orderProductService;
+    private OrderService orderService;
 
     @DisplayName("판매 가능 상품 목록을 조회한다.")
     @Test
@@ -91,8 +91,8 @@ class ProductFacadeTest extends MockTestSupport {
         when(paymentService.getCompletedOrdersBetweenDays(3))
             .thenReturn(orders);
 
-        OrderProductInfo.TopPaidProducts topPaidProducts = OrderProductInfo.TopPaidProducts.of(List.of(6L, 5L, 4L));
-        when(orderProductService.getTopPaidProducts(any()))
+        OrderInfo.TopPaidProducts topPaidProducts = OrderInfo.TopPaidProducts.of(List.of(6L, 5L, 4L));
+        when(orderService.getTopPaidProducts(any()))
             .thenReturn(topPaidProducts);
 
         ProductInfo.Products products = ProductInfo.Products.of(List.of(
@@ -123,9 +123,9 @@ class ProductFacadeTest extends MockTestSupport {
         ProductResult.Products popularProducts = productFacade.getPopularProducts();
 
         // then
-        InOrder inOrder = inOrder(paymentService, orderProductService, productService);
+        InOrder inOrder = inOrder(paymentService, orderService, productService);
         inOrder.verify(paymentService, times(1)).getCompletedOrdersBetweenDays(3);
-        inOrder.verify(orderProductService, times(1)).getTopPaidProducts(any());
+        inOrder.verify(orderService, times(1)).getTopPaidProducts(any());
         inOrder.verify(productService, times(1)).getProducts(any());
 
         assertThat(popularProducts.getProducts()).hasSize(3)

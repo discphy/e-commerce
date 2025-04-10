@@ -3,6 +3,7 @@ package kr.hhplus.be.ecommerce.application.order;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceService;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponInfo;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponService;
+import kr.hhplus.be.ecommerce.domain.order.OrderCommand;
 import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
 import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.domain.payment.PaymentService;
@@ -33,27 +34,23 @@ public class OrderFacade {
     private static final double NOT_DISCOUNT_RATE = 0.0;
 
     public void orderPayment(OrderCriteria.OrderPayment criteria) {
-        // 주문
         userService.getUser(criteria.getUserId());
+
         ProductInfo.OrderProducts orderProducts = productService.getOrderProducts(criteria.toProductCommand());
 
         Optional<Long> optionalCouponId = Optional.ofNullable(criteria.getCouponId());
-
         Optional<UserCouponInfo.UsableCoupon> optionalUsableCoupon = optionalCouponId
             .map(id -> userCouponService.getUsableCoupon(criteria.toCouponCommand()));
-
         Optional<CouponInfo.Coupon> optionalCoupon = optionalCouponId
             .map(couponService::getCoupon);
 
-        OrderInfo.Order order = orderService.createOrder(
-            criteria.toOrderCommand(
-                optionalUsableCoupon.map(UserCouponInfo.UsableCoupon::getUserCouponId).orElse(null),
-                optionalCoupon.map(CouponInfo.Coupon::getDiscountRate).orElse(NOT_DISCOUNT_RATE),
-                orderProducts
-            )
+        OrderCommand.Create orderCommand = criteria.toOrderCommand(
+            optionalUsableCoupon.map(UserCouponInfo.UsableCoupon::getUserCouponId).orElse(null),
+            optionalCoupon.map(CouponInfo.Coupon::getDiscountRate).orElse(NOT_DISCOUNT_RATE),
+            orderProducts
         );
+        OrderInfo.Order order = orderService.createOrder(orderCommand);
 
-        // 결제
         balanceService.useBalance(criteria.toBalanceCommand(order.getTotalPrice()));
         optionalUsableCoupon.ifPresent(coupon -> userCouponService.useUserCoupon(coupon.getUserCouponId()));
         stockService.deductStock(criteria.toStockCommand());

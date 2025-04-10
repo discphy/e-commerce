@@ -2,6 +2,8 @@ package kr.hhplus.be.ecommerce.domain.order;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface OrderRepository {
 
@@ -10,4 +12,6 @@ public interface OrderRepository {
     Order findById(Long orderId);
 
     void sendOrderMessage(Order order);
+
+    List<OrderProduct> findOrderIdsIn(List<Long> orderIds);
 }

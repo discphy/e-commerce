@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -13,19 +15,15 @@ public class OrderService {
 
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
         List<OrderProduct> orderProducts = command.getProducts().stream()
-            .map(product -> OrderProduct.create(
-                product.getProductId(),
-                product.getProductName(),
-                product.getProductPrice(),
-                product.getQuantity()
-            ))
+            .map(this::createOrderProduct)
             .toList();
 
         Order order = Order.create(
             command.getUserId(),
             command.getUserCouponId(),
             command.getDiscountRate(),
-            orderProducts);
+            orderProducts
+        );
 
         orderRepository.save(order);
 
@@ -35,6 +33,35 @@ public class OrderService {
     public void paidOrder(Long orderId) {
         Order order = orderRepository.findById(orderId);
         order.paid();
+
         orderRepository.sendOrderMessage(order);
+    }
+
+    public OrderInfo.TopPaidProducts getTopPaidProducts(OrderCommand.TopOrders command) {
+        List<OrderProduct> orderProducts = orderRepository.findOrderIdsIn(command.getOrderIds());
+
+        Map<Long, Integer> productQuantityMap = orderProducts.stream()
+            .collect(
+                Collectors.groupingBy(
+                    OrderProduct::getProductId,
+                    Collectors.summingInt(OrderProduct::getQuantity)
+                )
+            );
+
+        List<Long> sortedProductIds = productQuantityMap.entrySet().stream()
+            .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+            .map(Map.Entry::getKey)
+            .toList();
+
+        return OrderInfo.TopPaidProducts.of(sortedProductIds);
+    }
+
+    private OrderProduct createOrderProduct(OrderCommand.OrderProduct product) {
+        return OrderProduct.create(
+            product.getProductId(),
+            product.getProductName(),
+            product.getProductPrice(),
+            product.getQuantity()
+        );
     }
 }

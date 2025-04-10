@@ -32,11 +32,11 @@ class OrderControllerDocsTest extends RestDocsSupport {
     @Test
     void createOrder() throws Exception {
         // given
-        OrderRequest.Create request = OrderRequest.Create.of(
+        OrderRequest.OrderPayment request = OrderRequest.OrderPayment.of(
             1L,
             1L,
             List.of(
-                OrderRequest.Product.of(1L, 2)
+                OrderRequest.OrderProduct.of(1L, 2)
             )
         );
 

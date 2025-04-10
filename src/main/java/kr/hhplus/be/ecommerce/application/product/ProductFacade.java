@@ -21,7 +21,7 @@ public class ProductFacade {
     private final ProductService productService;
     private final StockService stockService;
     private final PaymentService paymentService;
-    private final OrderProductService orderProductService;
+    private final OrderService orderService;
 
     public ProductResult.Products getProducts() {
         ProductInfo.Products products = productService.getSellingProducts();
@@ -33,8 +33,8 @@ public class ProductFacade {
     public ProductResult.Products getPopularProducts() {
         PaymentInfo.Orders completedOrders = paymentService.getCompletedOrdersBetweenDays(RECENT_DAYS);
 
-        OrderProductCommand.TopOrders orderProductCommand = OrderProductCommand.TopOrders.of(completedOrders.getOrderIds(), TOP_LIMIT);
-        OrderProductInfo.TopPaidProducts topPaidProducts = orderProductService.getTopPaidProducts(orderProductCommand);
+        OrderCommand.TopOrders orderProductCommand = OrderCommand.TopOrders.of(completedOrders.getOrderIds(), TOP_LIMIT);
+        OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(orderProductCommand);
         ProductInfo.Products products = productService.getProducts(ProductCommand.Products.of(topPaidProducts.getProductIds()));
 
         return ProductResult.Products.of(products.getProducts().stream()

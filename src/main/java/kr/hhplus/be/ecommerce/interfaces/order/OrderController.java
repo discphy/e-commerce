@@ -15,7 +15,7 @@ public class OrderController {
     private final OrderFacade orderFacade;
 
     @PostMapping("/api/v1/orders")
-    public ApiResponse<Void> createOrder(@Valid @RequestBody OrderRequest.Create request) {
+    public ApiResponse<Void> orderPayment(@Valid @RequestBody OrderRequest.OrderPayment request) {
         orderFacade.orderPayment(request.toCriteria());
         return ApiResponse.success();
     }

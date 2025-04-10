@@ -20,10 +20,10 @@ class OrderControllerTest extends ControllerTestSupport {
     @Test
     void createOrderWithoutUserId() throws Exception {
         // given
-        OrderRequest.Create request = OrderRequest.Create.of(
+        OrderRequest.OrderPayment request = OrderRequest.OrderPayment.of(
             null,
             1L,
-            List.of(OrderRequest.Product.of(1L, 1))
+            List.of(OrderRequest.OrderProduct.of(1L, 1))
         );
 
         // when & then
@@ -42,7 +42,7 @@ class OrderControllerTest extends ControllerTestSupport {
     @Test
     void createOrderWithEmptyProducts() throws Exception {
         // given
-        OrderRequest.Create request = OrderRequest.Create.of(
+        OrderRequest.OrderPayment request = OrderRequest.OrderPayment.of(
             1L,
             1L,
             List.of()
@@ -64,11 +64,11 @@ class OrderControllerTest extends ControllerTestSupport {
     @Test
     void createOrderWithoutProductId() throws Exception {
         // given
-        OrderRequest.Create request = OrderRequest.Create.of(
+        OrderRequest.OrderPayment request = OrderRequest.OrderPayment.of(
             1L,
             1L,
             List.of(
-                OrderRequest.Product.of(null, 1)
+                OrderRequest.OrderProduct.of(null, 1)
             )
         );
 
@@ -88,11 +88,11 @@ class OrderControllerTest extends ControllerTestSupport {
     @Test
     void createOrderWithoutQuantity() throws Exception {
         // given
-        OrderRequest.Create request = OrderRequest.Create.of(
+        OrderRequest.OrderPayment request = OrderRequest.OrderPayment.of(
             1L,
             1L,
             List.of(
-                OrderRequest.Product.of(1L, null)
+                OrderRequest.OrderProduct.of(1L, null)
             )
         );
 
@@ -113,11 +113,11 @@ class OrderControllerTest extends ControllerTestSupport {
     @ValueSource(ints = {-1, 0})
     void createOrderWithNegativeOrZeroQuantity(int quantity) throws Exception {
         // given
-        OrderRequest.Create request = OrderRequest.Create.of(
+        OrderRequest.OrderPayment request = OrderRequest.OrderPayment.of(
             1L,
             1L,
             List.of(
-                OrderRequest.Product.of(1L, quantity)
+                OrderRequest.OrderProduct.of(1L, quantity)
             )
         );
 
@@ -137,11 +137,11 @@ class OrderControllerTest extends ControllerTestSupport {
     @Test
     void createOrder() throws Exception {
         // given
-        OrderRequest.Create request = OrderRequest.Create.of(
+        OrderRequest.OrderPayment request = OrderRequest.OrderPayment.of(
             1L,
             1L,
             List.of(
-                OrderRequest.Product.of(1L, 2)
+                OrderRequest.OrderProduct.of(1L, 2)
             )
         );
 

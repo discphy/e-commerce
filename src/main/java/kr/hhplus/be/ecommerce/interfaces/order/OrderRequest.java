@@ -16,7 +16,7 @@ public class OrderRequest {
 
     @Getter
     @NoArgsConstructor
-    public static class Create {
+    public static class OrderPayment {
 
         @NotNull(message = "사용자 ID는 필수 입니다.")
         private Long userId;
@@ -24,28 +24,28 @@ public class OrderRequest {
 
         @Valid
         @NotEmpty(message = "상품 목록은 1개 이상이여야 합니다.")
-        private List<Product> products;
+        private List<OrderProduct> products;
 
-        private Create(Long userId, Long couponId, List<Product> products) {
+        private OrderPayment(Long userId, Long couponId, List<OrderProduct> products) {
             this.userId = userId;
             this.couponId = couponId;
             this.products = products;
         }
 
-        public static Create of(Long userId, Long couponId, List<Product> products) {
-            return new Create(userId, couponId, products);
+        public static OrderPayment of(Long userId, Long couponId, List<OrderProduct> products) {
+            return new OrderPayment(userId, couponId, products);
         }
 
         public OrderCriteria.OrderPayment toCriteria() {
             return OrderCriteria.OrderPayment.of(userId, couponId, products.stream()
-                    .map(Product::toCommand)
+                    .map(OrderProduct::toCriteria)
                     .toList());
         }
     }
 
     @Getter
     @NoArgsConstructor
-    public static class Product {
+    public static class OrderProduct {
 
         @NotNull(message = "상품 ID는 필수입니다.")
         private Long id;
@@ -54,16 +54,16 @@ public class OrderRequest {
         @Positive(message = "상품 구매 수량은 양수여야 합니다.")
         private Integer quantity;
 
-        private Product(Long id, Integer quantity) {
+        private OrderProduct(Long id, Integer quantity) {
             this.id = id;
             this.quantity = quantity;
         }
 
-        public static Product of(Long id, Integer quantity) {
-            return new Product(id, quantity);
+        public static OrderProduct of(Long id, Integer quantity) {
+            return new OrderProduct(id, quantity);
         }
 
-        public OrderCriteria.OrderProduct toCommand() {
+        public OrderCriteria.OrderProduct toCriteria() {
             return OrderCriteria.OrderProduct.of(id, quantity);
         }
     }
