@@ -78,6 +78,24 @@ class OrderServiceTest extends MockTestSupport {
         verify(orderRepository, times(1)).sendOrderMessage(order);
     }
 
+    @DisplayName("주문 상품이 없다면, 상위 상품을 조회시 결과가 비어있다.")
+    @Test
+    void getTopPaidProductsWithEmptyOrders() {
+        // given
+        List<OrderProduct> orderProducts = List.of();
+
+        when(orderRepository.findOrderIdsIn(any()))
+            .thenReturn(orderProducts);
+
+        OrderCommand.TopOrders command = OrderCommand.TopOrders.of(List.of(1L, 2L), 5);
+
+        // when
+        OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(command);
+
+        // then
+        assertThat(topPaidProducts.getProductIds()).isEmpty();
+    }
+
     @DisplayName("상위 상품을 조회한다.")
     @Test
     void getTopPaidProducts() {

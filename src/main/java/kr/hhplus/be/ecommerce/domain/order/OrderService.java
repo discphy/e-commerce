@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -52,7 +54,7 @@ public class OrderService {
     private Map<Long, Integer> groupingProductMap(List<OrderProduct> orderProducts) {
         return orderProducts.stream()
             .collect(
-                Collectors.groupingBy(
+                groupingBy(
                     OrderProduct::getProductId,
                     Collectors.summingInt(OrderProduct::getQuantity)
                 )
