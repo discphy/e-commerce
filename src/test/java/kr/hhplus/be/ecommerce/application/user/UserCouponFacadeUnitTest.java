@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.mockito.Mockito.*;
 
-class UserCouponFacadeTest extends MockTestSupport {
+class UserCouponFacadeUnitTest extends MockTestSupport {
 
     @InjectMocks
     private UserCouponFacade userCouponFacade;

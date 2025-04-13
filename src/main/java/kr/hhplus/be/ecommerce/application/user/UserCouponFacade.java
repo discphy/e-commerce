@@ -8,6 +8,8 @@ import kr.hhplus.be.ecommerce.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserCouponFacade {
@@ -26,11 +28,10 @@ public class UserCouponFacade {
     public UserCouponResult.Coupons getUserCoupons(Long userId) {
         userService.getUser(userId);
 
-        return UserCouponResult.Coupons.of(
-            userCouponService.getUserCoupons(userId).getCoupons().stream()
-                .map(this::getUserCoupon)
-                .toList()
-        );
+        List<UserCouponResult.Coupon> coupons = userCouponService.getUserCoupons(userId).getCoupons().stream()
+            .map(this::getUserCoupon)
+            .toList();
+        return UserCouponResult.Coupons.of(coupons);
     }
 
     private UserCouponResult.Coupon getUserCoupon(UserCouponInfo.Coupon userCoupon) {

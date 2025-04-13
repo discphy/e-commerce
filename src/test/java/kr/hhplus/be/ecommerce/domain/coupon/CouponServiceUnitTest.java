@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-class CouponServiceTest extends MockTestSupport {
+class CouponServiceUnitTest extends MockTestSupport {
 
     @InjectMocks
     private CouponService couponService;

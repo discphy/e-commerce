@@ -1,9 +1,11 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public interface CouponRepository {
+
+    Coupon save(Coupon coupon);
 
     Coupon findById(Long couponId);
 }
