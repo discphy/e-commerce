@@ -85,5 +85,9 @@ public class Balance {
         if (amount <= 0) {
             throw new IllegalArgumentException("초기 금액은 0보다 커야 합니다.");
         }
+
+        if (amount > MAX_BALANCE_AMOUNT) {
+            throw new IllegalArgumentException("최대 금액을 초과할 수 없습니다.");
+        }
     }
 }

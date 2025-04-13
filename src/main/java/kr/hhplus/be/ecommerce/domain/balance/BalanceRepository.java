@@ -1,10 +1,10 @@
 package kr.hhplus.be.ecommerce.domain.balance;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Repository
+@Component
 public interface BalanceRepository {
 
     Optional<Balance> findOptionalByUserId(Long userId);

@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-class BalanceFacadeTest extends MockTestSupport {
+class BalanceFacadeUnitTest extends MockTestSupport {
 
     @InjectMocks
     private BalanceFacade balanceFacade;
