@@ -37,8 +37,3 @@ include::order/order.adoc[]
 == 상품 API
 
 include::product/product.adoc[]
-
-[[Rank-API]]
-== 랭킹 API
-
-include::rank/rank.adoc[]

@@ -1,13 +1,17 @@
 package kr.hhplus.be.ecommerce.docs.balance;
 
-import kr.hhplus.be.ecommerce.api.controller.balance.BalanceController;
-import kr.hhplus.be.ecommerce.api.controller.balance.request.BalanceUpdateRequest;
+import kr.hhplus.be.ecommerce.application.balance.BalanceFacade;
+import kr.hhplus.be.ecommerce.application.balance.BalanceResult;
+import kr.hhplus.be.ecommerce.interfaces.balance.BalanceController;
 import kr.hhplus.be.ecommerce.docs.RestDocsSupport;
+import kr.hhplus.be.ecommerce.interfaces.balance.BalanceRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -20,14 +24,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class BalanceControllerDocsTest extends RestDocsSupport {
 
+    private final BalanceFacade balanceFacade = mock(BalanceFacade.class);
+
     @Override
     protected Object initController() {
-        return new BalanceController();
+        return new BalanceController(balanceFacade);
     }
 
     @DisplayName("잔액 조회 API")
     @Test
     void getBalance() throws Exception {
+        // given
+        when(balanceFacade.getBalance(1L))
+            .thenReturn(BalanceResult.Balance.of(1_000L));
+
         // when & then
         mockMvc.perform(
             get("/api/v1/users/{id}/balance", 1L)
@@ -53,17 +63,17 @@ class BalanceControllerDocsTest extends RestDocsSupport {
     @Test
     void updateBalance() throws Exception {
         // given
-        BalanceUpdateRequest request = BalanceUpdateRequest.of(10_000L);
+        BalanceRequest.Charge request = BalanceRequest.Charge.of(10_000L);
 
         // when & then
         mockMvc.perform(
-                post("/api/v1/users/{id}/balance", 1L)
+                post("/api/v1/users/{id}/balance/charge", 1L)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
             .andExpect(status().isOk())
-            .andDo(document("update-balance",
+            .andDo(document("charge-balance",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 pathParameters(
