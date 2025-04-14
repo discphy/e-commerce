@@ -14,7 +14,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ProductServiceTest extends MockTestSupport {
+class ProductServiceUnitTest extends MockTestSupport {
 
     @InjectMocks
     private ProductService productService;

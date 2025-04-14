@@ -1,11 +1,13 @@
 package kr.hhplus.be.ecommerce.domain.product;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Repository
+@Component
 public interface ProductRepository {
+
+    Product save(Product product);
 
     Product findById(Long productId);
 
