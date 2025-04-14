@@ -21,7 +21,7 @@ import org.mockito.Mock;
 
 import static org.mockito.Mockito.*;
 
-class OrderFacadeTest extends MockTestSupport {
+class OrderFacadeUnitTest extends MockTestSupport {
 
     @InjectMocks
     private OrderFacade orderFacade;
