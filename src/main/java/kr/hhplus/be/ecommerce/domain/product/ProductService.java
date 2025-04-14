@@ -28,7 +28,8 @@ public class ProductService {
     }
 
     public ProductInfo.Products getProducts(ProductCommand.Products command) {
-        List<ProductInfo.Product> products = productRepository.findByIds(command.getProductIds()).stream()
+        List<ProductInfo.Product> products = command.getProductIds().stream()
+            .map(productRepository::findById)
             .map(this::toProductInfo)
             .toList();
 

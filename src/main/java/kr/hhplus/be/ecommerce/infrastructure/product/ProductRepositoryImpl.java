@@ -29,9 +29,4 @@ public class ProductRepositoryImpl implements ProductRepository {
     public List<Product> findSellingStatusIn(List<ProductSellingStatus> statuses) {
         return productJpaRepository.findBySellStatusIn(statuses);
     }
-
-    @Override
-    public List<Product> findByIds(List<Long> productIds) {
-        return productJpaRepository.findByIdIn(productIds);
-    }
 }

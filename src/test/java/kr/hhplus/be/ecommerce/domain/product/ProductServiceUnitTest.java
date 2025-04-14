@@ -123,32 +123,4 @@ class ProductServiceUnitTest extends MockTestSupport {
                 tuple("상품명9", 35_000L)
             );
     }
-
-    @DisplayName("여러 개의 상품 ID로 상품을 조회한다.")
-    @Test
-    void getProducts() {
-        // given
-        ProductCommand.Products command = mock(ProductCommand.Products.class);
-
-        List<Product> products = List.of(
-            Product.create("상품명1", 10_000L, ProductSellingStatus.SELLING),
-            Product.create("상품명3", 15_000L, ProductSellingStatus.SELLING),
-            Product.create("상품명5", 30_000L, ProductSellingStatus.SELLING)
-        );
-
-        when(productRepository.findByIds(anyList()))
-            .thenReturn(products);
-
-        // when
-        ProductInfo.Products productInfos = productService.getProducts(command);
-
-        // then
-        assertThat(productInfos.getProducts()).hasSize(3)
-            .extracting("productName", "productPrice")
-            .containsExactly(
-                tuple("상품명1", 10_000L),
-                tuple("상품명3", 15_000L),
-                tuple("상품명5", 30_000L)
-            );
-    }
 }

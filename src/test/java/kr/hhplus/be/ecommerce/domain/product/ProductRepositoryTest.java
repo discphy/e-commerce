@@ -66,26 +66,4 @@ class ProductRepositoryTest extends IntegrationTestSupport {
                 tuple(targetProduct.getName(), targetProduct.getSellStatus())
             );
     }
-
-    @DisplayName("상품 ID 리스트로 상품들을 조회한다.")
-    @Test
-    void findByIds() {
-        // given
-        Product product1 = Product.create("상품명1", 1_000L, ProductSellingStatus.SELLING);
-        Product product2 = Product.create("상품명2", 2_000L, ProductSellingStatus.HOLD);
-        Product product3 = Product.create("상품명3", 3_000L, ProductSellingStatus.STOP_SELLING);
-        List.of(product1, product2, product3).forEach(productRepository::save);
-
-        // when
-        List<Product> results = productRepository.findByIds(List.of(product1.getId(), product2.getId(), product3.getId()));
-
-        // then
-        assertThat(results).hasSize(3)
-            .extracting("name", "price", "sellStatus")
-            .containsExactlyInAnyOrder(
-                tuple(product1.getName(), product1.getPrice(), product1.getSellStatus()),
-                tuple(product2.getName(), product2.getPrice(), product2.getSellStatus()),
-                tuple(product3.getName(), product3.getPrice(), product3.getSellStatus())
-            );
-    }
 }
