@@ -7,6 +7,7 @@ import kr.hhplus.be.ecommerce.domain.user.UserCouponService;
 import kr.hhplus.be.ecommerce.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class UserCouponFacade {
     private final CouponService couponService;
     private final UserCouponService userCouponService;
 
+    @Transactional
     public void publishUserCoupon(UserCouponCriteria.Publish criteria) {
         userService.getUser(criteria.getUserId());
 
@@ -25,6 +27,7 @@ public class UserCouponFacade {
         userCouponService.createUserCoupon(criteria.toCommand());
     }
 
+    @Transactional(readOnly = true)
     public UserCouponResult.Coupons getUserCoupons(Long userId) {
         userService.getUser(userId);
 
