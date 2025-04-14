@@ -12,7 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-class PaymentServiceTest extends MockTestSupport {
+class PaymentServiceUnitTest extends MockTestSupport {
 
     @InjectMocks
     private PaymentService paymentService;
@@ -35,7 +35,7 @@ class PaymentServiceTest extends MockTestSupport {
 
     @DisplayName("최근 결제 내역의 주문 ID를 가져온다.")
     @Test
-    void getCompletedOrdersWithinDays() {
+    void getCompletedOrdersWithInDays() {
         // given
         int days = 3;
 
@@ -52,7 +52,7 @@ class PaymentServiceTest extends MockTestSupport {
                 .build()
         );
 
-        when(paymentRepository.findCompletedPaymentsWithin(anyList(), any(), any()))
+        when(paymentRepository.findCompletedPaymentsWithIn(anyList(), any(), any()))
             .thenReturn(payments);
 
         // when
