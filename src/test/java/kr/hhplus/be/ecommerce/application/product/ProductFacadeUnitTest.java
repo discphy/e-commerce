@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-class ProductFacadeTest extends MockTestSupport {
+class ProductFacadeUnitTest extends MockTestSupport {
 
     @InjectMocks
     private ProductFacade productFacade;
