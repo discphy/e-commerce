@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "stock", indexes = {
+    @Index(name = "idx_product_id", columnList = "product_id")
+})
 public class Stock {
 
     @Id

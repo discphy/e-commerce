@@ -12,6 +12,9 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "balance", indexes = {
+    @Index(name = "idx_user_id", columnList = "user_id")
+})
 public class Balance {
 
     private static final long MAX_BALANCE_AMOUNT = 10_000_000L;
