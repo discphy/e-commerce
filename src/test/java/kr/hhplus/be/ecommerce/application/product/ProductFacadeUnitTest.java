@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.application.product;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
 import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.domain.payment.PaymentInfo;

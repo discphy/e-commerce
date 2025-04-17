@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.application.user;
 
-import kr.hhplus.be.ecommerce.IntegrationTestSupport;
+import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
 import kr.hhplus.be.ecommerce.domain.coupon.Coupon;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponRepository;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponStatus;

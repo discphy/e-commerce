@@ -3,7 +3,7 @@ package kr.hhplus.be.ecommerce.docs.balance;
 import kr.hhplus.be.ecommerce.application.balance.BalanceFacade;
 import kr.hhplus.be.ecommerce.application.balance.BalanceResult;
 import kr.hhplus.be.ecommerce.interfaces.balance.BalanceController;
-import kr.hhplus.be.ecommerce.docs.RestDocsSupport;
+import kr.hhplus.be.ecommerce.support.RestDocsSupport;
 import kr.hhplus.be.ecommerce.interfaces.balance.BalanceRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

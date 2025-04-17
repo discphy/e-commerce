@@ -1,7 +1,7 @@
 package kr.hhplus.be.ecommerce.docs.order;
 
 import kr.hhplus.be.ecommerce.application.order.OrderFacade;
-import kr.hhplus.be.ecommerce.docs.RestDocsSupport;
+import kr.hhplus.be.ecommerce.support.RestDocsSupport;
 import kr.hhplus.be.ecommerce.interfaces.order.OrderController;
 import kr.hhplus.be.ecommerce.interfaces.order.OrderRequest;
 import org.junit.jupiter.api.DisplayName;

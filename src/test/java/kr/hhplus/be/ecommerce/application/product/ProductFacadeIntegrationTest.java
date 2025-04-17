@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.application.product;
 
-import kr.hhplus.be.ecommerce.IntegrationTestSupport;
+import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
 import kr.hhplus.be.ecommerce.domain.order.Order;
 import kr.hhplus.be.ecommerce.domain.order.OrderProduct;
 import kr.hhplus.be.ecommerce.domain.order.OrderRepository;

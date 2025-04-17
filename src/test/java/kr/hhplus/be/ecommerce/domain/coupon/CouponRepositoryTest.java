@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
-import kr.hhplus.be.ecommerce.IntegrationTestSupport;
+import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
