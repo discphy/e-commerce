@@ -33,12 +33,20 @@ dependencyManagement {
 	}
 }
 
+val querydslVersion = "5.0.0"
+
 dependencies {
     // Spring
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	// QueryDSL
+	implementation("com.querydsl:querydsl-jpa:${querydslVersion}:jakarta")
+	annotationProcessor("com.querydsl:querydsl-apt:${querydslVersion}:jakarta")
+	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
 	// lombok
 	compileOnly("org.projectlombok:lombok")
@@ -57,6 +65,20 @@ dependencies {
 	// RestDocs
 	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+}
+
+val querydslDir = "$buildDir/generated/querydsl"
+
+sourceSets {
+	main {
+		java {
+			srcDir(querydslDir)
+		}
+	}
+}
+
+tasks.withType<JavaCompile> {
+	options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 }
 
 tasks.withType<Test> {
