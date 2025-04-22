@@ -19,6 +19,22 @@ class UserCouponServiceIntegrationTest extends IntegrationTestSupport {
     @Autowired
     private UserCouponRepository userCouponRepository;
 
+    @DisplayName("이미 발급받은 쿠폰은 재발급할 수 없다.")
+    @Test
+    void createUserCouponCannotDuplicate() {
+        // given
+        Long userId = 1L;
+        Long couponId = 1L;
+        userCouponRepository.save(UserCoupon.create(userId, couponId));
+
+        UserCouponCommand.Publish command = UserCouponCommand.Publish.of(userId, couponId);
+
+        // when & then
+        assertThatThrownBy(() -> userCouponService.createUserCoupon(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 발급된 쿠폰입니다.");
+    }
+
     @DisplayName("사용자 쿠폰을 생성한다.")
     @Test
     void createUserCoupon() {
