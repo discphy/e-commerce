@@ -62,7 +62,11 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
         user = User.create("항플");
         userRepository.save(user);
 
-        Balance balance = Balance.create(user.getId(), 500_000L);
+        Balance balance = Balance.builder()
+            .userId(user.getId())
+            .amount(500_000L)
+            .build();
+
         balanceRepository.save(balance);
 
         product = Product.create("항플 블랙 뱃지", 100_000L, ProductSellingStatus.SELLING);
