@@ -16,9 +16,7 @@ public class BalanceTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "balance_id")
-    private Balance balance;
+    private Long balanceId;
 
     @Enumerated(EnumType.STRING)
     private BalanceTransactionType transactionType;
@@ -26,16 +24,16 @@ public class BalanceTransaction {
     private long amount;
 
     @Builder
-    private BalanceTransaction(Long id, Balance balance, BalanceTransactionType transactionType, long amount) {
+    private BalanceTransaction(Long id, Long balanceId, BalanceTransactionType transactionType, long amount) {
         this.id = id;
-        this.balance = balance;
+        this.balanceId = balanceId;
         this.transactionType = transactionType;
         this.amount = amount;
     }
 
     public static BalanceTransaction ofCharge(Balance balance, long amount) {
         return BalanceTransaction.builder()
-            .balance(balance)
+            .balanceId(balance.getId())
             .transactionType(BalanceTransactionType.CHARGE)
             .amount(amount)
             .build();
@@ -43,7 +41,7 @@ public class BalanceTransaction {
 
     public static BalanceTransaction ofUse(Balance balance, long amount) {
         return BalanceTransaction.builder()
-            .balance(balance)
+            .balanceId(balance.getId())
             .transactionType(BalanceTransactionType.USE)
             .amount(-amount)
             .build();
