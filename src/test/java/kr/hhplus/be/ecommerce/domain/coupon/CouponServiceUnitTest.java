@@ -25,7 +25,7 @@ class CouponServiceUnitTest extends MockTestSupport {
     @Test
     void publishCouponWithInvalidId() {
         // given
-        when(couponRepository.findById(anyLong()))
+        when(couponRepository.findWithLockById(anyLong()))
             .thenThrow(new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
 
         // when & then
@@ -44,7 +44,7 @@ class CouponServiceUnitTest extends MockTestSupport {
             .expiredAt(LocalDateTime.now().plusDays(1))
             .build();
 
-        when(couponRepository.findById(anyLong()))
+        when(couponRepository.findWithLockById(anyLong()))
             .thenReturn(coupon);
 
         // when & then
@@ -63,7 +63,7 @@ class CouponServiceUnitTest extends MockTestSupport {
             .expiredAt(LocalDateTime.now().minusDays(1))
             .build();
 
-        when(couponRepository.findById(anyLong()))
+        when(couponRepository.findWithLockById(anyLong()))
             .thenReturn(coupon);
 
         // when & then
@@ -83,7 +83,7 @@ class CouponServiceUnitTest extends MockTestSupport {
             .quantity(0)
             .build();
 
-        when(couponRepository.findById(anyLong()))
+        when(couponRepository.findWithLockById(anyLong()))
             .thenReturn(coupon);
 
         // when & then
@@ -103,7 +103,7 @@ class CouponServiceUnitTest extends MockTestSupport {
             .quantity(1)
             .build();
 
-        when(couponRepository.findById(anyLong()))
+        when(couponRepository.findWithLockById(anyLong()))
             .thenReturn(coupon);
 
         // when
