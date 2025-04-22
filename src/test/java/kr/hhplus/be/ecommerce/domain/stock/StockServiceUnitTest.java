@@ -32,7 +32,7 @@ class StockServiceUnitTest extends MockTestSupport {
         when(command.getProducts())
             .thenReturn(List.of(orderProduct, orderProduct));
 
-        when(stockRepository.findByProductId(anyLong()))
+        when(stockRepository.findWithLockByProductId(anyLong()))
             .thenThrow(new IllegalArgumentException("재고가 존재하지 않습니다."));
 
         // when & then
@@ -54,7 +54,7 @@ class StockServiceUnitTest extends MockTestSupport {
         when(command.getProducts())
             .thenReturn(List.of(orderProduct, orderProduct));
 
-        when(stockRepository.findByProductId(anyLong()))
+        when(stockRepository.findWithLockByProductId(anyLong()))
             .thenReturn(Stock.create(1L, 0));
 
         // when
@@ -77,7 +77,7 @@ class StockServiceUnitTest extends MockTestSupport {
             .thenReturn(List.of(orderProduct));
 
         Stock stock = Stock.create(1L, 10);
-        when(stockRepository.findByProductId(anyLong()))
+        when(stockRepository.findWithLockByProductId(anyLong()))
             .thenReturn(stock, stock);
 
         // when
