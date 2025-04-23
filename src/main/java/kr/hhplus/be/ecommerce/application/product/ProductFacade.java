@@ -1,16 +1,18 @@
 package kr.hhplus.be.ecommerce.application.product;
 
-import kr.hhplus.be.ecommerce.domain.order.*;
-import kr.hhplus.be.ecommerce.domain.payment.PaymentInfo;
-import kr.hhplus.be.ecommerce.domain.payment.PaymentService;
 import kr.hhplus.be.ecommerce.domain.product.ProductCommand;
 import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.domain.product.ProductService;
+import kr.hhplus.be.ecommerce.domain.rank.RankCommand;
+import kr.hhplus.be.ecommerce.domain.rank.RankInfo;
+import kr.hhplus.be.ecommerce.domain.rank.RankService;
 import kr.hhplus.be.ecommerce.domain.stock.StockInfo;
 import kr.hhplus.be.ecommerce.domain.stock.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +23,7 @@ public class ProductFacade {
 
     private final ProductService productService;
     private final StockService stockService;
-    private final PaymentService paymentService;
-    private final OrderService orderService;
+    private final RankService rankService;
 
     @Transactional(readOnly = true)
     public ProductResult.Products getProducts() {
@@ -34,11 +35,14 @@ public class ProductFacade {
 
     @Transactional(readOnly = true)
     public ProductResult.Products getPopularProducts() {
-        PaymentInfo.Orders completedOrders = paymentService.getCompletedOrdersBetweenDays(RECENT_DAYS);
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(RECENT_DAYS);
 
-        OrderCommand.TopOrders orderProductCommand = OrderCommand.TopOrders.of(completedOrders.getOrderIds(), TOP_LIMIT);
-        OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(orderProductCommand);
-        ProductInfo.Products products = productService.getProducts(ProductCommand.Products.of(topPaidProducts.getProductIds()));
+        RankCommand.PopularSellRank popularSellRankCommand = RankCommand.PopularSellRank.of(TOP_LIMIT, startDate, endDate);
+        RankInfo.PopularProducts popularProducts = rankService.getPopularSellRank(popularSellRankCommand);
+
+        ProductCommand.Products productsCommand = ProductCommand.Products.of(popularProducts.getProductIds());
+        ProductInfo.Products products = productService.getProducts(productsCommand);
 
         return ProductResult.Products.of(products.getProducts().stream()
             .map(this::getProduct)
