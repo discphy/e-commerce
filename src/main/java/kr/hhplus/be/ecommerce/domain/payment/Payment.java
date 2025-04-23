@@ -6,14 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "payment", indexes = {
-    @Index(name = "idx_payment_status_paid_at", columnList = "payment_status, paid_at")
-})
 public class Payment {
 
     @Id
@@ -31,21 +26,17 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    private LocalDateTime paidAt;
-
     @Builder
     private Payment(Long id,
                     Long orderId,
                     long amount,
                     PaymentMethod paymentMethod,
-                    PaymentStatus paymentStatus,
-                    LocalDateTime paidAt) {
+                    PaymentStatus paymentStatus) {
         this.id = id;
         this.orderId = orderId;
         this.amount = amount;
         this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
-        this.paidAt = paidAt;
     }
 
     public static Payment create(Long orderId, long amount) {
@@ -65,7 +56,6 @@ public class Payment {
         }
 
         this.paymentStatus = PaymentStatus.COMPLETED;
-        this.paidAt = LocalDateTime.now();
     }
 
     private static void validateAmount(long amount) {
