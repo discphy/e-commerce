@@ -3,6 +3,7 @@ package kr.hhplus.be.ecommerce.domain.order;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,6 +67,27 @@ class OrderTest {
         long expectedDiscountPrice = (long) (expectedTotalPrice * 0.1);
         assertThat(order.getDiscountPrice()).isEqualTo(expectedDiscountPrice);
         assertThat(order.getTotalPrice()).isEqualTo(expectedTotalPrice - expectedDiscountPrice);
+    }
+
+    @DisplayName("주문을 결제 완료한다.")
+    @Test
+    void paid() {
+        // given
+        List<OrderProduct> orderProducts = List.of(
+            OrderProduct.create(1L, "상품명1", 1000, 1),
+            OrderProduct.create(2L, "상품명2", 2000, 2),
+            OrderProduct.create(3L, "상품명3", 3000, 3),
+            OrderProduct.create(4L, "상품명4", 4000, 4)
+        );
+
+        Order order = Order.create(1L, null, 0.0, orderProducts);
+
+        // when
+        order.paid(LocalDateTime.now());
+
+        // then
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+        assertThat(order.getPaidAt()).isNotNull();
     }
 
 }

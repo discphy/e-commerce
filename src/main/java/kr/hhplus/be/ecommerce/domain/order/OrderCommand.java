@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -63,18 +64,36 @@ public class OrderCommand {
     }
 
     @Getter
-    public static class TopOrders {
+    public static class DateQuery {
 
-        private final List<Long> orderIds;
-        private final int limit;
+        private final LocalDate date;
 
-        private TopOrders(List<Long> orderIds, int limit) {
-            this.orderIds = orderIds;
-            this.limit = limit;
+        private DateQuery(LocalDate date) {
+            this.date = date;
         }
 
-        public static TopOrders of(List<Long> orderIds, int limit) {
-            return new TopOrders(orderIds, limit);
+        public static DateQuery of(LocalDate date) {
+            return new DateQuery(date);
+        }
+
+        public PaidProducts toPaidProductsQuery(OrderStatus orderStatus) {
+            return PaidProducts.of(date, orderStatus);
+        }
+    }
+
+    @Getter
+    public static class PaidProducts {
+
+        private final LocalDate paidAt;
+        private final OrderStatus status;
+
+        private PaidProducts(LocalDate paidAt, OrderStatus status) {
+            this.paidAt = paidAt;
+            this.status = status;
+        }
+
+        public static PaidProducts of(LocalDate paidAt, OrderStatus status) {
+            return new PaidProducts(paidAt, status);
         }
     }
 }
