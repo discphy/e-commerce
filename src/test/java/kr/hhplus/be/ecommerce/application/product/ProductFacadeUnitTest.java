@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.application.product;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
 import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.domain.payment.PaymentInfo;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-class ProductFacadeTest extends MockTestSupport {
+class ProductFacadeUnitTest extends MockTestSupport {
 
     @InjectMocks
     private ProductFacade productFacade;

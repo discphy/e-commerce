@@ -24,6 +24,7 @@ public class Order {
 
     private Long userCouponId;
 
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     private long totalPrice;

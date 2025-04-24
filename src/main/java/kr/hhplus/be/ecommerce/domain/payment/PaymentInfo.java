@@ -22,4 +22,18 @@ public class PaymentInfo {
             return new Orders(orderIds);
         }
     }
+
+    @Getter
+    public static class Payment {
+
+        private final Long paymentId;
+
+        private Payment(Long paymentId) {
+            this.paymentId = paymentId;
+        }
+
+        public static Payment of(Long paymentId) {
+            return new Payment(paymentId);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.user;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-class UserServiceTest extends MockTestSupport {
+class UserServiceUnitTest extends MockTestSupport {
 
     @InjectMocks
     private UserService userService;

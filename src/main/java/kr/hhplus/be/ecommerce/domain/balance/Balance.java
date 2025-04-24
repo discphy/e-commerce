@@ -12,6 +12,9 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "balance", indexes = {
+    @Index(name = "idx_user_id", columnList = "user_id")
+})
 public class Balance {
 
     private static final long MAX_BALANCE_AMOUNT = 10_000_000L;
@@ -84,6 +87,10 @@ public class Balance {
     private static void validateAmount(long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("초기 금액은 0보다 커야 합니다.");
+        }
+
+        if (amount > MAX_BALANCE_AMOUNT) {
+            throw new IllegalArgumentException("최대 금액을 초과할 수 없습니다.");
         }
     }
 }

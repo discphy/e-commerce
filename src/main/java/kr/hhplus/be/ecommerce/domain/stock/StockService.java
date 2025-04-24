@@ -9,6 +9,11 @@ public class StockService {
 
     private final StockRepository stockRepository;
 
+    public StockInfo.Stock getStock(Long productId) {
+        Stock stock = stockRepository.findByProductId(productId);
+        return StockInfo.Stock.of(stock.getId(), stock.getQuantity());
+    }
+
     public void deductStock(StockCommand.OrderProducts command) {
         command.getProducts().forEach(this::deductStock);
     }
@@ -16,10 +21,5 @@ public class StockService {
     private void deductStock(StockCommand.OrderProduct command) {
         Stock stock = stockRepository.findByProductId(command.getProductId());
         stock.deduct(command.getQuantity());
-    }
-
-    public StockInfo.Stock getStock(Long productId) {
-        Stock stock = stockRepository.findByProductId(productId);
-        return StockInfo.Stock.of(stock.getId(), stock.getQuantity());
     }
 }

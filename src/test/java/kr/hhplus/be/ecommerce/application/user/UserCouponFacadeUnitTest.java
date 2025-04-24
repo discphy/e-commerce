@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.application.user;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponInfo;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponService;
 import kr.hhplus.be.ecommerce.domain.user.UserCouponInfo;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.mockito.Mockito.*;
 
-class UserCouponFacadeTest extends MockTestSupport {
+class UserCouponFacadeUnitTest extends MockTestSupport {
 
     @InjectMocks
     private UserCouponFacade userCouponFacade;

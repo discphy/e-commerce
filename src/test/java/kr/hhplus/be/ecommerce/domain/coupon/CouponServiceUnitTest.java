@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-class CouponServiceTest extends MockTestSupport {
+class CouponServiceUnitTest extends MockTestSupport {
 
     @InjectMocks
     private CouponService couponService;

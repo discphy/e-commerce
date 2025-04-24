@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.balance;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,7 +14,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-class BalanceServiceTest extends MockTestSupport {
+class BalanceServiceUnitTest extends MockTestSupport {
 
     @InjectMocks
     private BalanceService balanceService;

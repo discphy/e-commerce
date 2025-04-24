@@ -15,6 +15,7 @@ import kr.hhplus.be.ecommerce.domain.user.UserCouponService;
 import kr.hhplus.be.ecommerce.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -33,7 +34,8 @@ public class OrderFacade {
 
     private static final double NOT_DISCOUNT_RATE = 0.0;
 
-    public void orderPayment(OrderCriteria.OrderPayment criteria) {
+    @Transactional
+    public OrderResult.Order orderPayment(OrderCriteria.OrderPayment criteria) {
         userService.getUser(criteria.getUserId());
 
         ProductInfo.OrderProducts orderProducts = productService.getOrderProducts(criteria.toProductCommand());
@@ -56,5 +58,7 @@ public class OrderFacade {
         stockService.deductStock(criteria.toStockCommand());
         paymentService.pay(criteria.toPaymentCommand(order));
         orderService.paidOrder(order.getOrderId());
+
+        return OrderResult.Order.of(order);
     }
 }

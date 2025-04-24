@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "payment", indexes = {
+    @Index(name = "idx_payment_status_paid_at", columnList = "payment_status, paid_at")
+})
 public class Payment {
 
     @Id
@@ -22,8 +25,10 @@ public class Payment {
 
     private long amount;
 
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
+    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
     private LocalDateTime paidAt;

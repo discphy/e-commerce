@@ -7,6 +7,9 @@ import kr.hhplus.be.ecommerce.domain.user.UserCouponService;
 import kr.hhplus.be.ecommerce.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +19,7 @@ public class UserCouponFacade {
     private final CouponService couponService;
     private final UserCouponService userCouponService;
 
+    @Transactional
     public void publishUserCoupon(UserCouponCriteria.Publish criteria) {
         userService.getUser(criteria.getUserId());
 
@@ -23,14 +27,14 @@ public class UserCouponFacade {
         userCouponService.createUserCoupon(criteria.toCommand());
     }
 
+    @Transactional(readOnly = true)
     public UserCouponResult.Coupons getUserCoupons(Long userId) {
         userService.getUser(userId);
 
-        return UserCouponResult.Coupons.of(
-            userCouponService.getUserCoupons(userId).getCoupons().stream()
-                .map(this::getUserCoupon)
-                .toList()
-        );
+        List<UserCouponResult.Coupon> coupons = userCouponService.getUserCoupons(userId).getCoupons().stream()
+            .map(this::getUserCoupon)
+            .toList();
+        return UserCouponResult.Coupons.of(coupons);
     }
 
     private UserCouponResult.Coupon getUserCoupon(UserCouponInfo.Coupon userCoupon) {

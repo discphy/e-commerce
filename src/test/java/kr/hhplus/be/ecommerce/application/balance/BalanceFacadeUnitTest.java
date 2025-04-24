@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.application.balance;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceInfo;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceService;
 import kr.hhplus.be.ecommerce.domain.user.UserService;
@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-class BalanceFacadeTest extends MockTestSupport {
+class BalanceFacadeUnitTest extends MockTestSupport {
 
     @InjectMocks
     private BalanceFacade balanceFacade;

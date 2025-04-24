@@ -14,6 +14,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderExternalClient orderExternalClient;
 
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
         List<OrderProduct> orderProducts = command.getProducts().stream()
@@ -30,7 +31,7 @@ public class OrderService {
         Order order = orderRepository.findById(orderId);
         order.paid();
 
-        orderRepository.sendOrderMessage(order);
+        orderExternalClient.sendOrderMessage(order);
     }
 
     public OrderInfo.TopPaidProducts getTopPaidProducts(OrderCommand.TopOrders command) {

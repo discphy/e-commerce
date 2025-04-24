@@ -17,6 +17,15 @@ class BalanceTest {
             .hasMessage("초기 금액은 0보다 커야 합니다.");
     }
 
+    @DisplayName("초기 금액은 최대 금액보다 클 수 없다.")
+    @Test
+    void ofCannotExceedsMaxAmount() {
+        // when & then
+        assertThatThrownBy(() -> Balance.create(1L, 10_000_001L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("최대 금액을 초과할 수 없습니다.");
+    }
+
     @DisplayName("충전 금액은 0보다 커야한다.")
     @Test
     void chargeWithNotPositiveAmount() {

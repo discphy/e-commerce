@@ -10,6 +10,7 @@ import kr.hhplus.be.ecommerce.domain.stock.StockInfo;
 import kr.hhplus.be.ecommerce.domain.stock.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class ProductFacade {
     private final PaymentService paymentService;
     private final OrderService orderService;
 
+    @Transactional(readOnly = true)
     public ProductResult.Products getProducts() {
         ProductInfo.Products products = productService.getSellingProducts();
         return ProductResult.Products.of(products.getProducts().stream()
@@ -30,6 +32,7 @@ public class ProductFacade {
             .toList());
     }
 
+    @Transactional(readOnly = true)
     public ProductResult.Products getPopularProducts() {
         PaymentInfo.Orders completedOrders = paymentService.getCompletedOrdersBetweenDays(RECENT_DAYS);
 

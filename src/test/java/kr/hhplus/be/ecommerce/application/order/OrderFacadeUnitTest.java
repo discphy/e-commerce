@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.application.order;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceService;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponInfo;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponService;
@@ -21,7 +21,7 @@ import org.mockito.Mock;
 
 import static org.mockito.Mockito.*;
 
-class OrderFacadeTest extends MockTestSupport {
+class OrderFacadeUnitTest extends MockTestSupport {
 
     @InjectMocks
     private OrderFacade orderFacade;

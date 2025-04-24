@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.order;
 
-import kr.hhplus.be.ecommerce.MockTestSupport;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,13 +13,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class OrderServiceTest extends MockTestSupport {
+class OrderServiceUnitTest extends MockTestSupport {
 
     @InjectMocks
     private OrderService orderService;
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private OrderExternalClient orderExternalClient;
 
     @DisplayName("주문을 생성한다.")
     @Test
@@ -75,7 +78,7 @@ class OrderServiceTest extends MockTestSupport {
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
-        verify(orderRepository, times(1)).sendOrderMessage(order);
+        verify(orderExternalClient, times(1)).sendOrderMessage(order);
     }
 
     @DisplayName("주문 상품이 없다면, 상위 상품을 조회시 결과가 비어있다.")
