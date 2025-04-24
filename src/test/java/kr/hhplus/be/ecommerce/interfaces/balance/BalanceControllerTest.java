@@ -37,7 +37,7 @@ class BalanceControllerTest extends ControllerTestSupport {
 
     @DisplayName("잔액 충전 시, 잔액은 필수이다.")
     @Test
-    void updateBalanceWithoutAmount() throws Exception {
+    void chargeBalanceWithoutAmount() throws Exception {
         // given
         BalanceRequest.Charge request = new BalanceRequest.Charge();
 
@@ -56,7 +56,7 @@ class BalanceControllerTest extends ControllerTestSupport {
     @DisplayName("잔액 충전 시, 잔액은 양수여야 한다.")
     @ParameterizedTest
     @ValueSource(longs = {-1_000L, 0})
-    void updateBalanceWithNegativeOrZeroAmount(Long amount) throws Exception {
+    void chargeBalanceWithNegativeOrZeroAmount(Long amount) throws Exception {
         // given
         BalanceRequest.Charge request = BalanceRequest.Charge.of(amount);
 
@@ -74,7 +74,7 @@ class BalanceControllerTest extends ControllerTestSupport {
 
     @DisplayName("잔액을 충전한다.")
     @Test
-    void updateBalance() throws Exception {
+    void chargeBalance() throws Exception {
         // given
         BalanceRequest.Charge request = BalanceRequest.Charge.of(10_000L);
 

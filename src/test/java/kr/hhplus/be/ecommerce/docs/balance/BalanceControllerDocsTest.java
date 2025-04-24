@@ -61,7 +61,7 @@ class BalanceControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("잔액 충전 API")
     @Test
-    void updateBalance() throws Exception {
+    void chargeBalance() throws Exception {
         // given
         BalanceRequest.Charge request = BalanceRequest.Charge.of(10_000L);
 
