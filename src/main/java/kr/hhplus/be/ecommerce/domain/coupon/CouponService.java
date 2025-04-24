@@ -12,7 +12,7 @@ public class CouponService {
 
     @Transactional
     public void publishCoupon(Long couponId) {
-        Coupon coupon = couponRepository.findWithLockById(couponId);
+        Coupon coupon = couponRepository.findByIdWithLock(couponId);
         coupon.publish();
     }
 
