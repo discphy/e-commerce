@@ -34,6 +34,7 @@ dependencyManagement {
 }
 
 val querydslVersion = "5.0.0"
+val restAssuredVersion = "5.3.2"
 
 dependencies {
     // Spring
@@ -65,6 +66,11 @@ dependencies {
 	// RestDocs
 	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+
+	// RestAssured
+	testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
+	testImplementation("io.rest-assured:json-path:${restAssuredVersion}")
+	testImplementation("io.rest-assured:json-schema-validator:${restAssuredVersion}")
 }
 
 val querydslDir = "$buildDir/generated/querydsl"
