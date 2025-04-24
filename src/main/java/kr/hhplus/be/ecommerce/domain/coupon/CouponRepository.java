@@ -9,5 +9,5 @@ public interface CouponRepository {
 
     Coupon findById(Long couponId);
 
-    Coupon findWithLockById(Long couponId);
+    Coupon findByIdWithLock(Long couponId);
 }

@@ -6,5 +6,5 @@ public interface StockRepository {
 
     Stock findByProductId(Long productId);
 
-    Stock findWithLockByProductId(Long productId);
+    Stock findByProductIdWithLock(Long productId);
 }
