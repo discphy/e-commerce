@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.hhplus.be.ecommerce.domain.rank.RankCommand;
 import kr.hhplus.be.ecommerce.domain.rank.RankInfo;
+import kr.hhplus.be.ecommerce.domain.rank.RankType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +28,7 @@ public class RankQueryDslRepository {
             )
             .from(rank)
             .where(
+                rank.rankType.eq(RankType.SELL),
                 rank.rankDate.between(
                     command.getStartDate(),
                     command.getEndDate()

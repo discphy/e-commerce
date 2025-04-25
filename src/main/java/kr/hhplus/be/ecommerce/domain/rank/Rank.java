@@ -10,8 +10,10 @@ import java.time.LocalDate;
 
 @Getter
 @Entity
-@Table(name = "product_rank")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "product_rank", indexes = {
+    @Index(name = "idx_rank_type_date", columnList = "rank_type, rank_date")
+})
 public class Rank {
 
     @Id
