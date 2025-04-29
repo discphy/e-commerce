@@ -6,13 +6,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
-@Table(name = "orders")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "orders", indexes = {
+    @Index(name = "idx_order_status_paid_at", columnList = "order_status, paid_at")
+})
 public class Order {
 
     @Id
@@ -33,6 +36,8 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderProduct> orderProducts = new ArrayList<>();
+
+    private LocalDateTime paidAt;
 
     @Builder
     private Order(Long userId, Long userCouponId, double discountRate, List<OrderProduct> orderProducts) {
@@ -60,8 +65,9 @@ public class Order {
             .build();
     }
 
-    public void paid() {
+    public void paid(LocalDateTime paidAt) {
         this.orderStatus = OrderStatus.PAID;
+        this.paidAt = paidAt;
     }
 
     private long calculateTotalPrice(List<OrderProduct> orderProducts) {

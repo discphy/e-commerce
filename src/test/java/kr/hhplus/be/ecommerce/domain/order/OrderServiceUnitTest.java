@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -81,47 +81,29 @@ class OrderServiceUnitTest extends MockTestSupport {
         verify(orderExternalClient, times(1)).sendOrderMessage(order);
     }
 
-    @DisplayName("주문 상품이 없다면, 상위 상품을 조회시 결과가 비어있다.")
+    @DisplayName("결제 완료 된 상품을 요청한 날짜에 조회한다.")
     @Test
-    void getTopPaidProductsWithEmptyOrders() {
+    void getPaidProducts() {
         // given
-        List<OrderProduct> orderProducts = List.of();
+        OrderCommand.DateQuery command = OrderCommand.DateQuery.of(LocalDate.of(2025, 4, 23));
 
-        when(orderRepository.findOrderIdsIn(any()))
-            .thenReturn(orderProducts);
-
-        OrderCommand.TopOrders command = OrderCommand.TopOrders.of(List.of(1L, 2L), 5);
-
-        // when
-        OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(command);
-
-        // then
-        assertThat(topPaidProducts.getProductIds()).isEmpty();
-    }
-
-    @DisplayName("상위 상품을 조회한다.")
-    @Test
-    void getTopPaidProducts() {
-        // given
-        List<OrderProduct> orderProducts = List.of(
-            OrderProduct.create(1L, "상품명", 2_000L, 2),
-            OrderProduct.create(2L, "상품명", 3_000L, 3),
-            OrderProduct.create(1L, "상품명", 2_000L, 4),
-            OrderProduct.create(3L, "상품명", 2_000L, 3),
-            OrderProduct.create(4L, "상품명", 2_000L, 2),
-            OrderProduct.create(5L, "상품명", 2_000L, 1)
+        List<OrderInfo.PaidProduct> paidProducts = List.of(
+            OrderInfo.PaidProduct.of(1L, 2),
+            OrderInfo.PaidProduct.of(2L, 4)
         );
 
-        when(orderRepository.findOrderIdsIn(any()))
-            .thenReturn(orderProducts);
-
-        OrderCommand.TopOrders command = OrderCommand.TopOrders.of(List.of(1L, 2L), 5);
+        when(orderRepository.findPaidProducts(any()))
+            .thenReturn(paidProducts);
 
         // when
-        OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(command);
+        OrderInfo.PaidProducts result = orderService.getPaidProducts(command);
 
         // then
-        assertThat(topPaidProducts.getProductIds()).hasSize(5)
-            .containsExactly(1L, 2L, 3L, 4L, 5L);
+        assertThat(result.getProducts()).hasSize(2)
+            .extracting("productId", "quantity")
+            .containsExactlyInAnyOrder(
+                tuple(1L, 2),
+                tuple(2L, 4)
+            );
     }
 }

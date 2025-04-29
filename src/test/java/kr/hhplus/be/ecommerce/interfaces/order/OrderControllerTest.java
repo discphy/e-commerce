@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.interfaces.order;
 
-import kr.hhplus.be.ecommerce.interfaces.ControllerTestSupport;
+import kr.hhplus.be.ecommerce.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

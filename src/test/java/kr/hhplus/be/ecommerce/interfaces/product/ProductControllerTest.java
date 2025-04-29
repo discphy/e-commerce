@@ -1,7 +1,7 @@
 package kr.hhplus.be.ecommerce.interfaces.product;
 
 import kr.hhplus.be.ecommerce.application.product.ProductResult;
-import kr.hhplus.be.ecommerce.interfaces.ControllerTestSupport;
+import kr.hhplus.be.ecommerce.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
