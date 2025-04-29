@@ -27,7 +27,10 @@ class BalanceServiceUnitTest extends MockTestSupport {
     void chargeShouldPositiveAmount() {
         // given
         BalanceCommand.Charge command = BalanceCommand.Charge.of(1L, 0L);
-        Balance balance = Balance.create(1L, 10_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000L)
+            .build();
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
             .thenReturn(Optional.of(balance));
@@ -43,7 +46,10 @@ class BalanceServiceUnitTest extends MockTestSupport {
     void chargeCannotExceedMaxAmount() {
         // given
         BalanceCommand.Charge command = BalanceCommand.Charge.of(1L, 1L);
-        Balance balance = Balance.create(1L, 10_000_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000_000L)
+            .build();
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
             .thenReturn(Optional.of(balance));
@@ -59,9 +65,16 @@ class BalanceServiceUnitTest extends MockTestSupport {
     void chargeBalanceIfNotExist() {
         // given
         BalanceCommand.Charge command = BalanceCommand.Charge.of(1L, 10_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000L)
+            .build();
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
             .thenReturn(Optional.empty());
+
+        when(balanceRepository.save(any(Balance.class)))
+            .thenReturn(balance);
 
         // when
         balanceService.chargeBalance(command);
@@ -108,7 +121,10 @@ class BalanceServiceUnitTest extends MockTestSupport {
     void useBalanceWithZeroAmount() {
         // given
         BalanceCommand.Use command = BalanceCommand.Use.of(1L, 0L);
-        Balance balance = Balance.create(1L, 10_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000L)
+            .build();
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
             .thenReturn(Optional.of(balance));
@@ -124,7 +140,10 @@ class BalanceServiceUnitTest extends MockTestSupport {
     void useBalanceWithInsufficientBalance() {
         // given
         BalanceCommand.Use command = BalanceCommand.Use.of(1L, 10_001L);
-        Balance balance = Balance.create(1L, 10_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000L)
+            .build();
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
             .thenReturn(Optional.of(balance));
@@ -140,7 +159,10 @@ class BalanceServiceUnitTest extends MockTestSupport {
     void useBalance() {
         // given
         BalanceCommand.Use command = BalanceCommand.Use.of(1L, 10_000L);
-        Balance balance = Balance.create(1L, 10_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000L)
+            .build();
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
             .thenReturn(Optional.of(balance));
@@ -170,7 +192,10 @@ class BalanceServiceUnitTest extends MockTestSupport {
     @Test
     void getBalance() {
         // given
-        Balance balance = Balance.create(1L, 10_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000L)
+            .build();
 
         when(balanceRepository.findOptionalByUserId(anyLong()))
             .thenReturn(Optional.of(balance));

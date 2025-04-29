@@ -20,7 +20,10 @@ class BalanceRepositoryTest extends IntegrationTestSupport {
     @Test
     void save() {
         // given
-        Balance balance = Balance.create(1L, 1_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(1_000L)
+            .build();
 
         // when
         balanceRepository.save(balance);
@@ -43,7 +46,10 @@ class BalanceRepositoryTest extends IntegrationTestSupport {
     @Test
     void findByUserId() {
         // given
-        Balance balance = Balance.create(1L, 1_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(1_000L)
+            .build();
         balanceRepository.save(balance);
 
         // when

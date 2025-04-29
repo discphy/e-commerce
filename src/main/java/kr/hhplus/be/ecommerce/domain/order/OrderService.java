@@ -3,11 +3,8 @@ package kr.hhplus.be.ecommerce.domain.order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -29,18 +26,16 @@ public class OrderService {
 
     public void paidOrder(Long orderId) {
         Order order = orderRepository.findById(orderId);
-        order.paid();
+        order.paid(LocalDateTime.now());
 
         orderExternalClient.sendOrderMessage(order);
     }
 
-    public OrderInfo.TopPaidProducts getTopPaidProducts(OrderCommand.TopOrders command) {
-        List<OrderProduct> orderProducts = orderRepository.findOrderIdsIn(command.getOrderIds());
+    public OrderInfo.PaidProducts getPaidProducts(OrderCommand.DateQuery command) {
+        OrderCommand.PaidProducts queryCommand = command.toPaidProductsQuery(OrderStatus.PAID);
+        List<OrderInfo.PaidProduct> paidProducts = orderRepository.findPaidProducts(queryCommand);
 
-        Map<Long, Integer> productQuantityMap = groupingProductMap(orderProducts);
-        List<Long> sortedProductIds = sortedProducts(productQuantityMap);
-
-        return OrderInfo.TopPaidProducts.of(sortedProductIds);
+        return OrderInfo.PaidProducts.of(paidProducts);
     }
 
     private OrderProduct createOrderProduct(OrderCommand.OrderProduct product) {
@@ -50,22 +45,5 @@ public class OrderService {
             product.getProductPrice(),
             product.getQuantity()
         );
-    }
-
-    private Map<Long, Integer> groupingProductMap(List<OrderProduct> orderProducts) {
-        return orderProducts.stream()
-            .collect(
-                groupingBy(
-                    OrderProduct::getProductId,
-                    Collectors.summingInt(OrderProduct::getQuantity)
-                )
-            );
-    }
-
-    private static List<Long> sortedProducts(Map<Long, Integer> productQuantityMap) {
-        return productQuantityMap.entrySet().stream()
-            .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
-            .map(Map.Entry::getKey)
-            .toList();
     }
 }

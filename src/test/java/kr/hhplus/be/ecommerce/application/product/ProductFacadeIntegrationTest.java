@@ -1,22 +1,20 @@
 package kr.hhplus.be.ecommerce.application.product;
 
-import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
-import kr.hhplus.be.ecommerce.domain.order.Order;
-import kr.hhplus.be.ecommerce.domain.order.OrderProduct;
-import kr.hhplus.be.ecommerce.domain.order.OrderRepository;
-import kr.hhplus.be.ecommerce.domain.payment.Payment;
-import kr.hhplus.be.ecommerce.domain.payment.PaymentRepository;
 import kr.hhplus.be.ecommerce.domain.product.Product;
 import kr.hhplus.be.ecommerce.domain.product.ProductRepository;
 import kr.hhplus.be.ecommerce.domain.product.ProductSellingStatus;
+import kr.hhplus.be.ecommerce.domain.rank.Rank;
+import kr.hhplus.be.ecommerce.domain.rank.RankRepository;
 import kr.hhplus.be.ecommerce.domain.stock.Stock;
 import kr.hhplus.be.ecommerce.domain.stock.StockRepository;
+import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,10 +32,7 @@ class ProductFacadeIntegrationTest extends IntegrationTestSupport {
     private StockRepository stockRepository;
 
     @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private PaymentRepository paymentRepository;
+    private RankRepository rankRepository;
 
     private Product product1;
 
@@ -79,27 +74,13 @@ class ProductFacadeIntegrationTest extends IntegrationTestSupport {
     @Test
     void getPopularProducts() {
         // given
-        Order order1 = Order.create(1L, 1L, 0.1, List.of(
-            OrderProduct.create(product1.getId(), "상품1", 10_000L, 2),
-            OrderProduct.create(product2.getId(), "상품2", 20_000L, 3)
-        ));
-        Order order2 = Order.create(1L, 1L, 0.1, List.of(
-            OrderProduct.create(product1.getId(), "상품1", 10_000L, 2),
-            OrderProduct.create(product3.getId(), "상품3", 30_000L, 4)
-        ));
-        Order order3 = Order.create(1L, 1L, 0.1, List.of(
-            OrderProduct.create(product2.getId(), "상품2", 20_000L, 3),
-            OrderProduct.create(product3.getId(), "상품3", 30_000L, 4)
-        ));
-        List.of(order1, order2, order3).forEach(orderRepository::save);
+        List<Rank> ranks = List.of(
+            Rank.createSell(product1.getId(), LocalDate.of(2025, 4, 23), 10L),
+            Rank.createSell(product2.getId(), LocalDate.of(2025, 4, 22), 34L),
+            Rank.createSell(product3.getId(), LocalDate.of(2025, 4, 23), 42L)
+        );
 
-        Payment payment1 = Payment.create(order1.getId(), 80_000L);
-        Payment payment2 = Payment.create(order2.getId(), 140_000L);
-        Payment payment3 = Payment.create(order3.getId(), 180_000L);
-        List.of(payment1, payment2, payment3).forEach(payment -> {
-            payment.pay();
-            paymentRepository.save(payment);
-        });
+        ranks.forEach(rankRepository::save);
 
         // when
         ProductResult.Products products = productFacade.getPopularProducts();

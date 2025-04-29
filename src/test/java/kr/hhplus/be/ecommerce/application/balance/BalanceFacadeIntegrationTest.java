@@ -32,7 +32,10 @@ class BalanceFacadeIntegrationTest extends IntegrationTestSupport {
         user = User.create("항플");
         userRepository.save(user);
 
-        Balance balance = Balance.create(user.getId(), 100_000L);
+        Balance balance = Balance.builder()
+            .userId(user.getId())
+            .amount(100_000L)
+            .build();
         balanceRepository.save(balance);
     }
 

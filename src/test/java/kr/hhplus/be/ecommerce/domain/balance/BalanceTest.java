@@ -8,29 +8,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BalanceTest {
 
-    @DisplayName("초기 금액은 0보다 커야한다.")
-    @Test
-    void ofWithNotPositiveAmount() {
-        // when & then
-        assertThatThrownBy(() -> Balance.create(1L, 0L))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("초기 금액은 0보다 커야 합니다.");
-    }
-
-    @DisplayName("초기 금액은 최대 금액보다 클 수 없다.")
-    @Test
-    void ofCannotExceedsMaxAmount() {
-        // when & then
-        assertThatThrownBy(() -> Balance.create(1L, 10_000_001L))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("최대 금액을 초과할 수 없습니다.");
-    }
-
     @DisplayName("충전 금액은 0보다 커야한다.")
     @Test
     void chargeWithNotPositiveAmount() {
         // given
-        Balance balance = Balance.create(1L, 10_000_000L);
+        Balance balance = Balance.create(1L);
 
         // when & then
         assertThatThrownBy(() -> balance.charge(0L))
@@ -42,7 +24,10 @@ class BalanceTest {
     @Test
     void chargeCannotExceedMaxAmount() {
         // given
-        Balance balance = Balance.create(1L, 10_000_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000_000L)
+            .build();
 
         // when & then
         assertThatThrownBy(() -> balance.charge(1L))
@@ -54,23 +39,26 @@ class BalanceTest {
     @Test
     void charge() {
         // given
-        Balance balance = Balance.create(1L, 1_000_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(1_000_000L)
+            .build();
 
         // when
         balance.charge(1_000_000L);
 
         // then
         assertThat(balance.getAmount()).isEqualTo(2_000_000L);
-        assertThat(balance.getBalanceTransactions()).hasSize(2)
-            .extracting("amount")
-            .containsExactly(1_000_000L, 1_000_000L);
     }
 
     @DisplayName("사용 금액은 0보다 커야한다.")
     @Test
     void useWithNotPositiveAmount() {
         // given
-        Balance balance = Balance.create(1L, 1_000_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(1_000_000L)
+            .build();
 
         // when & then
         assertThatThrownBy(() -> balance.use(0L))
@@ -82,7 +70,10 @@ class BalanceTest {
     @Test
     void useCannotInsufficientAmount() {
         // given
-        Balance balance = Balance.create(1L, 1_000_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(1_000_000L)
+            .build();
 
         // when & then
         assertThatThrownBy(() -> balance.use(1_000_001L))
@@ -94,15 +85,15 @@ class BalanceTest {
     @Test
     void use() {
         // given
-        Balance balance = Balance.create(1L, 1_000_000L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(1_000_000L)
+            .build();
 
         // when
         balance.use(1_000_000L);
 
         // then
         assertThat(balance.getAmount()).isZero();
-        assertThat(balance.getBalanceTransactions()).hasSize(2)
-            .extracting("amount")
-            .containsExactly(1_000_000L, -1_000_000L);
     }
 }

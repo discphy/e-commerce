@@ -6,9 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @Transactional
 class OrderServiceIntegrationTest extends IntegrationTestSupport {
@@ -55,9 +58,9 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.PAID);
     }
 
-    @DisplayName("결제가 가장 많이 된 상품의 ID 목록을 조회한다.")
+    @DisplayName("결제 완료 된 상품을 요청한 날짜에 조회한다.")
     @Test
-    void getTopPaidProducts() {
+    void getPaidProducts() {
         // given
         Order order1 = Order.create(1L, 1L, 0.1, List.of(
             OrderProduct.create(1L, "상품1", 10_000L, 2),
@@ -71,15 +74,25 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
             OrderProduct.create(2L, "상품2", 20_000L, 3),
             OrderProduct.create(3L, "상품3", 30_000L, 4)
         ));
-        List.of(order1, order2, order3).forEach(orderRepository::save);
 
-        OrderCommand.TopOrders command = OrderCommand.TopOrders.of(List.of(order1.getId(), order2.getId(), order3.getId()), 5);
+        List.of(order1, order2, order3)
+            .forEach(order -> {
+                order.paid(LocalDateTime.of(2025, 4, 22, 12, 0, 0));
+                orderRepository.save(order);
+            });
+
+        OrderCommand.DateQuery command = OrderCommand.DateQuery.of(LocalDate.of(2025, 4, 23));
 
         // when
-        OrderInfo.TopPaidProducts topPaidProducts = orderService.getTopPaidProducts(command);
+        OrderInfo.PaidProducts result = orderService.getPaidProducts(command);
 
         // then
-        assertThat(topPaidProducts.getProductIds()).hasSize(3)
-            .containsExactly(3L, 2L, 1L);
+        assertThat(result.getProducts()).hasSize(3)
+            .extracting("productId", "quantity")
+            .containsExactlyInAnyOrder(
+                tuple(1L, 4),
+                tuple(2L, 6),
+                tuple(3L, 8)
+            );
     }
 }

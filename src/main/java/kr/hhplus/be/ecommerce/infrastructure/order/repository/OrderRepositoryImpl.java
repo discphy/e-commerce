@@ -1,8 +1,6 @@
 package kr.hhplus.be.ecommerce.infrastructure.order.repository;
 
-import kr.hhplus.be.ecommerce.domain.order.Order;
-import kr.hhplus.be.ecommerce.domain.order.OrderProduct;
-import kr.hhplus.be.ecommerce.domain.order.OrderRepository;
+import kr.hhplus.be.ecommerce.domain.order.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +12,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     private final OrderJpaRepository orderJpaRepository;
     private final OrderProductJpaRepository orderProductJpaRepository;
+    private final OrderQueryDslRepository orderQueryDslRepository;
 
     @Override
     public Order save(Order order) {
@@ -29,5 +28,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<OrderProduct> findOrderIdsIn(List<Long> orderIds) {
         return orderProductJpaRepository.findByOrderIdIn(orderIds);
+    }
+
+    @Override
+    public List<OrderInfo.PaidProduct> findPaidProducts(OrderCommand.PaidProducts command) {
+        return orderQueryDslRepository.findPaidProducts(command);
     }
 }

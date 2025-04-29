@@ -1,10 +1,13 @@
 package kr.hhplus.be.ecommerce.domain.balance;
 
+import kr.hhplus.be.ecommerce.infrastructure.balance.BalanceTransactionJpaRepository;
 import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -17,12 +20,18 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
     @Autowired
     private BalanceRepository balanceRepository;
 
+    @Autowired
+    private BalanceTransactionJpaRepository balanceTransactionJpaRepository;
+
     @DisplayName("잔고 충전 시, 잔고가 존재하면 충전 금액을 추가한다.")
     @Test
     void chargeBalanceWhenBalanceExists() {
         // given
         Long userId = 1L;
-        Balance existingBalance = Balance.create(userId, 10_000L);
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(10_000L)
+            .build();
         balanceRepository.save(existingBalance);
 
         BalanceCommand.Charge command = BalanceCommand.Charge.of(userId, 5_000L);
@@ -40,7 +49,10 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
     void chargeBalanceWhenAmountIsNotPositive() {
         // given
         Long userId = 1L;
-        Balance existingBalance = Balance.create(userId, 10_000L);
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(10_000L)
+            .build();
         balanceRepository.save(existingBalance);
 
         BalanceCommand.Charge command = BalanceCommand.Charge.of(userId, -5_000L);
@@ -56,7 +68,10 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
     void chargeBalanceWhenExceedsMaxAmount() {
         // given
         Long userId = 1L;
-        Balance existingBalance = Balance.create(userId, 10_000_000L);
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(10_000_000L)
+            .build();
         balanceRepository.save(existingBalance);
 
         BalanceCommand.Charge command = BalanceCommand.Charge.of(userId, 1L);
@@ -82,19 +97,6 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
         assertThat(newBalance.getAmount()).isEqualTo(5_000L);
     }
 
-    @DisplayName("잔고 생성 시, 저장 금액이 양수이어야 한다.")
-    @Test
-    void createBalanceWhenAmountIsNotPositive() {
-        // given
-        Long userId = 1L;
-        BalanceCommand.Charge command = BalanceCommand.Charge.of(userId, -5_000L);
-
-        // when & then
-        assertThatThrownBy(() -> balanceService.chargeBalance(command))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("초기 금액은 0보다 커야 합니다.");
-    }
-
     @DisplayName("잔고 생성 시, 최대 금액을 초과하면 예외를 발생시킨다.")
     @Test
     void createBalanceWhenExceedsMaxAmount() {
@@ -113,7 +115,10 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
     void useBalanceWhenBalanceExists() {
         // given
         Long userId = 1L;
-        Balance existingBalance = Balance.create(userId, 10_000L);
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(10_000L)
+            .build();
         balanceRepository.save(existingBalance);
 
         BalanceCommand.Use command = BalanceCommand.Use.of(userId, 5_000L);
@@ -144,7 +149,10 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
     void useBalanceWhenAmountIsNotPositive() {
         // given
         Long userId = 1L;
-        Balance existingBalance = Balance.create(userId, 10_000L);
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(10_000L)
+            .build();
         balanceRepository.save(existingBalance);
 
         BalanceCommand.Use command = BalanceCommand.Use.of(userId, -5_000L);
@@ -160,7 +168,10 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
     void useBalanceWhenInsufficientBalance() {
         // given
         Long userId = 1L;
-        Balance existingBalance = Balance.create(userId, 5_000L);
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(5_000L)
+            .build();
         balanceRepository.save(existingBalance);
 
         BalanceCommand.Use command = BalanceCommand.Use.of(userId, 5_001L);
@@ -177,15 +188,15 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
         // given
         Long userId = 1L;
         BalanceCommand.Charge command = BalanceCommand.Charge.of(userId, 5_000L);
-        balanceService.chargeBalance(command);
         BalanceCommand.Use useCommand = BalanceCommand.Use.of(userId, 2_000L);
-        balanceService.useBalance(useCommand);
 
         // when
-        Balance balance = balanceRepository.findOptionalByUserId(userId).orElseThrow();
+        balanceService.chargeBalance(command);
+        balanceService.useBalance(useCommand);
 
         // then
-        assertThat(balance.getBalanceTransactions()).hasSize(2)
+        List<BalanceTransaction> transactions = balanceTransactionJpaRepository.findAll();
+        assertThat(transactions).hasSize(2)
             .extracting("amount", "transactionType")
             .containsExactly(
                 tuple(5_000L, BalanceTransactionType.CHARGE),
@@ -198,7 +209,10 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
     void getBalanceWhenBalanceExists() {
         // given
         Long userId = 1L;
-        Balance existingBalance = Balance.create(userId, 10_000L);
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(10_000L)
+            .build();
         balanceRepository.save(existingBalance);
 
         // when

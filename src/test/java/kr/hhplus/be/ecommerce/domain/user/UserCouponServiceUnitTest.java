@@ -8,6 +8,7 @@ import org.mockito.Mock;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,6 +34,22 @@ class UserCouponServiceUnitTest extends MockTestSupport {
 
         // then
         verify(userCouponRepository, times(1)).save(any(UserCoupon.class));
+    }
+
+    @DisplayName("사용자 쿠폰 생성 시, 여러개의 쿠폰을 발급 받을 수 없다.")
+    @Test
+    void createUserCouponCannotDuplicate() {
+        // given
+        UserCouponCommand.Publish command = mock(UserCouponCommand.Publish.class);
+        UserCoupon userCoupon = UserCoupon.create(1L, 1L);
+
+        when(userCouponRepository.findOptionalByUserIdAndCouponId(anyLong(), anyLong()))
+            .thenReturn(Optional.of(userCoupon));
+
+        // when
+        assertThatThrownBy(() -> userCouponService.createUserCoupon(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 발급된 쿠폰입니다.");
     }
 
     @DisplayName("유효한 ID로 사용 가능한 쿠폰을 조회해야 한다.")

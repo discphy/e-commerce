@@ -12,6 +12,13 @@ public class UserCouponService {
     private final UserCouponRepository userCouponRepository;
 
     public void createUserCoupon(UserCouponCommand.Publish command) {
+        userCouponRepository.findOptionalByUserIdAndCouponId(command.getUserId(), command.getCouponId())
+            .ifPresent(
+                userCoupon -> {
+                    throw new IllegalArgumentException("이미 발급된 쿠폰입니다.");
+                }
+            );
+
         UserCoupon userCoupon = UserCoupon.create(command.getUserId(), command.getCouponId());
         userCouponRepository.save(userCoupon);
     }
