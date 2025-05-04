@@ -31,8 +31,6 @@ spring:
     password: application
   jpa:
     show-sql: true
-    hibernate:
-      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -40,3 +38,12 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+---
+spring.config.activate.on-profile: test
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
