@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.config.scheduler;
+package kr.hhplus.be.ecommerce.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;

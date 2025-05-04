@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.config.web;
+package kr.hhplus.be.ecommerce.support.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
