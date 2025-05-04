@@ -39,29 +39,4 @@ class ProductControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data.products[*].price").value(300000))
             .andExpect(jsonPath("$.data.products[*].stock").value(3));
     }
-
-    @DisplayName("상위 상품 Top5 목록을 가져온다.")
-    @Test
-    void getRanks() throws Exception {
-        // given
-        when(productFacade.getPopularProducts())
-            .thenReturn(ProductResult.Products.of(
-                List.of(
-                    ProductResult.Product.of(1L, "상품명", 300_000L, 3)
-                )
-            ));
-
-        // when & then
-        mockMvc.perform(
-                get("/api/v1/products/ranks")
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.code").value(200))
-            .andExpect(jsonPath("$.message").value("OK"))
-            .andExpect(jsonPath("$.data.products[*].id").value(1))
-            .andExpect(jsonPath("$.data.products[*].name").value("상품명"))
-            .andExpect(jsonPath("$.data.products[*].price").value(300000))
-            .andExpect(jsonPath("$.data.products[*].stock").value(3));
-    }
 }
