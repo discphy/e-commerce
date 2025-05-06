@@ -32,7 +32,7 @@ class StockServiceUnitTest extends MockTestSupport {
         when(command.getProducts())
             .thenReturn(List.of(orderProduct, orderProduct));
 
-        when(stockRepository.findWithLockByProductId(anyLong()))
+        when(stockRepository.findByProductIdWithLock(anyLong()))
             .thenThrow(new IllegalArgumentException("재고가 존재하지 않습니다."));
 
         // when & then
@@ -54,7 +54,7 @@ class StockServiceUnitTest extends MockTestSupport {
         when(command.getProducts())
             .thenReturn(List.of(orderProduct, orderProduct));
 
-        when(stockRepository.findWithLockByProductId(anyLong()))
+        when(stockRepository.findByProductIdWithLock(anyLong()))
             .thenReturn(Stock.create(1L, 0));
 
         // when
@@ -77,14 +77,14 @@ class StockServiceUnitTest extends MockTestSupport {
             .thenReturn(List.of(orderProduct));
 
         Stock stock = Stock.create(1L, 10);
-        when(stockRepository.findWithLockByProductId(anyLong()))
+        when(stockRepository.findByProductIdWithLock(anyLong()))
             .thenReturn(stock, stock);
 
         // when
         stockService.deductStock(command);
 
         // then
-         assertThat(stock.getQuantity()).isZero();
+        assertThat(stock.getQuantity()).isZero();
     }
 
     @DisplayName("상품 ID로 재고를 조회한다.")
