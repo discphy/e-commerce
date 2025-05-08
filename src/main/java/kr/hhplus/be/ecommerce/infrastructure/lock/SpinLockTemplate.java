@@ -5,7 +5,7 @@ import kr.hhplus.be.ecommerce.support.lock.LockStrategy;
 import kr.hhplus.be.ecommerce.support.lock.LockTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ public class SpinLockTemplate implements LockTemplate {
         end
     """;
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
     @Override
     public LockStrategy getLockStrategy() {
