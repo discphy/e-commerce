@@ -1,8 +1,6 @@
 package kr.hhplus.be.ecommerce.infrastructure.lock;
 
-import kr.hhplus.be.ecommerce.support.lock.LockCallback;
-import kr.hhplus.be.ecommerce.support.lock.LockStrategy;
-import kr.hhplus.be.ecommerce.support.lock.LockTemplate;
+import kr.hhplus.be.ecommerce.support.lock.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -16,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SpinLockTemplate implements LockTemplate {
+public class SpinLockTemplate extends DefaultLockTemplate {
 
     private static final String UNLOCK_SCRIPT = """
         if redis.call("get", KEYS[1]) == ARGV[1] then
@@ -27,6 +25,7 @@ public class SpinLockTemplate implements LockTemplate {
     """;
 
     private final StringRedisTemplate redisTemplate;
+    private final LockIdHolder lockIdHolder;
 
     @Override
     public LockStrategy getLockStrategy() {
@@ -34,27 +33,36 @@ public class SpinLockTemplate implements LockTemplate {
     }
 
     @Override
-    public <T> T executeWithLock(String key, long waitTime, long leaseTime, TimeUnit timeUnit, LockCallback<T> callback) throws Throwable {
+    public void acquireLock(String key, long waitTime, long leaseTime, TimeUnit timeUnit) {
         long startTime = System.currentTimeMillis();
         String lockId = UUID.randomUUID().toString();
 
-        try {
-            log.debug("락 획득 시도 : {}", key);
-            while (!tryLock(key, lockId, leaseTime, timeUnit)) {
-                log.debug("락 획득 대기 중 : {}", key);
+        lockIdHolder.set(key, lockId);
 
-                if (timeout(startTime, waitTime, timeUnit)) {
-                    throw new IllegalStateException("락 획득 대기 시간 초과 : " + key);
-                }
+        log.debug("락 획득 시도 : {}", key);
+        while (!tryLock(key, lockId, leaseTime, timeUnit)) {
+            log.debug("락 획득 대기 중 : {}", key);
 
-                Thread.onSpinWait();
+            if (timeout(startTime, waitTime, timeUnit)) {
+                throw new IllegalStateException("락 획득 대기 시간 초과 : " + key);
             }
 
-            return callback.doInLock();
-        } finally {
-            unlock(key, lockId);
-            log.debug("락 해제 : {}", key);
+            Thread.onSpinWait();
         }
+    }
+
+    @Override
+    public void releaseLock(String key) {
+        if (lockIdHolder.notExists(key)) {
+            log.debug("락 해제 실패 : 락을 보유하고 있지 않음 : {}", key);
+            return;
+        }
+
+        String lockId = lockIdHolder.get(key);
+        unlock(key, lockId);
+
+        lockIdHolder.remove(lockId);
+        log.debug("락 해제 : {}", key);
     }
 
     private boolean tryLock(String key, String lockId, long leaseTime, TimeUnit timeUnit) {

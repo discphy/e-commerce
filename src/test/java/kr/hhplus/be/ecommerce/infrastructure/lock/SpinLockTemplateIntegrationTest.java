@@ -2,6 +2,7 @@ package kr.hhplus.be.ecommerce.infrastructure.lock;
 
 import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
 import kr.hhplus.be.ecommerce.support.lock.LockCallback;
+import kr.hhplus.be.ecommerce.support.lock.LockIdHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,13 @@ class SpinLockTemplateIntegrationTest extends IntegrationTestSupport {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private LockIdHolder lockIdHolder;
+
     @AfterEach
     void tearDown() {
         redisTemplate.delete("lock:spinLockTest");
+        lockIdHolder.clear();
     }
 
     @DisplayName("락을 획득하지 못하면 재시도 후 대기 시간을 초과하여 예외가 발생한다.")

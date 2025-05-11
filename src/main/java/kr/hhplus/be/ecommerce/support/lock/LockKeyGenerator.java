@@ -23,6 +23,10 @@ public class LockKeyGenerator {
             context.setVariable(parameterNames[i], args[i]);
         }
 
-        return parser.parseExpression(key).getValue(context, String.class);
+        try {
+            return parser.parseExpression(key).getValue(context, String.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("락 키 설정이 올바르지 않습니다. " + key, e);
+        }
     }
 }

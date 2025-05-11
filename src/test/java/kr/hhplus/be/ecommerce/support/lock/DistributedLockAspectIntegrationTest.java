@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.support.lock;
 
+import jakarta.transaction.Transactional;
 import kr.hhplus.be.ecommerce.support.ConcurrencyTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,11 +67,13 @@ class DistributedLockAspectIntegrationTest extends ConcurrencyTestSupport {
     @Service
     static class TestService {
 
+        @Transactional
         @DistributedLock(type = LockType.COUPON, key = "#key", strategy = LockStrategy.SPIN_LOCK)
         public String spinLock(String key) {
             return "spinLock";
         }
 
+        @Transactional
         @DistributedLock(type = LockType.COUPON, key = "#key", strategy = LockStrategy.PUB_SUB_LOCK)
         public String pubSubLock(String key) {
             return "pubSubLock";

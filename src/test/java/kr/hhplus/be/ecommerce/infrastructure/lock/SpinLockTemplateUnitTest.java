@@ -2,13 +2,13 @@ package kr.hhplus.be.ecommerce.infrastructure.lock;
 
 import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import kr.hhplus.be.ecommerce.support.lock.LockCallback;
+import kr.hhplus.be.ecommerce.support.lock.LockIdHolder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -27,11 +27,16 @@ class SpinLockTemplateUnitTest extends MockTestSupport {
     @Mock
     private StringRedisTemplate redisTemplate;
 
+    @Mock
+    private ValueOperations<String, String> valueOperations;
+
+    @Mock
+    private LockIdHolder lockIdHolder;
+
     @DisplayName("락을 획득하지 못하면 재시도 후 대기 시간을 초과하여 예외가 발생한다.")
     @Test
     void executeWithLockWhenNotAcquiredLock() {
         // given
-        ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
         LockCallback<String> callback = () -> "callback";
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -49,7 +54,6 @@ class SpinLockTemplateUnitTest extends MockTestSupport {
     @Test
     void executeWithLockWhenAcquiredLock() throws Throwable {
         // given
-        ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
         LockCallback<String> callback = () -> "callback";
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -66,7 +70,6 @@ class SpinLockTemplateUnitTest extends MockTestSupport {
     @Test
     void executeWithLockWhenRetry() throws Throwable {
         // given
-        ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
         LockCallback<String> callback = () -> "callback";
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -83,7 +86,6 @@ class SpinLockTemplateUnitTest extends MockTestSupport {
     @Test
     void executeWithLockAfterUnlock() throws Throwable {
         // given
-        ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
         LockCallback<String> callback = () -> "callback";
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -93,6 +95,6 @@ class SpinLockTemplateUnitTest extends MockTestSupport {
         lockTemplate.executeWithLock("key", 1L, 1L, TimeUnit.SECONDS, callback);
 
         // then
-        verify(redisTemplate, times(1)).execute(any(DefaultRedisScript.class), eq(Collections.singletonList("key")), any());
+        verify(redisTemplate, times(1)).execute(any(), eq(Collections.singletonList("key")), any());
     }
 }
