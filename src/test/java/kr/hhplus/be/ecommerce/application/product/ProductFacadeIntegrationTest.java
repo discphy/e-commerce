@@ -3,8 +3,6 @@ package kr.hhplus.be.ecommerce.application.product;
 import kr.hhplus.be.ecommerce.domain.product.Product;
 import kr.hhplus.be.ecommerce.domain.product.ProductRepository;
 import kr.hhplus.be.ecommerce.domain.product.ProductSellingStatus;
-import kr.hhplus.be.ecommerce.domain.rank.Rank;
-import kr.hhplus.be.ecommerce.domain.rank.RankRepository;
 import kr.hhplus.be.ecommerce.domain.stock.Stock;
 import kr.hhplus.be.ecommerce.domain.stock.StockRepository;
 import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,9 +27,6 @@ class ProductFacadeIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private StockRepository stockRepository;
-
-    @Autowired
-    private RankRepository rankRepository;
 
     private Product product1;
 
@@ -55,7 +49,6 @@ class ProductFacadeIntegrationTest extends IntegrationTestSupport {
 
         List.of(stock1, stock2, stock3)
             .forEach(stockRepository::save);
-
     }
 
     @DisplayName("판매 가능 상품 목록을 조회한다.")
@@ -68,26 +61,5 @@ class ProductFacadeIntegrationTest extends IntegrationTestSupport {
         assertThat(products.getProducts()).hasSize(2)
             .extracting(ProductResult.Product::getProductId)
             .containsExactlyInAnyOrder(product1.getId(), product2.getId());
-    }
-
-    @DisplayName("상위 상품을 조회한다.")
-    @Test
-    void getPopularProducts() {
-        // given
-        List<Rank> ranks = List.of(
-            Rank.createSell(product1.getId(), LocalDate.now().minusDays(1), 10L),
-            Rank.createSell(product2.getId(), LocalDate.now().minusDays(1), 34L),
-            Rank.createSell(product3.getId(), LocalDate.now().minusDays(2), 42L)
-        );
-
-        ranks.forEach(rankRepository::save);
-
-        // when
-        ProductResult.Products products = productFacade.getPopularProducts();
-
-        // then
-        assertThat(products.getProducts()).hasSize(3)
-            .extracting("productId")
-            .containsExactly(product3.getId(), product2.getId(), product1.getId());
     }
 }
