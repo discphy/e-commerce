@@ -84,7 +84,7 @@ class StockServiceUnitTest extends MockTestSupport {
         stockService.deductStock(command);
 
         // then
-         assertThat(stock.getQuantity()).isZero();
+        assertThat(stock.getQuantity()).isZero();
     }
 
     @DisplayName("상품 ID로 재고를 조회한다.")

@@ -75,9 +75,9 @@ class ProductFacadeIntegrationTest extends IntegrationTestSupport {
     void getPopularProducts() {
         // given
         List<Rank> ranks = List.of(
-            Rank.createSell(product1.getId(), LocalDate.of(2025, 4, 23), 10L),
-            Rank.createSell(product2.getId(), LocalDate.of(2025, 4, 22), 34L),
-            Rank.createSell(product3.getId(), LocalDate.of(2025, 4, 23), 42L)
+            Rank.createSell(product1.getId(), LocalDate.now().minusDays(1), 10L),
+            Rank.createSell(product2.getId(), LocalDate.now().minusDays(1), 34L),
+            Rank.createSell(product3.getId(), LocalDate.now().minusDays(2), 42L)
         );
 
         ranks.forEach(rankRepository::save);

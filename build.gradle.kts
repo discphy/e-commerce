@@ -35,12 +35,14 @@ dependencyManagement {
 
 val querydslVersion = "5.0.0"
 val restAssuredVersion = "5.3.2"
+val redissonVersion = "3.27.1"
 
 dependencies {
     // Spring
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
 	// QueryDSL
@@ -48,6 +50,9 @@ dependencies {
 	annotationProcessor("com.querydsl:querydsl-apt:${querydslVersion}:jakarta")
 	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+
+	// Redisson
+	implementation("org.redisson:redisson-spring-boot-starter:${redissonVersion}")
 
 	// lombok
 	compileOnly("org.projectlombok:lombok")
