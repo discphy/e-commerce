@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.support.filter;
 
+import kr.hhplus.be.ecommerce.support.ContainerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(LoggingFilterIntegrationTest.DummyController.class)
-class LoggingFilterIntegrationTest {
+class LoggingFilterIntegrationTest extends ContainerTestSupport {
 
     @Autowired
     protected MockMvc mockMvc;
