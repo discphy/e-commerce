@@ -17,6 +17,7 @@ public abstract class ConcurrencyTestSupport extends IntegrationTestSupport {
 
     @AfterEach
     void tearDown() {
+        super.tearDown();
         databaseCleaner.clean();
     }
 
