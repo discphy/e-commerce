@@ -37,6 +37,7 @@ public class UserCouponInfo {
         public static Coupons of(List<Coupon> coupons) {
             return new Coupons(coupons);
         }
+
     }
 
     @Getter
@@ -51,6 +52,22 @@ public class UserCouponInfo {
             this.userCouponId = userCouponId;
             this.couponId = couponId;
             this.issuedAt = issuedAt;
+        }
+    }
+
+    @Getter
+    public static class Candidates {
+
+        private final Long userId;
+        private final LocalDateTime issuedAt;
+
+        private Candidates(Long userId, LocalDateTime issuedAt) {
+            this.userId = userId;
+            this.issuedAt = issuedAt;
+        }
+
+        public static Candidates of(Long userId, LocalDateTime issuedAt) {
+            return new Candidates(userId, issuedAt);
         }
     }
 }
