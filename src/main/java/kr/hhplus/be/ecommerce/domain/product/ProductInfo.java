@@ -39,10 +39,6 @@ public class ProductInfo {
             this.productPrice = productPrice;
             this.quantity = quantity;
         }
-
-        public static OrderProduct of(Long productId, String productName, Long productPrice, int quantity) {
-            return new OrderProduct(productId, productName, productPrice, quantity);
-        }
     }
 
     @Getter
