@@ -24,8 +24,8 @@ public class UserCouponRequest {
             return new Publish(couponId);
         }
 
-        public UserCouponCriteria.Publish toCriteria(Long userId) {
-            return UserCouponCriteria.Publish.of(userId, couponId);
+        public UserCouponCriteria.PublishRequest toCriteria(Long userId) {
+            return UserCouponCriteria.PublishRequest.of(userId, couponId);
         }
     }
 
