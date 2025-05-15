@@ -28,7 +28,7 @@ public enum CacheType implements Cacheable {
 
     @Override
     public String createKey(String key) {
-        return cacheName() + "::" + key;
+        return cacheName() + ":" + key;
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
