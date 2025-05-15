@@ -28,6 +28,7 @@
 + [🏎️ DB 성능 최적화 보고서](docs/report/01.DBPerformanceOptimizationReport.md)
 + [🏁 동시성 이슈 분석 및 해결 보고서](docs/report/02.ConcurrencyReport.md)
 + [🧪 캐시 전략 설계](docs/report/03.CacheStrategyArchitectureReport.md)
++ [🏗️ Redis 디자인 아키텍처 보고서](docs/report/04.RedisDesignArchitectureReport.md)
 
 ### 🖌️ WIL
 
