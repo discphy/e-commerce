@@ -26,4 +26,15 @@ public class RankScheduler {
             log.error("실시간 인기상품 캐싱 스케줄러 실행 중 오류 발생", e);
         }
     }
+
+    @Scheduled(cron = "10 0 0 * * *")
+    public void persistDailyRank() {
+        log.info("일일 판매량 DB 영속 스케줄러 실행");
+        try {
+            rankFacade.persistDailyRank(RankCriteria.PersistDailyRank.ofBeforeDays(LocalDate.now()));
+            log.info("일일 판매량 DB 영속 스케줄러 완료");
+        } catch (Exception e) {
+            log.error("일일 판매량 DB 영속 스케줄러 실행 중 오류 발생", e);
+        }
+    }
 }

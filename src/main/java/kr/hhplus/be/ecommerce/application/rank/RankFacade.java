@@ -48,6 +48,11 @@ public class RankFacade {
         return getPopularProducts(criteria.getTop(), criteria.getDays());
     }
 
+    @Transactional
+    public void persistDailyRank(RankCriteria.PersistDailyRank criteria) {
+        rankService.persistDailyRank(criteria.getDate());
+    }
+
     private RankCommand.CreateList createListCommand(OrderInfo.PaidProducts paidProducts, LocalDate yesterday) {
         List<RankCommand.Create> commands = paidProducts.getProducts().stream()
             .map(product -> createCommand(product, yesterday))

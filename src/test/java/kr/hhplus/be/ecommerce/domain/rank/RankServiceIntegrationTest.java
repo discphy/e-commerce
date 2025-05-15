@@ -79,4 +79,44 @@ class RankServiceIntegrationTest extends IntegrationTestSupport {
                 rank5.getProductId()
             );
     }
+
+    @DisplayName("일일 판매 랭크를 영속화 한다.")
+    @Test
+    void persistDailyRank() {
+        // given
+        LocalDate date = LocalDate.of(2025, 5, 16);
+
+        List<Rank> ranks = List.of(
+            Rank.createSell(1L, date, 100L),
+            Rank.createSell(2L, date, 90L),
+            Rank.createSell(3L, date, 80L)
+        );
+
+        ranks.forEach(rankRepository::save);
+
+        // when
+        rankService.persistDailyRank(date);
+
+        // then
+        List<Rank> results = rankRepository.findBy(RankType.SELL, date);
+        assertThat(results).hasSize(3)
+            .extracting(Rank::getProductId)
+            .containsExactlyInAnyOrder(1L, 2L, 3L);
+        List<RankInfo.PopularProduct> deleted = rankRepository.findDailyRank(RankKey.ofDate(RankType.SELL, date));
+        assertThat(deleted).isEmpty();
+    }
+
+    @DisplayName("일일 판매 랭크가 비어있으면 영속화 하지 않는다.")
+    @Test
+    void persistDailyRankWithEmpty() {
+        // given
+        LocalDate date = LocalDate.of(2025, 5, 16);
+
+        // when
+        rankService.persistDailyRank(date);
+
+        // then
+        List<Rank> results = rankRepository.findBy(RankType.SELL, date);
+        assertThat(results).isEmpty();
+    }
 }

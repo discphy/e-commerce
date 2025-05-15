@@ -1,9 +1,6 @@
 package kr.hhplus.be.ecommerce.infrastructure.rank;
 
-import kr.hhplus.be.ecommerce.domain.rank.Rank;
-import kr.hhplus.be.ecommerce.domain.rank.RankCommand;
-import kr.hhplus.be.ecommerce.domain.rank.RankInfo;
-import kr.hhplus.be.ecommerce.domain.rank.RankKeys;
+import kr.hhplus.be.ecommerce.domain.rank.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
@@ -37,6 +34,17 @@ public class RankRedisRepository {
         return Optional.ofNullable(tuples)
             .map(this::getList)
             .orElse(new ArrayList<>());
+    }
+
+    public List<RankInfo.PopularProduct> findDailyRank(RankKey key) {
+        Set<TypedTuple<Long>> tuples = redisTemplate.opsForZSet().rangeWithScores(key.generate(), 0, -1);
+        return Optional.ofNullable(tuples)
+            .map(this::getList)
+            .orElse(new ArrayList<>());
+    }
+
+    public boolean delete(RankKey key) {
+        return redisTemplate.delete(key.generate());
     }
 
     private List<RankInfo.PopularProduct> getList(Set<TypedTuple<Long>> set) {

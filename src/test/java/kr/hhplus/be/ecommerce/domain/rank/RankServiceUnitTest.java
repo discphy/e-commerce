@@ -74,4 +74,46 @@ class RankServiceUnitTest extends MockTestSupport {
             .extracting(RankInfo.PopularProduct::getProductId)
             .containsExactly(1L, 2L, 3L, 4L, 5L);
     }
+
+    @DisplayName("일일 판매 랭크를 영속화 한다.")
+    @Test
+    void persistDailyRank() {
+        // given
+        LocalDate date = LocalDate.of(2025, 5, 16);
+
+        List<RankInfo.PopularProduct> products = List.of(
+            RankInfo.PopularProduct.of(1L, 100L),
+            RankInfo.PopularProduct.of(2L, 90L),
+            RankInfo.PopularProduct.of(3L, 80L)
+        );
+
+        when(rankRepository.findDailyRank(any()))
+            .thenReturn(products);
+
+        // when
+        rankService.persistDailyRank(date);
+
+        // then
+        verify(rankRepository, times(1)).saveAll(any());
+        verify(rankRepository, times(1)).delete(any());
+    }
+
+    @DisplayName("일일 판매 랭크가 비어있으면 영속화 하지 않는다.")
+    @Test
+    void persistDailyRankWithEmpty() {
+        // given
+        LocalDate date = LocalDate.of(2025, 5, 16);
+
+        List<RankInfo.PopularProduct> products = List.of();
+
+        when(rankRepository.findDailyRank(any()))
+            .thenReturn(products);
+
+        // when
+        rankService.persistDailyRank(date);
+
+        // then
+        verify(rankRepository, never()).saveAll(any());
+        verify(rankRepository, never()).delete(any());
+    }
 }
