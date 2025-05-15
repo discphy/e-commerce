@@ -72,6 +72,10 @@ public class Coupon {
         return this;
     }
 
+    public void finish() {
+        this.status = CouponStatus.FINISHED;
+    }
+
     private static void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("쿠폰 이름은 필수입니다.");

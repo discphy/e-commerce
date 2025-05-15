@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CouponService {
@@ -23,5 +25,18 @@ public class CouponService {
                 .name(coupon.getName())
                 .discountRate(coupon.getDiscountRate())
                 .build();
+    }
+
+    public CouponInfo.PublishableCoupons getPublishableCoupons() {
+        List<CouponInfo.PublishableCoupon> list = couponRepository.findByStatus(CouponStatus.PUBLISHABLE).stream()
+            .map(coupon -> CouponInfo.PublishableCoupon.of(coupon.getId(), coupon.getQuantity()))
+            .toList();
+
+        return CouponInfo.PublishableCoupons.of(list);
+    }
+
+    public void finishCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId);
+        coupon.finish();
     }
 }

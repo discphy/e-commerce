@@ -12,6 +12,7 @@ public enum CouponStatus {
     CANCELED("취소"),
     REGISTERED("등록"),
     PUBLISHABLE("발급가능"),
+    FINISHED("발급완료"),
     ;
     private final String description;
 
