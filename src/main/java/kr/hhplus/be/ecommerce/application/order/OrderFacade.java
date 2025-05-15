@@ -9,6 +9,7 @@ import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.domain.payment.PaymentService;
 import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.domain.product.ProductService;
+import kr.hhplus.be.ecommerce.domain.rank.RankService;
 import kr.hhplus.be.ecommerce.domain.stock.StockService;
 import kr.hhplus.be.ecommerce.domain.user.UserCouponInfo;
 import kr.hhplus.be.ecommerce.domain.user.UserCouponService;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -31,6 +33,7 @@ public class OrderFacade {
     private final BalanceService balanceService;
     private final StockService stockService;
     private final PaymentService paymentService;
+    private final RankService rankService;
 
     private static final double NOT_DISCOUNT_RATE = 0.0;
 
@@ -58,6 +61,7 @@ public class OrderFacade {
         stockService.deductStock(criteria.toStockCommand());
         paymentService.pay(criteria.toPaymentCommand(order));
         orderService.paidOrder(order.getOrderId());
+        rankService.createSellRank(criteria.toRankCommand(LocalDate.now()));
 
         return OrderResult.Order.of(order);
     }

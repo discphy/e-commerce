@@ -6,5 +6,5 @@ public interface RankRepository {
 
     Rank save(Rank rank);
 
-    List<RankInfo.PopularProduct> findPopularSellRanks(RankCommand.PopularSellRank command);
+    List<RankInfo.PopularProduct> findPopularSellRanks(RankCommand.Query command);
 }

@@ -6,12 +6,14 @@ import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
 import kr.hhplus.be.ecommerce.domain.payment.PaymentCommand;
 import kr.hhplus.be.ecommerce.domain.product.ProductCommand;
 import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
+import kr.hhplus.be.ecommerce.domain.rank.RankCommand;
 import kr.hhplus.be.ecommerce.domain.stock.StockCommand;
 import kr.hhplus.be.ecommerce.domain.user.UserCouponCommand;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -73,6 +75,14 @@ public class OrderCriteria {
 
         public PaymentCommand.Payment toPaymentCommand(OrderInfo.Order order) {
             return PaymentCommand.Payment.of(order.getOrderId(), userId, order.getTotalPrice());
+        }
+
+        public RankCommand.CreateList toRankCommand(LocalDate date) {
+            return RankCommand.CreateList.of(
+                products.stream()
+                    .map(o -> RankCommand.Create.of(o.getProductId(), o.getQuantity(), date))
+                    .toList()
+            );
         }
     }
 

@@ -13,16 +13,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RankRepositoryImpl implements RankRepository {
 
-    private final RankJpaRepository rankJpaRepository;
     private final RankQueryDslRepository rankQueryDslRepository;
+    private final RankJpaRepository rankJpaRepository;
+    private final RankRedisRepository rankRedisRepository;
 
     @Override
     public Rank save(Rank rank) {
-        return rankJpaRepository.save(rank);
+        return rankRedisRepository.save(rank);
     }
 
     @Override
-    public List<RankInfo.PopularProduct> findPopularSellRanks(RankCommand.PopularSellRank command) {
-        return rankQueryDslRepository.findPopularSellRanks(command);
+    public List<RankInfo.PopularProduct> findPopularSellRanks(RankCommand.Query command) {
+        return rankRedisRepository.findPopularSellRanks(command);
     }
 }

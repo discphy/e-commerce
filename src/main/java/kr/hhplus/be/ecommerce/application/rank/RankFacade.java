@@ -65,10 +65,9 @@ public class RankFacade {
     }
 
     private RankResult.PopularProducts getPopularProducts(int top, int days) {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(days);
+        LocalDate now = LocalDate.now();
 
-        RankCommand.PopularSellRank popularSellRankCommand = RankCommand.PopularSellRank.of(top, startDate, endDate);
+        RankCommand.PopularSellRank popularSellRankCommand = RankCommand.PopularSellRank.of(top, days, now);
         RankInfo.PopularProducts popularProducts = rankService.getPopularSellRank(popularSellRankCommand);
 
         ProductCommand.Products productsCommand = ProductCommand.Products.of(popularProducts.getProductIds());

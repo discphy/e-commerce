@@ -19,7 +19,12 @@ public class RankService {
     }
 
     public RankInfo.PopularProducts getPopularSellRank(RankCommand.PopularSellRank command) {
-        List<RankInfo.PopularProduct> popularProducts = rankRepository.findPopularSellRanks(command);
+        RankKey target = RankKey.ofDays(RankType.SELL, command.getDays());
+        RankKeys sources = RankKeys.ofDaysWithDate(RankType.SELL, command.getDays(), command.getDate());
+
+        RankCommand.Query query = RankCommand.Query.of(command.getTop(), target, sources);
+        List<RankInfo.PopularProduct> popularProducts = rankRepository.findPopularSellRanks(query);
+
         return RankInfo.PopularProducts.of(popularProducts);
     }
 

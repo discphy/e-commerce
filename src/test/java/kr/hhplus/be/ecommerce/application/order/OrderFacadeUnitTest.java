@@ -1,6 +1,5 @@
 package kr.hhplus.be.ecommerce.application.order;
 
-import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceService;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponInfo;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponService;
@@ -9,10 +8,12 @@ import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.domain.payment.PaymentService;
 import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.domain.product.ProductService;
+import kr.hhplus.be.ecommerce.domain.rank.RankService;
 import kr.hhplus.be.ecommerce.domain.stock.StockService;
 import kr.hhplus.be.ecommerce.domain.user.UserCouponInfo;
 import kr.hhplus.be.ecommerce.domain.user.UserCouponService;
 import kr.hhplus.be.ecommerce.domain.user.UserService;
+import kr.hhplus.be.ecommerce.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -50,6 +51,9 @@ class OrderFacadeUnitTest extends MockTestSupport {
     @Mock
     private PaymentService paymentService;
 
+    @Mock
+    private RankService rankService;
+
     @DisplayName("주문 결제를 한다.")
     @Test
     void orderPayment() {
@@ -77,7 +81,8 @@ class OrderFacadeUnitTest extends MockTestSupport {
             orderService,
             balanceService,
             stockService,
-            paymentService
+            paymentService,
+            rankService
         );
 
         inOrder.verify(userService, times(1)).getUser(criteria.getUserId());
@@ -96,5 +101,6 @@ class OrderFacadeUnitTest extends MockTestSupport {
         inOrder.verify(stockService, times(1)).deductStock(criteria.toStockCommand());
         inOrder.verify(paymentService, times(1)).pay(criteria.toPaymentCommand(mockOrder));
         inOrder.verify(orderService, times(1)).paidOrder(mockOrder.getOrderId());
+        inOrder.verify(rankService, times(1)).createSellRank(criteria.toRankCommand(any()));
     }
 }

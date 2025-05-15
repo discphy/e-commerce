@@ -62,7 +62,7 @@ class RankServiceUnitTest extends MockTestSupport {
 
         RankCommand.PopularSellRank command = RankCommand.PopularSellRank.of(
             5,
-            LocalDate.of(2025, 4, 23),
+            7,
             LocalDate.of(2025, 4, 30)
         );
 
@@ -73,7 +73,5 @@ class RankServiceUnitTest extends MockTestSupport {
         assertThat(result.getProducts()).hasSize(5)
             .extracting(RankInfo.PopularProduct::getProductId)
             .containsExactly(1L, 2L, 3L, 4L, 5L);
-
     }
-
 }
