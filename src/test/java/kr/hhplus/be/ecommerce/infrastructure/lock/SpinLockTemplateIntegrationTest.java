@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.infrastructure.lock;
 
-import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
+import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import kr.hhplus.be.ecommerce.support.lock.LockCallback;
 import kr.hhplus.be.ecommerce.support.lock.LockIdHolder;
 import org.junit.jupiter.api.AfterEach;

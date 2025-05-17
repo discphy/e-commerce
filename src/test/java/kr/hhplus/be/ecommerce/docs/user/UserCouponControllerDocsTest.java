@@ -2,7 +2,7 @@ package kr.hhplus.be.ecommerce.docs.user;
 
 import kr.hhplus.be.ecommerce.application.user.UserCouponFacade;
 import kr.hhplus.be.ecommerce.application.user.UserCouponResult;
-import kr.hhplus.be.ecommerce.support.RestDocsSupport;
+import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
 import kr.hhplus.be.ecommerce.interfaces.user.UserCouponController;
 import kr.hhplus.be.ecommerce.interfaces.user.UserCouponRequest;
 import org.junit.jupiter.api.DisplayName;

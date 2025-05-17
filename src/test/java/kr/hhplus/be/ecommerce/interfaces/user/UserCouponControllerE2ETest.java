@@ -8,7 +8,7 @@ import kr.hhplus.be.ecommerce.domain.user.User;
 import kr.hhplus.be.ecommerce.domain.user.UserCoupon;
 import kr.hhplus.be.ecommerce.domain.user.UserCouponRepository;
 import kr.hhplus.be.ecommerce.domain.user.UserRepository;
-import kr.hhplus.be.ecommerce.support.E2EControllerTestSupport;
+import kr.hhplus.be.ecommerce.test.support.E2EControllerTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

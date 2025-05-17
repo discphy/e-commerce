@@ -1,7 +1,7 @@
 package kr.hhplus.be.ecommerce.application.user;
 
 import kr.hhplus.be.ecommerce.domain.user.UserCouponKey;
-import kr.hhplus.be.ecommerce.support.ConcurrencyTestSupport;
+import kr.hhplus.be.ecommerce.test.support.ConcurrencyTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

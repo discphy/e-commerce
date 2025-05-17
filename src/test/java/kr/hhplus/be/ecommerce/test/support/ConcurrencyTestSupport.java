@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.support;
+package kr.hhplus.be.ecommerce.test.support;
 
-import kr.hhplus.be.ecommerce.support.database.DatabaseCleaner;
+import kr.hhplus.be.ecommerce.test.support.database.DatabaseCleaner;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 

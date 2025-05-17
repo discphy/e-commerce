@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.balance;
 
-import kr.hhplus.be.ecommerce.support.ConcurrencyTestSupport;
+import kr.hhplus.be.ecommerce.test.support.ConcurrencyTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

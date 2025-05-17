@@ -6,7 +6,7 @@ import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.domain.product.ProductService;
 import kr.hhplus.be.ecommerce.domain.rank.RankInfo;
 import kr.hhplus.be.ecommerce.domain.rank.RankService;
-import kr.hhplus.be.ecommerce.support.MockTestSupport;
+import kr.hhplus.be.ecommerce.test.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;

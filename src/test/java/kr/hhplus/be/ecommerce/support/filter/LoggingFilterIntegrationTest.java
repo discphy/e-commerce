@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.support.filter;
 
-import kr.hhplus.be.ecommerce.support.ContainerTestSupport;
+import kr.hhplus.be.ecommerce.test.support.ContainerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

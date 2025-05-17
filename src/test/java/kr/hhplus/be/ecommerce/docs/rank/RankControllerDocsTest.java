@@ -3,7 +3,7 @@ package kr.hhplus.be.ecommerce.docs.rank;
 import kr.hhplus.be.ecommerce.application.rank.RankFacade;
 import kr.hhplus.be.ecommerce.application.rank.RankResult;
 import kr.hhplus.be.ecommerce.interfaces.rank.RankController;
-import kr.hhplus.be.ecommerce.support.RestDocsSupport;
+import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
