@@ -1,6 +1,7 @@
-package kr.hhplus.be.ecommerce.support.database;
+package kr.hhplus.be.ecommerce.test.support.database;
 
-import kr.hhplus.be.ecommerce.support.key.KeyType;
+import kr.hhplus.be.ecommerce.support.cache.CacheType;
+import kr.hhplus.be.ecommerce.support.cache.Cacheable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -12,14 +13,14 @@ import java.util.Set;
 
 @Component
 @Profile("test")
-public class RedisKeyCleaner {
+public class RedisCacheCleaner {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     public void clean() {
-        Arrays.stream(KeyType.values())
-            .map(KeyType::getKey)
+        Arrays.stream(CacheType.values())
+            .map(Cacheable::cacheName)
             .map(this::getKeys)
             .filter(this::isExistKeys)
             .forEach(this::cleanBy);

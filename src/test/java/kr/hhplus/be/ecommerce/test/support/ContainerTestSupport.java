@@ -1,7 +1,7 @@
-package kr.hhplus.be.ecommerce.support;
+package kr.hhplus.be.ecommerce.test.support;
 
-import kr.hhplus.be.ecommerce.support.container.MySQLContainerExtension;
-import kr.hhplus.be.ecommerce.support.container.RedisContainerExtension;
+import kr.hhplus.be.ecommerce.test.support.container.MySQLContainerExtension;
+import kr.hhplus.be.ecommerce.test.support.container.RedisContainerExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;

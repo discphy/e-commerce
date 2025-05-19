@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support;
+package kr.hhplus.be.ecommerce.test.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.ecommerce.application.balance.BalanceFacade;

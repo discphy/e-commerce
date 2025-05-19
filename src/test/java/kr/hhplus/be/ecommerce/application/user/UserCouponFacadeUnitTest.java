@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.application.user;
 
-import kr.hhplus.be.ecommerce.support.MockTestSupport;
+import kr.hhplus.be.ecommerce.test.support.MockTestSupport;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponInfo;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponService;
 import kr.hhplus.be.ecommerce.domain.user.UserCouponInfo;
@@ -33,20 +33,88 @@ class UserCouponFacadeUnitTest extends MockTestSupport {
     @Mock
     private UserCouponService userCouponService;
 
-    @DisplayName("사용자 쿠폰을 발급한다.")
+    @DisplayName("사용자 쿠폰을 발급을 요청한다.")
     @Test
-    void publishUserCoupon() {
+    void requestPublishUserCoupon() {
         // given
-        UserCouponCriteria.Publish criteria = mock(UserCouponCriteria.Publish.class);
+        UserCouponCriteria.PublishRequest criteria = mock(UserCouponCriteria.PublishRequest.class);
 
         // when
-        userCouponFacade.publishUserCoupon(criteria);
+        userCouponFacade.requestPublishUserCoupon(criteria);
 
         // then
-        InOrder inOrder = inOrder(userService, couponService, userCouponService);
-        inOrder.verify(userService, times(1)).getUser(criteria.getUserId());
-        inOrder.verify(couponService, times(1)).publishCoupon(criteria.getCouponId());
-        inOrder.verify(userCouponService, times(1)).createUserCoupon(criteria.toCommand());
+        InOrder inOrder = inOrder(userCouponService);
+        inOrder.verify(userCouponService, times(1)).requestPublishUserCoupon(criteria.toCommand(any(LocalDateTime.class)));
+    }
+
+    @DisplayName("사용자 쿠폰을 발급한다.")
+    @Test
+    void publishUserCoupons() {
+        // given
+        UserCouponCriteria.Publish criteria = mock(UserCouponCriteria.Publish.class);
+        CouponInfo.PublishableCoupons coupons = mock(CouponInfo.PublishableCoupons.class);
+
+        when(coupons.getCoupons())
+            .thenReturn(
+                List.of(
+                    CouponInfo.PublishableCoupon.builder()
+                        .couponId(1L)
+                        .quantity(10)
+                        .build(),
+                    CouponInfo.PublishableCoupon.builder()
+                        .couponId(2L)
+                        .quantity(20)
+                        .build()
+                )
+            );
+
+        when(couponService.getPublishableCoupons())
+            .thenReturn(coupons);
+
+        // when
+        userCouponFacade.publishUserCoupons(criteria);
+
+        // then
+        InOrder inOrder = inOrder(couponService, userCouponService);
+        inOrder.verify(couponService, times(1)).getPublishableCoupons();
+        inOrder.verify(userCouponService, times(2)).publishUserCoupons(any());
+    }
+
+    @DisplayName("사용자 쿠폰 발급을 완료한다.")
+    @Test
+    void finishedPublishCoupons() {
+        // given
+        CouponInfo.PublishableCoupons coupons = mock(CouponInfo.PublishableCoupons.class);
+
+        when(coupons.getCoupons())
+            .thenReturn(
+                List.of(
+                    CouponInfo.PublishableCoupon.builder()
+                        .couponId(1L)
+                        .quantity(10)
+                        .build(),
+                    CouponInfo.PublishableCoupon.builder()
+                        .couponId(2L)
+                        .quantity(20)
+                        .build()
+                )
+            );
+
+        when(couponService.getPublishableCoupons())
+            .thenReturn(coupons);
+
+        when(userCouponService.isPublishFinished(any()))
+            .thenReturn(true)
+            .thenReturn(false);
+
+        // when
+        userCouponFacade.finishedPublishCoupons();
+
+        // then
+        InOrder inOrder = inOrder(couponService, userCouponService, couponService);
+        inOrder.verify(couponService, times(1)).getPublishableCoupons();
+        inOrder.verify(userCouponService, times(2)).isPublishFinished(any());
+        verify(couponService, times(1)).finishCoupon(eq(1L));
     }
 
     @DisplayName("보유 쿠폰 목록을 조회한다.")
@@ -85,7 +153,8 @@ class UserCouponFacadeUnitTest extends MockTestSupport {
         UserCouponResult.Coupons result = userCouponFacade.getUserCoupons(1L);
 
         // then
-        InOrder inOrder = inOrder(userCouponService, couponService);
+        InOrder inOrder = inOrder(userService, userCouponService, couponService);
+        inOrder.verify(userService, times(1)).getUser(anyLong());
         inOrder.verify(userCouponService, times(1)).getUserCoupons(anyLong());
         inOrder.verify(couponService, times(2)).getCoupon(anyLong());
 

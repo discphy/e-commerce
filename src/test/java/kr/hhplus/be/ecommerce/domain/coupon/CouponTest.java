@@ -124,5 +124,23 @@ class CouponTest {
         // then
         assertThat(coupon.getQuantity()).isZero();
     }
+
+    @DisplayName("쿠폰 발급을 종료한다.")
+    @Test
+    void finish() {
+        // given
+        Coupon coupon = Coupon.builder()
+            .name("쿠폰명")
+            .status(CouponStatus.PUBLISHABLE)
+            .expiredAt(LocalDateTime.now().plusDays(1))
+            .quantity(1)
+            .build();
+
+        // when
+        coupon.finish();
+
+        // then
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.FINISHED);
+    }
   
 }

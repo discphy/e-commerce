@@ -22,7 +22,7 @@ public class UserCouponController {
     @PostMapping("/api/v1/users/{id}/coupons/publish")
     public ApiResponse<Void> publishCoupon(@PathVariable("id") Long id,
                                            @Valid @RequestBody UserCouponRequest.Publish request) {
-        userCouponFacade.publishUserCoupon(request.toCriteria(id));
+        userCouponFacade.requestPublishUserCoupon(request.toCriteria(id));
         return ApiResponse.success();
     }
 }

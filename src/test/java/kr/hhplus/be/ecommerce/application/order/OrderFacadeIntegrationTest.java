@@ -1,7 +1,7 @@
 package kr.hhplus.be.ecommerce.application.order;
 
 import kr.hhplus.be.ecommerce.domain.rank.*;
-import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
+import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import kr.hhplus.be.ecommerce.domain.balance.Balance;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceRepository;
 import kr.hhplus.be.ecommerce.domain.coupon.Coupon;

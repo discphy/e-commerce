@@ -1,12 +1,13 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
-import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
+import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -119,5 +120,56 @@ class CouponServiceIntegrationTest extends IntegrationTestSupport {
         assertThat(couponInfo.getCouponId()).isEqualTo(coupon.getId());
         assertThat(couponInfo.getName()).isEqualTo(coupon.getName());
         assertThat(couponInfo.getDiscountRate()).isEqualTo(coupon.getDiscountRate());
+    }
+
+    @DisplayName("발급 가능한 쿠폰 목록을 가져온다.")
+    @Test
+    void getPublishableCoupons() {
+        // given
+        List<Coupon> coupons = List.of(
+            Coupon.builder()
+                .name("쿠폰명")
+                .status(CouponStatus.PUBLISHABLE)
+                .discountRate(0.1)
+                .quantity(1)
+                .expiredAt(LocalDateTime.now().plusDays(1))
+                .build(),
+            Coupon.builder()
+                .name("쿠폰명2")
+                .status(CouponStatus.PUBLISHABLE)
+                .discountRate(0.1)
+                .quantity(10)
+                .expiredAt(LocalDateTime.now().plusDays(1))
+                .build()
+        );
+        coupons.forEach(couponRepository::save);
+
+        // when
+        CouponInfo.PublishableCoupons publishableCoupons = couponService.getPublishableCoupons();
+
+        // then
+        assertThat(publishableCoupons.getCoupons()).hasSize(2)
+            .extracting(CouponInfo.PublishableCoupon::getCouponId)
+            .containsExactlyInAnyOrder(coupons.get(0).getId(), coupons.get(1).getId());
+    }
+
+    @DisplayName("쿠폰 발급을 종료한다.")
+    @Test
+    void finishCoupon() {
+        // given
+        Coupon coupon = Coupon.builder()
+            .name("쿠폰명")
+            .status(CouponStatus.PUBLISHABLE)
+            .expiredAt(LocalDateTime.now().plusDays(1))
+            .quantity(1)
+            .build();
+        couponRepository.save(coupon);
+
+
+        // when
+        couponService.finishCoupon(coupon.getId());
+
+        // then
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.FINISHED);
     }
 }

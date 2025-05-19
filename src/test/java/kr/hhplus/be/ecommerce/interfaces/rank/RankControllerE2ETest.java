@@ -5,7 +5,7 @@ import kr.hhplus.be.ecommerce.domain.product.ProductRepository;
 import kr.hhplus.be.ecommerce.domain.product.ProductSellingStatus;
 import kr.hhplus.be.ecommerce.domain.rank.Rank;
 import kr.hhplus.be.ecommerce.domain.rank.RankRepository;
-import kr.hhplus.be.ecommerce.support.E2EControllerTestSupport;
+import kr.hhplus.be.ecommerce.test.support.E2EControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

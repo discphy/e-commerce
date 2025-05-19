@@ -1,7 +1,7 @@
 package kr.hhplus.be.ecommerce.interfaces.rank;
 
 import kr.hhplus.be.ecommerce.application.rank.RankResult;
-import kr.hhplus.be.ecommerce.support.ControllerTestSupport;
+import kr.hhplus.be.ecommerce.test.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

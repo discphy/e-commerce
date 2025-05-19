@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.container;
+package kr.hhplus.be.ecommerce.test.support.container;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
