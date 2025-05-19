@@ -48,6 +48,11 @@ public class RankFacade {
         return getPopularProducts(criteria.getTop(), criteria.getDays());
     }
 
+    @Transactional
+    public void persistDailyRank(RankCriteria.PersistDailyRank criteria) {
+        rankService.persistDailyRank(criteria.getDate());
+    }
+
     private RankCommand.CreateList createListCommand(OrderInfo.PaidProducts paidProducts, LocalDate yesterday) {
         List<RankCommand.Create> commands = paidProducts.getProducts().stream()
             .map(product -> createCommand(product, yesterday))
@@ -65,10 +70,9 @@ public class RankFacade {
     }
 
     private RankResult.PopularProducts getPopularProducts(int top, int days) {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(days);
+        LocalDate now = LocalDate.now();
 
-        RankCommand.PopularSellRank popularSellRankCommand = RankCommand.PopularSellRank.of(top, startDate, endDate);
+        RankCommand.PopularSellRank popularSellRankCommand = RankCommand.PopularSellRank.of(top, days, now);
         RankInfo.PopularProducts popularProducts = rankService.getPopularSellRank(popularSellRankCommand);
 
         ProductCommand.Products productsCommand = ProductCommand.Products.of(popularProducts.getProductIds());

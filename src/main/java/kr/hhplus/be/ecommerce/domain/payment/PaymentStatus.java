@@ -23,8 +23,4 @@ public enum PaymentStatus {
     public boolean cannotPayable() {
         return CANNOT_PAYABLE_STATUSES.contains(this);
     }
-
-    public static List<PaymentStatus> forCompleted() {
-        return List.of(COMPLETED);
-    }
 }

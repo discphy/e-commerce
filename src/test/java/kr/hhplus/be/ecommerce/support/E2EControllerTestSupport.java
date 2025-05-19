@@ -3,6 +3,7 @@ package kr.hhplus.be.ecommerce.support;
 import io.restassured.RestAssured;
 import kr.hhplus.be.ecommerce.support.database.DatabaseCleaner;
 import kr.hhplus.be.ecommerce.support.database.RedisCacheCleaner;
+import kr.hhplus.be.ecommerce.support.database.RedisKeyCleaner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public abstract class E2EControllerTestSupport extends IntegrationTestSupport {
     @Autowired
     private RedisCacheCleaner redisCacheCleaner;
 
+    @Autowired
+    private RedisKeyCleaner redisKeyCleaner;
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
@@ -28,5 +32,6 @@ public abstract class E2EControllerTestSupport extends IntegrationTestSupport {
     void tearDown() {
         databaseCleaner.clean();
         redisCacheCleaner.clean();
+        redisKeyCleaner.clean();
     }
 }

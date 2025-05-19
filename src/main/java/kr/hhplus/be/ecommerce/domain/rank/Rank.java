@@ -51,6 +51,10 @@ public class Rank {
             .build();
     }
 
+    public RankKey toKey() {
+        return RankKey.ofDate(rankType, rankDate);
+    }
+
     private static void validateProduct(Long productId) {
         if (productId == null) {
             throw new IllegalArgumentException("상품이 존재하지 않습니다.");

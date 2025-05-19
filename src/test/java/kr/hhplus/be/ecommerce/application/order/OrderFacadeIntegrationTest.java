@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.application.order;
 
+import kr.hhplus.be.ecommerce.domain.rank.*;
 import kr.hhplus.be.ecommerce.support.IntegrationTestSupport;
 import kr.hhplus.be.ecommerce.domain.balance.Balance;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceRepository;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,6 +54,9 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private CouponRepository couponRepository;
+
+    @Autowired
+    private RankRepository rankRepository;
 
     private User user;
 
@@ -97,6 +102,16 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
         Order order = orderRepository.findById(result.getOrderId());
         assertThat(order.getTotalPrice()).isEqualTo(200_000L);
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+
+        RankCommand.Query command = RankCommand.Query.of(
+            1,
+            RankKey.ofDays(RankType.SELL, 3),
+            RankKeys.ofDaysWithDate(RankType.SELL, 3, LocalDate.now())
+        );
+        List<RankInfo.PopularProduct> popularSellRanks = rankRepository.findPopularSellRanks(command);
+        assertThat(popularSellRanks).hasSize(1)
+            .extracting(RankInfo.PopularProduct::getProductId)
+            .containsExactly(product.getId());
     }
 
     @DisplayName("쿠폰이 있는 주문 결제를 한다.")
@@ -129,5 +144,15 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
         Order order = orderRepository.findById(result.getOrderId());
         assertThat(order.getTotalPrice()).isEqualTo(180_000L);
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+
+        RankCommand.Query command = RankCommand.Query.of(
+            1,
+            RankKey.ofDays(RankType.SELL, 3),
+            RankKeys.ofDaysWithDate(RankType.SELL, 3, LocalDate.now())
+        );
+        List<RankInfo.PopularProduct> popularSellRanks = rankRepository.findPopularSellRanks(command);
+        assertThat(popularSellRanks).hasSize(1)
+            .extracting(RankInfo.PopularProduct::getProductId)
+            .containsExactly(product.getId());
     }
 }
