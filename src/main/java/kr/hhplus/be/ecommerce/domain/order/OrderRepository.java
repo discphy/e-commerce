@@ -9,6 +9,4 @@ public interface OrderRepository {
     Order findById(Long orderId);
 
     List<OrderProduct> findOrderIdsIn(List<Long> orderIds);
-
-    List<OrderInfo.PaidProduct> findPaidProducts(OrderCommand.PaidProducts command);
 }

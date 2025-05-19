@@ -13,7 +13,6 @@ public class RankRepositoryImpl implements RankRepository {
 
     private final RankJpaRepository rankJpaRepository;
     private final RankRedisRepository rankRedisRepository;
-    private final RankQueryDslRepository rankQueryDslRepository;
     private final RankJdbcTemplateRepository rankJdbcTemplateRepository;
 
     @Override

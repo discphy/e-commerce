@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -79,31 +79,5 @@ class OrderServiceUnitTest extends MockTestSupport {
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
         verify(orderExternalClient, times(1)).sendOrderMessage(order);
-    }
-
-    @DisplayName("결제 완료 된 상품을 요청한 날짜에 조회한다.")
-    @Test
-    void getPaidProducts() {
-        // given
-        OrderCommand.DateQuery command = OrderCommand.DateQuery.of(LocalDate.of(2025, 4, 23));
-
-        List<OrderInfo.PaidProduct> paidProducts = List.of(
-            OrderInfo.PaidProduct.of(1L, 2),
-            OrderInfo.PaidProduct.of(2L, 4)
-        );
-
-        when(orderRepository.findPaidProducts(any()))
-            .thenReturn(paidProducts);
-
-        // when
-        OrderInfo.PaidProducts result = orderService.getPaidProducts(command);
-
-        // then
-        assertThat(result.getProducts()).hasSize(2)
-            .extracting("productId", "quantity")
-            .containsExactlyInAnyOrder(
-                tuple(1L, 2),
-                tuple(2L, 4)
-            );
     }
 }
