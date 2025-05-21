@@ -22,7 +22,7 @@ class OrderServiceUnitTest extends MockTestSupport {
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderExternalClient orderExternalClient;
+    private OrderEventPublisher orderEventPublisher;
 
     @DisplayName("주문을 생성한다.")
     @Test
@@ -58,7 +58,7 @@ class OrderServiceUnitTest extends MockTestSupport {
             .hasMessage("주문이 존재하지 않습니다.");
     }
 
-    @DisplayName("주문을 결제한다. 결제 완료 시, 외부 데이터 플랫폼으로 주문정보를 전송한다.")
+    @DisplayName("주문을 결제한다.")
     @Test
     void paidOrder() {
         // given
@@ -78,6 +78,43 @@ class OrderServiceUnitTest extends MockTestSupport {
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
-        verify(orderExternalClient, times(1)).sendOrderMessage(order);
+    }
+
+    @DisplayName("주문을 결제 시, 이벤트를 발행한다.")
+    @Test
+    void publishEventAfterPaidOrder() {
+        // given
+        Order order = Order.create(1L,
+            1L,
+            0.1,
+            List.of(
+                OrderProduct.create(1L, "상품명", 2_000L, 2)
+            )
+        );
+
+        when(orderRepository.findById(any()))
+            .thenReturn(order);
+
+        // when
+        orderService.paidOrder(1L);
+
+        // then
+        verify(orderEventPublisher, times(1)).paid(any(OrderEvent.Paid.class));
+    }
+
+    @DisplayName("주문을 결제 시, 실패하면 이벤트를 발행하지 않는다.")
+    @Test
+    void notPublishEventAfterFailedPaidOrder() {
+        // given
+        when(orderRepository.findById(any()))
+            .thenThrow(new IllegalArgumentException("주문이 존재하지 않습니다."));
+
+        // when
+        assertThatThrownBy(() -> orderService.paidOrder(1L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("주문이 존재하지 않습니다.");
+
+        // then
+        verify(orderEventPublisher, never()).paid(any(OrderEvent.Paid.class));
     }
 }
