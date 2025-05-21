@@ -2,8 +2,8 @@ package kr.hhplus.be.ecommerce.docs.order;
 
 import kr.hhplus.be.ecommerce.application.order.OrderFacade;
 import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
-import kr.hhplus.be.ecommerce.interfaces.order.OrderController;
-import kr.hhplus.be.ecommerce.interfaces.order.OrderRequest;
+import kr.hhplus.be.ecommerce.interfaces.order.api.OrderController;
+import kr.hhplus.be.ecommerce.interfaces.order.api.OrderRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
