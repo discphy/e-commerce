@@ -1,42 +1,100 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CouponService {
 
     private final CouponRepository couponRepository;
-
-    @Transactional
-    public void publishCoupon(Long couponId) {
-        Coupon coupon = couponRepository.findByIdWithLock(couponId);
-        coupon.publish();
-    }
+    private final CouponClient couponClient;
 
     public CouponInfo.Coupon getCoupon(Long couponId) {
-        Coupon coupon = couponRepository.findById(couponId);
+        Coupon coupon = couponRepository.findCouponById(couponId);
         return CouponInfo.Coupon.builder()
-                .couponId(coupon.getId())
-                .name(coupon.getName())
-                .discountRate(coupon.getDiscountRate())
-                .build();
+            .couponId(coupon.getId())
+            .couponName(coupon.getName())
+            .discountRate(coupon.getDiscountRate())
+            .build();
     }
 
-    public CouponInfo.PublishableCoupons getPublishableCoupons() {
-        List<CouponInfo.PublishableCoupon> list = couponRepository.findByStatus(CouponStatus.PUBLISHABLE).stream()
-            .map(coupon -> CouponInfo.PublishableCoupon.of(coupon.getId(), coupon.getQuantity()))
+    public CouponInfo.UsableCoupon getUsableCoupon(CouponCommand.UsableCoupon command) {
+        UserCoupon userCoupon = couponRepository.findByUserIdAndCouponId(command.getUserId(), command.getCouponId());
+
+        if (userCoupon.cannotUse()) {
+            throw new IllegalStateException("사용할 수 없는 쿠폰입니다.");
+        }
+
+        return CouponInfo.UsableCoupon.of(userCoupon.getId());
+    }
+
+    public void useUserCoupon(Long userCouponId) {
+        UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId);
+        userCoupon.use();
+    }
+
+    @Transactional(readOnly = true)
+    public CouponInfo.Coupons getUserCoupons(Long userId) {
+        couponClient.getUser(userId);
+        return CouponInfo.Coupons.of(couponRepository.findByUserId(userId));
+    }
+
+    public boolean requestPublishUserCoupon(CouponCommand.PublishRequest command) {
+        boolean isSuccess = couponRepository.save(command);
+
+        if (!isSuccess) {
+            throw new IllegalArgumentException("쿠폰 발급 요청에 실패했습니다.");
+        }
+
+        return true;
+    }
+
+    @Transactional
+    public void publishUserCoupons(CouponCommand.PublishCoupons command) {
+        couponRepository.findByStatus(CouponStatus.PUBLISHABLE).stream()
+            .map(c -> CouponCommand.PublishCoupon.of(c.getId(), c.getQuantity(), command.getMaxPublishCount()))
+            .forEach(this::publishUserCoupons);
+    }
+
+    @Transactional
+    public void finishedPublishCoupons() {
+        couponRepository.findByStatus(CouponStatus.PUBLISHABLE).stream()
+            .filter(this::isPublishFinished)
+            .forEach(Coupon::finish);
+    }
+
+    private boolean isPublishFinished(Coupon coupon) {
+        int publishedCount = couponRepository.countByCouponId(coupon.getId());
+
+        if (publishedCount > coupon.getQuantity()) {
+            log.error("발급된 쿠폰 개수가 발급 가능 개수를 초과했습니다. 쿠폰 ID: {}", coupon.getId());
+        }
+
+        return publishedCount >= coupon.getQuantity();
+    }
+
+    private void publishUserCoupons(CouponCommand.PublishCoupon command) {
+        int start = couponRepository.countByCouponId(command.getCouponId());
+        int end = Math.min(command.getQuantity(), start + command.getMaxPublishCount());
+
+        if (start >= command.getQuantity()) {
+            log.info("발급할 쿠폰 수량이 없습니다. 쿠폰 ID : {}", command.getCouponId());
+            return;
+        }
+
+        List<CouponInfo.Candidates> candidates = couponRepository
+            .findPublishCandidates(CouponCommand.Candidates.of(command.getCouponId(), start, end));
+
+        List<UserCoupon> coupons = candidates.stream()
+            .map(uc -> UserCoupon.create(uc.getUserId(), command.getCouponId(), uc.getIssuedAt()))
             .toList();
 
-        return CouponInfo.PublishableCoupons.of(list);
-    }
-
-    public void finishCoupon(Long couponId) {
-        Coupon coupon = couponRepository.findById(couponId);
-        coupon.finish();
+        couponRepository.saveAll(coupons);
     }
 }

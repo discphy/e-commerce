@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.infrastructure.coupon;
+package kr.hhplus.be.ecommerce.infrastructure.coupon.repository;
 
 import jakarta.persistence.LockModeType;
 import kr.hhplus.be.ecommerce.domain.coupon.Coupon;

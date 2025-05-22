@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum KeyType {
 
     RANK("랭크"),
-    USER_COUPON("사용자 쿠폰"),
+    COUPON("사용자 쿠폰"),
     ;
 
     private final String description;

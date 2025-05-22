@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.infrastructure.user;
+package kr.hhplus.be.ecommerce.infrastructure.coupon.repository;
 
-import kr.hhplus.be.ecommerce.domain.user.*;
+import kr.hhplus.be.ecommerce.domain.coupon.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -8,11 +8,29 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class UserCouponRepositoryImpl implements UserCouponRepository {
+public class CouponRepositoryImpl implements CouponRepository {
 
+    private final CouponJpaRepository couponJpaRepository;
     private final UserCouponJpaRepository userCouponJpaRepository;
     private final UserCouponRedisRepository userCouponRedisRepository;
+    private final UserCouponQueryDslRepository userCouponQueryDslRepository;
     private final UserCouponJdbcTemplateRepository userCouponJdbcTemplateRepository;
+
+    @Override
+    public Coupon save(Coupon coupon) {
+        return couponJpaRepository.save(coupon);
+    }
+
+    @Override
+    public Coupon findCouponById(Long couponId) {
+        return couponJpaRepository.findById(couponId)
+            .orElseThrow(() -> new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
+    }
+
+    @Override
+    public List<Coupon> findByStatus(CouponStatus status) {
+        return couponJpaRepository.findByStatus(status);
+    }
 
     @Override
     public UserCoupon save(UserCoupon userCoupon) {
@@ -26,18 +44,18 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     }
 
     @Override
-    public UserCoupon findById(Long userCouponId) {
+    public UserCoupon findUserCouponById(Long userCouponId) {
         return userCouponJpaRepository.findById(userCouponId)
             .orElseThrow(() -> new IllegalArgumentException("보유한 쿠폰을 찾을 수 없습니다."));
     }
 
     @Override
-    public List<UserCoupon> findByUserIdAndUsableStatusIn(Long userId, List<UserCouponUsedStatus> statuses) {
-        return userCouponJpaRepository.findByUserIdAndUsedStatusIn(userId, statuses);
+    public List<CouponInfo.Coupon> findByUserId(Long userId) {
+        return userCouponQueryDslRepository.findByUserId(userId);
     }
 
     @Override
-    public boolean save(UserCouponCommand.PublishRequest command) {
+    public boolean save(CouponCommand.PublishRequest command) {
         return userCouponRedisRepository.save(command);
     }
 
@@ -47,17 +65,12 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     }
 
     @Override
-    public List<UserCouponInfo.Candidates> findPublishCandidates(UserCouponCommand.Candidates command) {
+    public List<CouponInfo.Candidates> findPublishCandidates(CouponCommand.Candidates command) {
         return userCouponRedisRepository.findPublishCandidates(command);
     }
 
     @Override
     public void saveAll(List<UserCoupon> userCoupons) {
         userCouponJdbcTemplateRepository.batchInsert(userCoupons);
-    }
-
-    @Override
-    public List<UserCoupon> findCouponId(Long couponId) {
-        return userCouponJpaRepository.findByCouponId(couponId);
     }
 }
