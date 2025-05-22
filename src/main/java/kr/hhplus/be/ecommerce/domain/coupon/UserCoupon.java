@@ -76,6 +76,15 @@ public class UserCoupon {
         this.usedAt = LocalDateTime.now();
     }
 
+    public void cancel() {
+        if (!cannotUse()) {
+            throw new IllegalStateException("사용할 수 있는 쿠폰을 취소할 수는 없습니다.");
+        }
+
+        this.usedStatus = UserCouponUsedStatus.UNUSED;
+        this.usedAt = null;
+    }
+
     public boolean cannotUse() {
         return usedStatus.cannotUsable();
     }

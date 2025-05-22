@@ -173,6 +173,59 @@ class CouponServiceIntegrationTest extends IntegrationTestSupport {
         assertThat(updatedUserCoupon.getUsedAt()).isNotNull();
     }
 
+    @DisplayName("사용자 쿠폰이 없으면, 쿠폰을 취소할 수 없다.")
+    @Test
+    void cancelUserCouponWhenNotFound() {
+        // given
+        Long userCouponId = 1L;
+
+        // when & then
+        assertThatThrownBy(() -> couponService.cancelUserCoupon(userCouponId))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("보유한 쿠폰을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("사용할 수 있는 쿠폰은 취소할 수 없다.")
+    @Test
+    void cancelUserCouponWhenCannotUse() {
+        // given
+        Long userId = 1L;
+        Long couponId = 1L;
+        UserCoupon userCoupon = UserCoupon.builder()
+            .userId(userId)
+            .couponId(couponId)
+            .usedStatus(UserCouponUsedStatus.UNUSED)
+            .build();
+        couponRepository.save(userCoupon);
+
+        // when & then
+        assertThatThrownBy(() -> couponService.cancelUserCoupon(userCoupon.getId()))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("사용할 수 있는 쿠폰을 취소할 수는 없습니다.");
+    }
+
+    @DisplayName("사용한 쿠폰을 취소한다.")
+    @Test
+    void cancelUserCoupon() {
+        // given
+        Long userId = 1L;
+        Long couponId = 1L;
+        UserCoupon userCoupon = UserCoupon.builder()
+            .userId(userId)
+            .couponId(couponId)
+            .usedStatus(UserCouponUsedStatus.USED)
+            .build();
+        couponRepository.save(userCoupon);
+
+        // when
+        couponService.cancelUserCoupon(userCoupon.getId());
+
+        // then
+        UserCoupon updatedUserCoupon = couponRepository.findUserCouponById(userCoupon.getId());
+        assertThat(updatedUserCoupon.getUsedStatus()).isEqualTo(UserCouponUsedStatus.UNUSED);
+        assertThat(updatedUserCoupon.getUsedAt()).isNull();
+    }
+
     @DisplayName("사용자의 쿠폰을 가져올 시, 사용자가 존재해야 한다.")
     @Test
     void getUserCouponsWithNotExistUser() {

@@ -15,6 +15,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final CouponClient couponClient;
 
+    @Transactional(readOnly = true)
     public CouponInfo.Coupon getCoupon(Long couponId) {
         Coupon coupon = couponRepository.findCouponById(couponId);
         return CouponInfo.Coupon.builder()
@@ -24,6 +25,7 @@ public class CouponService {
             .build();
     }
 
+    @Transactional(readOnly = true)
     public CouponInfo.UsableCoupon getUsableCoupon(CouponCommand.UsableCoupon command) {
         UserCoupon userCoupon = couponRepository.findByUserIdAndCouponId(command.getUserId(), command.getCouponId());
 
@@ -34,9 +36,16 @@ public class CouponService {
         return CouponInfo.UsableCoupon.of(userCoupon.getId());
     }
 
+    @Transactional
     public void useUserCoupon(Long userCouponId) {
         UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId);
         userCoupon.use();
+    }
+
+    @Transactional
+    public void cancelUserCoupon(Long userCouponId) {
+        UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId);
+        userCoupon.cancel();
     }
 
     @Transactional(readOnly = true)

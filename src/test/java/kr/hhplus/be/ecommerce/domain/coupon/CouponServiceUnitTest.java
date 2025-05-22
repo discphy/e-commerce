@@ -166,6 +166,56 @@ class CouponServiceUnitTest extends MockTestSupport {
         assertThat(userCoupon.getUsedStatus()).isEqualTo(UserCouponUsedStatus.USED);
     }
 
+    @DisplayName("유효한 ID로 쿠폰을 취소할 수 있다.")
+    @Test
+    void cancelCouponWithInvalidId() {
+        // given
+        when(couponRepository.findUserCouponById(anyLong()))
+            .thenThrow(new IllegalArgumentException("보유한 쿠폰을 찾을 수 없습니다."));
+
+        // when & then
+        assertThatThrownBy(() -> couponService.useUserCoupon(anyLong()))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("보유한 쿠폰을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("사용 가능한 쿠폰은 취소할 수 없다.")
+    @Test
+    void cancelCouponCannotUseCoupon() {
+        // given
+        UserCoupon userCoupon = UserCoupon.builder()
+            .usedStatus(UserCouponUsedStatus.UNUSED)
+            .build();
+
+        when(couponRepository.findUserCouponById(anyLong()))
+            .thenReturn(userCoupon);
+
+        // when & then
+        assertThatThrownBy(() -> couponService.cancelUserCoupon(anyLong()))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("사용할 수 있는 쿠폰을 취소할 수는 없습니다.");
+    }
+
+    @DisplayName("쿠폰을 취소한다.")
+    @Test
+    void cancelCoupon() {
+        // given
+        UserCoupon userCoupon = UserCoupon.builder()
+            .id(1L)
+            .usedStatus(UserCouponUsedStatus.USED)
+            .build();
+
+        when(couponRepository.findUserCouponById(anyLong()))
+            .thenReturn(userCoupon);
+
+        // when
+        couponService.cancelUserCoupon(1L);
+
+        // then
+        assertThat(userCoupon.getUsedStatus()).isEqualTo(UserCouponUsedStatus.UNUSED);
+        assertThat(userCoupon.getUsedAt()).isNull();
+    }
+
     @DisplayName("보유 쿠폰 목록 가져올 시, 사용자가 존재해야 한다.")
     @Test
     void getUserCouponsWithNotExistUser() {
