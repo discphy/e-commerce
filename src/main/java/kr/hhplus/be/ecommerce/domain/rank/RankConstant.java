@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.application.rank;
+package kr.hhplus.be.ecommerce.domain.rank;
 
 public class RankConstant {
 

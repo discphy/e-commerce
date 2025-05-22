@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.interfaces.rank;
+package kr.hhplus.be.ecommerce.interfaces.rank.api;
 
-import kr.hhplus.be.ecommerce.application.rank.RankResult;
+import kr.hhplus.be.ecommerce.domain.rank.RankInfo;
 import kr.hhplus.be.ecommerce.test.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,10 +20,14 @@ class RankControllerTest extends ControllerTestSupport {
     @Test
     void getRanks() throws Exception {
         // given
-        when(rankFacade.getPopularProducts(any()))
-            .thenReturn(RankResult.PopularProducts.of(
+        when(rankService.cachedPopularProducts(any()))
+            .thenReturn(RankInfo.PopularProducts.of(
                 List.of(
-                    RankResult.PopularProduct.of(1L, "상품명", 300_000L)
+                    RankInfo.PopularProduct.builder()
+                        .productId(1L)
+                        .productName("상품명")
+                        .productPrice(300_000L)
+                        .build()
                 )
             ));
 

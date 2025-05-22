@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.interfaces.rank;
+package kr.hhplus.be.ecommerce.interfaces.rank.api;
 
 import kr.hhplus.be.ecommerce.domain.product.Product;
 import kr.hhplus.be.ecommerce.domain.product.ProductRepository;

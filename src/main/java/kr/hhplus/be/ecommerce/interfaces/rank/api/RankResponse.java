@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.interfaces.rank;
+package kr.hhplus.be.ecommerce.interfaces.rank.api;
 
-import kr.hhplus.be.ecommerce.application.rank.RankResult;
+import kr.hhplus.be.ecommerce.domain.rank.RankInfo;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,8 +21,8 @@ public class RankResponse {
             this.products = products;
         }
 
-        public static PopularProducts of(RankResult.PopularProducts products) {
-            return new PopularProducts(products.getProducts().stream()
+        public static PopularProducts of(RankInfo.PopularProducts popularProducts) {
+            return new PopularProducts(popularProducts.getProducts().stream()
                 .map(PopularProduct::of)
                 .toList());
         }
@@ -43,7 +43,7 @@ public class RankResponse {
             this.price = price;
         }
 
-        public static PopularProduct of(RankResult.PopularProduct product) {
+        public static PopularProduct of(RankInfo.PopularProduct product) {
             return PopularProduct.builder()
                 .id(product.getProductId())
                 .name(product.getProductName())
