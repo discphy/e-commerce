@@ -18,7 +18,6 @@ public class RankService {
 
     private final RankRepository rankRepository;
 
-    @Transactional
     public List<Rank> createSellRank(RankCommand.CreateList command) {
         return command.getRanks().stream()
             .map(this::createSell)

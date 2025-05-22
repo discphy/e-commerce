@@ -2,6 +2,7 @@ package kr.hhplus.be.ecommerce.domain.product;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    @Transactional(readOnly = true)
     public ProductInfo.OrderProducts getOrderProducts(ProductCommand.OrderProducts command) {
         List<ProductInfo.OrderProduct> orderProducts = command.getProducts().stream()
             .map(this::toOrderProductInfo)
@@ -19,11 +21,13 @@ public class ProductService {
         return ProductInfo.OrderProducts.of(orderProducts);
     }
 
+    @Transactional(readOnly = true)
     public ProductInfo.Products getSellingProducts() {
         List<ProductInfo.Product> products = productRepository.findBySellStatusIn(ProductSellingStatus.forSelling());
         return ProductInfo.Products.of(products);
     }
 
+    @Transactional(readOnly = true)
     public ProductInfo.Products getProducts(ProductCommand.Products command) {
         List<ProductInfo.Product> products = command.getProductIds().stream()
             .map(productRepository::findById)
