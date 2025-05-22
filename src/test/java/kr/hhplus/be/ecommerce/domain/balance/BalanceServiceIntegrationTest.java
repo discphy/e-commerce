@@ -1,18 +1,23 @@
 package kr.hhplus.be.ecommerce.domain.balance;
 
-import kr.hhplus.be.ecommerce.infrastructure.balance.BalanceTransactionJpaRepository;
+import kr.hhplus.be.ecommerce.infrastructure.balance.repository.BalanceTransactionJpaRepository;
 import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @Transactional
 class BalanceServiceIntegrationTest extends IntegrationTestSupport {
+
+    @MockitoBean
+    private BalanceClient balanceClient;
 
     @Autowired
     private BalanceService balanceService;
@@ -22,6 +27,22 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private BalanceTransactionJpaRepository balanceTransactionJpaRepository;
+
+    @DisplayName("잔고 충전 시, 사용자가 존재해야 한다.")
+    @Test
+    void chargeBalanceWhenUserDoesNotExist() {
+        // given
+        Long notExistUserId = 999L;
+        BalanceCommand.Charge command = BalanceCommand.Charge.of(notExistUserId, 10_000L);
+
+        when(balanceClient.getUser(notExistUserId))
+            .thenThrow(new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.chargeBalance(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("사용자를 찾을 수 없습니다.");
+    }
 
     @DisplayName("잔고 충전 시, 잔고가 존재하면 충전 금액을 추가한다.")
     @Test
@@ -202,6 +223,21 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
                 tuple(5_000L, BalanceTransactionType.CHARGE),
                 tuple(-2_000L, BalanceTransactionType.USE)
             );
+    }
+
+    @DisplayName("잔고 조회 시, 사용자가 존재해야 한다.")
+    @Test
+    void getBalanceWhenUserDoesNotExist() {
+        // given
+        Long notExistUserId = 999L;
+
+        when(balanceClient.getUser(notExistUserId))
+            .thenThrow(new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.getBalance(notExistUserId))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("사용자를 찾을 수 없습니다.");
     }
 
     @DisplayName("잔고 조회 시, 잔고가 존재하면 잔고 정보를 반환한다.")

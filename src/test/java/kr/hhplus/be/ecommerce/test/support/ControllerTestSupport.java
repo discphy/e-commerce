@@ -1,12 +1,12 @@
 package kr.hhplus.be.ecommerce.test.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.ecommerce.application.balance.BalanceFacade;
 import kr.hhplus.be.ecommerce.application.order.OrderFacade;
 import kr.hhplus.be.ecommerce.application.product.ProductFacade;
 import kr.hhplus.be.ecommerce.application.rank.RankFacade;
 import kr.hhplus.be.ecommerce.application.user.UserCouponFacade;
-import kr.hhplus.be.ecommerce.interfaces.balance.BalanceController;
+import kr.hhplus.be.ecommerce.domain.balance.BalanceService;
+import kr.hhplus.be.ecommerce.interfaces.balance.api.BalanceController;
 import kr.hhplus.be.ecommerce.interfaces.order.api.OrderController;
 import kr.hhplus.be.ecommerce.interfaces.product.ProductController;
 import kr.hhplus.be.ecommerce.interfaces.rank.RankController;
@@ -32,7 +32,7 @@ public abstract class ControllerTestSupport {
     protected ObjectMapper objectMapper;
 
     @MockitoBean
-    protected BalanceFacade balanceFacade;
+    protected BalanceService balanceService;
 
     @MockitoBean
     protected OrderFacade orderFacade;
