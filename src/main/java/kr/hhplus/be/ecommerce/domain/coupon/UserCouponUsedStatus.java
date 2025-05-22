@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.domain.user;
+package kr.hhplus.be.ecommerce.domain.coupon;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +19,5 @@ public enum UserCouponUsedStatus {
 
     public boolean cannotUsable() {
         return CANNOT_USABLE_STATUSES.contains(this);
-    }
-
-    public static List<UserCouponUsedStatus> forUsable() {
-        return List.of(UNUSED);
     }
 }

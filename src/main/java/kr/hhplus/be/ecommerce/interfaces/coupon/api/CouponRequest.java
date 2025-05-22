@@ -1,13 +1,15 @@
-package kr.hhplus.be.ecommerce.interfaces.user;
+package kr.hhplus.be.ecommerce.interfaces.coupon.api;
 
 import jakarta.validation.constraints.NotNull;
-import kr.hhplus.be.ecommerce.application.user.UserCouponCriteria;
+import kr.hhplus.be.ecommerce.domain.coupon.CouponCommand;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserCouponRequest {
+public class CouponRequest {
 
     @Getter
     @NoArgsConstructor
@@ -24,8 +26,8 @@ public class UserCouponRequest {
             return new Publish(couponId);
         }
 
-        public UserCouponCriteria.PublishRequest toCriteria(Long userId) {
-            return UserCouponCriteria.PublishRequest.of(userId, couponId);
+        public CouponCommand.PublishRequest toCommand(Long id, LocalDateTime issuedAt) {
+            return CouponCommand.PublishRequest.of(id, couponId, issuedAt);
         }
     }
 

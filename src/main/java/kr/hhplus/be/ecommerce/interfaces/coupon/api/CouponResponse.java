@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.interfaces.user;
+package kr.hhplus.be.ecommerce.interfaces.coupon.api;
 
-import kr.hhplus.be.ecommerce.application.user.UserCouponResult;
+import kr.hhplus.be.ecommerce.domain.coupon.CouponInfo;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,21 +9,21 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserCouponResponse {
+public class CouponResponse {
 
     @Getter
     @NoArgsConstructor
     public static class Coupons {
 
-        private List<CouponV1> coupons;
+        private List<Coupon> coupons;
 
-        private Coupons(List<CouponV1> coupons) {
+        private Coupons(List<Coupon> coupons) {
             this.coupons = coupons;
         }
 
-        public static Coupons of(UserCouponResult.Coupons coupons) {
-            return new Coupons(coupons.getCoupons().stream()
-                .map(CouponV1::of)
+        public static Coupons of(CouponInfo.Coupons userCoupons) {
+            return new Coupons(userCoupons.getCoupons().stream()
+                .map(Coupon::of)
                 .toList()
             );
         }
@@ -31,21 +31,21 @@ public class UserCouponResponse {
 
     @Getter
     @NoArgsConstructor
-    public static class CouponV1 {
+    public static class Coupon {
 
         private Long id;
         private String name;
         private double discountRate;
 
         @Builder
-        private CouponV1(Long id, String name, double discountRate) {
+        private Coupon(Long id, String name, double discountRate) {
             this.id = id;
             this.name = name;
             this.discountRate = discountRate;
         }
 
-        public static CouponV1 of(UserCouponResult.Coupon coupon) {
-            return CouponV1.builder()
+        public static Coupon of(CouponInfo.Coupon coupon) {
+            return Coupon.builder()
                 .id(coupon.getUserCouponId())
                 .name(coupon.getCouponName())
                 .discountRate(coupon.getDiscountRate())

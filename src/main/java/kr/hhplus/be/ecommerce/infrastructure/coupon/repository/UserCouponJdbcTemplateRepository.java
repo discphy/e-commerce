@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.infrastructure.user;
+package kr.hhplus.be.ecommerce.infrastructure.coupon.repository;
 
-import kr.hhplus.be.ecommerce.domain.user.UserCoupon;
+import kr.hhplus.be.ecommerce.domain.coupon.UserCoupon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;

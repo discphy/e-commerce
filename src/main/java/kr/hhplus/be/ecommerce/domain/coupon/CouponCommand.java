@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.domain.user;
+package kr.hhplus.be.ecommerce.domain.coupon;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserCouponCommand {
+public class CouponCommand {
 
     @Getter
     public static class UsableCoupon {
@@ -44,36 +44,34 @@ public class UserCouponCommand {
     }
 
     @Getter
-    public static class Publish {
+    public static class PublishCoupons {
+
+        private final int maxPublishCount;
+
+        private PublishCoupons(int maxPublishCount) {
+            this.maxPublishCount = maxPublishCount;
+        }
+
+        public static PublishCoupons of(int maxPublishCount) {
+            return new PublishCoupons(maxPublishCount);
+        }
+    }
+
+    @Getter
+    public static class PublishCoupon {
 
         private final Long couponId;
         private final int quantity;
         private final int maxPublishCount;
 
-        private Publish(Long couponId, int quantity, int maxPublishCount) {
+        private PublishCoupon(Long couponId, int quantity, int maxPublishCount) {
             this.couponId = couponId;
             this.quantity = quantity;
             this.maxPublishCount = maxPublishCount;
         }
 
-        public static Publish of(Long couponId, int quantity, int maxPublishCount) {
-            return new Publish(couponId, quantity, maxPublishCount);
-        }
-    }
-
-    @Getter
-    public static class PublishFinish {
-
-        private final Long couponId;
-        private final int quantity;
-
-        private PublishFinish(Long couponId, int quantity) {
-            this.couponId = couponId;
-            this.quantity = quantity;
-        }
-
-        public static PublishFinish of(Long couponId, int quantity) {
-            return new PublishFinish(couponId, quantity);
+        public static PublishCoupon of(Long couponId, int quantity, int maxPublishCount) {
+            return new PublishCoupon(couponId, quantity, maxPublishCount);
         }
     }
 

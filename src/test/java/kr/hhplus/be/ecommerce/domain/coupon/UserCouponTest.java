@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.domain.user;
+package kr.hhplus.be.ecommerce.domain.coupon;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

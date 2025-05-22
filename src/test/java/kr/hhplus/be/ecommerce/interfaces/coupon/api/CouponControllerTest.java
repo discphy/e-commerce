@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.interfaces.user;
+package kr.hhplus.be.ecommerce.interfaces.coupon.api;
 
-import kr.hhplus.be.ecommerce.application.user.UserCouponResult;
+import kr.hhplus.be.ecommerce.domain.coupon.CouponInfo;
 import kr.hhplus.be.ecommerce.test.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,16 +15,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class UserCouponControllerTest extends ControllerTestSupport {
+class CouponControllerTest extends ControllerTestSupport {
 
     @DisplayName("보유한 쿠폰 목록을 가져온다.")
     @Test
     void getCoupons() throws Exception {
         // given
-        when(userCouponFacade.getUserCoupons(1L))
-            .thenReturn(UserCouponResult.Coupons.of(
+        when(couponService.getUserCoupons(1L))
+            .thenReturn(CouponInfo.Coupons.of(
                 List.of(
-                    UserCouponResult.Coupon.of(1L, "쿠폰명", 0.1)
+                    CouponInfo.Coupon.builder()
+                        .userCouponId(1L)
+                        .couponName("쿠폰명")
+                        .discountRate(0.1)
+                        .build()
                 )
             ));
 
@@ -45,7 +49,7 @@ class UserCouponControllerTest extends ControllerTestSupport {
     @Test
     void publishCouponWithoutCouponId() throws Exception {
         // given
-        UserCouponRequest.Publish request = new UserCouponRequest.Publish();
+        CouponRequest.Publish request = new CouponRequest.Publish();
 
         // when & then
         mockMvc.perform(
@@ -63,7 +67,7 @@ class UserCouponControllerTest extends ControllerTestSupport {
     @Test
     void publishCoupon() throws Exception {
         // given
-        UserCouponRequest.Publish request = UserCouponRequest.Publish.of(1L);
+        CouponRequest.Publish request = CouponRequest.Publish.of(1L);
 
         // when & then
         mockMvc.perform(
