@@ -1,8 +1,12 @@
 package kr.hhplus.be.ecommerce.domain.rank;
 
+import kr.hhplus.be.ecommerce.domain.product.Product;
+import kr.hhplus.be.ecommerce.support.cache.CacheType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +18,7 @@ public class RankService {
 
     private final RankRepository rankRepository;
 
+    @Transactional
     public List<Rank> createSellRank(RankCommand.CreateList command) {
         return command.getRanks().stream()
             .map(this::createSell)
@@ -21,26 +26,37 @@ public class RankService {
             .toList();
     }
 
-    public RankInfo.PopularProducts getPopularSellRank(RankCommand.PopularSellRank command) {
+    @Transactional(readOnly = true)
+    @Cacheable(value = CacheType.CacheName.POPULAR_PRODUCT, key = "'top:' + #command.top + ':days:' + #command.days")
+    public RankInfo.PopularProducts cachedPopularProducts(RankCommand.PopularProducts command) {
+        return getPopularProducts(command);
+    }
+
+    @Transactional(readOnly = true)
+    public RankInfo.PopularProducts getPopularProducts(RankCommand.PopularProducts command) {
         RankKey target = RankKey.ofDays(RankType.SELL, command.getDays());
         RankKeys sources = RankKeys.ofDaysWithDate(RankType.SELL, command.getDays(), command.getDate());
 
         RankCommand.Query query = RankCommand.Query.of(command.getTop(), target, sources);
-        List<RankInfo.PopularProduct> popularProducts = rankRepository.findPopularSellRanks(query);
+        List<RankInfo.PopularProduct> productScores = rankRepository.findProductScores(query)
+            .stream()
+            .map(this::getProduct)
+            .toList();
 
-        return RankInfo.PopularProducts.of(popularProducts);
+        return RankInfo.PopularProducts.of(productScores);
     }
 
+    @Transactional
     public void persistDailyRank(LocalDate date) {
         RankKey key = RankKey.ofDate(RankType.SELL, date);
-        List<RankInfo.PopularProduct> popularProducts = rankRepository.findDailyRank(key);
+        List<RankInfo.ProductScore> productScores = rankRepository.findDailyRank(key);
 
-        if (popularProducts.isEmpty()) {
+        if (productScores.isEmpty()) {
             log.info("일일 판매 링크가 존재하지 않습니다. date: {}", date);
             return;
         }
 
-        List<Rank> ranks = popularProducts.stream()
+        List<Rank> ranks = productScores.stream()
             .map(ps -> Rank.createSell(ps.getProductId(), date, ps.getTotalScore()))
             .toList();
 
@@ -50,5 +66,10 @@ public class RankService {
 
     private Rank createSell(RankCommand.Create command) {
         return Rank.createSell(command.getProductId(), command.getRankDate(), command.getScore());
+    }
+
+    private RankInfo.PopularProduct getProduct(RankInfo.ProductScore productScore) {
+        Product product = rankRepository.findProductById(productScore.getProductId());
+        return RankInfo.PopularProduct.of(product);
     }
 }

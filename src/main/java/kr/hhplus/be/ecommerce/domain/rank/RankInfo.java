@@ -1,6 +1,8 @@
 package kr.hhplus.be.ecommerce.domain.rank;
 
+import kr.hhplus.be.ecommerce.domain.product.Product;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,18 +12,18 @@ import java.util.List;
 public class RankInfo {
 
     @Getter
-    public static class PopularProduct {
+    public static class ProductScore {
 
         private final Long productId;
         private final Long totalScore;
 
-        public PopularProduct(Long productId, Long totalScore) {
+        private ProductScore(Long productId, Long totalScore) {
             this.productId = productId;
             this.totalScore = totalScore;
         }
 
-        public static PopularProduct of(Long productId, Long totalScore) {
-            return new PopularProduct(productId, totalScore);
+        public static ProductScore of(Long productId, Long totalScore) {
+            return new ProductScore(productId, totalScore);
         }
     }
 
@@ -37,11 +39,28 @@ public class RankInfo {
         public static PopularProducts of(List<PopularProduct> products) {
             return new PopularProducts(products);
         }
+    }
 
-        public List<Long> getProductIds() {
-            return products.stream()
-                .map(PopularProduct::getProductId)
-                .toList();
+    @Getter
+    public static class PopularProduct {
+
+        private final Long productId;
+        private final String productName;
+        private final Long productPrice;
+
+        @Builder
+        private PopularProduct(Long productId, String productName, Long productPrice) {
+            this.productId = productId;
+            this.productName = productName;
+            this.productPrice = productPrice;
+        }
+
+        public static PopularProduct of(Product product) {
+            return PopularProduct.builder()
+                .productId(product.getId())
+                .productName(product.getName())
+                .productPrice(product.getPrice())
+                .build();
         }
     }
 }

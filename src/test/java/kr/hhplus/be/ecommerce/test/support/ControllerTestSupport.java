@@ -2,14 +2,14 @@ package kr.hhplus.be.ecommerce.test.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.ecommerce.application.order.OrderFacade;
-import kr.hhplus.be.ecommerce.application.rank.RankFacade;
 import kr.hhplus.be.ecommerce.application.user.UserCouponFacade;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceService;
 import kr.hhplus.be.ecommerce.domain.product.ProductService;
+import kr.hhplus.be.ecommerce.domain.rank.RankService;
 import kr.hhplus.be.ecommerce.interfaces.balance.api.BalanceController;
 import kr.hhplus.be.ecommerce.interfaces.order.api.OrderController;
 import kr.hhplus.be.ecommerce.interfaces.product.api.ProductController;
-import kr.hhplus.be.ecommerce.interfaces.rank.RankController;
+import kr.hhplus.be.ecommerce.interfaces.rank.api.RankController;
 import kr.hhplus.be.ecommerce.interfaces.user.UserCouponController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,7 +41,7 @@ public abstract class ControllerTestSupport {
     protected ProductService productService;
 
     @MockitoBean
-    protected RankFacade rankFacade;
+    protected RankService rankService;
 
     @MockitoBean
     protected UserCouponFacade userCouponFacade;

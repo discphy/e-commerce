@@ -108,9 +108,9 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
             RankKey.ofDays(RankType.SELL, 3),
             RankKeys.ofDaysWithDate(RankType.SELL, 3, LocalDate.now())
         );
-        List<RankInfo.PopularProduct> popularSellRanks = rankRepository.findPopularSellRanks(command);
+        List<RankInfo.ProductScore> popularSellRanks = rankRepository.findProductScores(command);
         assertThat(popularSellRanks).hasSize(1)
-            .extracting(RankInfo.PopularProduct::getProductId)
+            .extracting(RankInfo.ProductScore::getProductId)
             .containsExactly(product.getId());
     }
 
@@ -150,9 +150,9 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
             RankKey.ofDays(RankType.SELL, 3),
             RankKeys.ofDaysWithDate(RankType.SELL, 3, LocalDate.now())
         );
-        List<RankInfo.PopularProduct> popularSellRanks = rankRepository.findPopularSellRanks(command);
+        List<RankInfo.ProductScore> popularSellRanks = rankRepository.findProductScores(command);
         assertThat(popularSellRanks).hasSize(1)
-            .extracting(RankInfo.PopularProduct::getProductId)
+            .extracting(RankInfo.ProductScore::getProductId)
             .containsExactly(product.getId());
     }
 }

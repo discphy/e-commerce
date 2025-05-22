@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.rank;
 
+import kr.hhplus.be.ecommerce.domain.product.Product;
 import kr.hhplus.be.ecommerce.test.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,27 +48,34 @@ class RankServiceUnitTest extends MockTestSupport {
 
     @DisplayName("인기 판매 랭크를 조회한다.")
     @Test
-    void getPopularSellRank() {
+    void getPopularProducts() {
         // given
-        List<RankInfo.PopularProduct> popularProducts = List.of(
-            RankInfo.PopularProduct.of(1L, 120L),  // 1등 상품
-            RankInfo.PopularProduct.of(2L, 95L),   // 2등 상품
-            RankInfo.PopularProduct.of(3L, 87L),   // 3등 상품
-            RankInfo.PopularProduct.of(4L, 76L),   // 4등 상품
-            RankInfo.PopularProduct.of(5L, 65L)   // 5등 상품
+        List<RankInfo.ProductScore> productScores = List.of(
+            RankInfo.ProductScore.of(1L, 120L),  // 1등 상품
+            RankInfo.ProductScore.of(2L, 95L),   // 2등 상품
+            RankInfo.ProductScore.of(3L, 87L),   // 3등 상품
+            RankInfo.ProductScore.of(4L, 76L),   // 4등 상품
+            RankInfo.ProductScore.of(5L, 65L)   // 5등 상품
         );
 
-        when(rankRepository.findPopularSellRanks(any()))
-            .thenReturn(popularProducts);
+        when(rankRepository.findProductScores(any()))
+            .thenReturn(productScores);
 
-        RankCommand.PopularSellRank command = RankCommand.PopularSellRank.of(
+        when(rankRepository.findProductById(anyLong()))
+            .thenReturn(Product.builder().id(1L).build())
+            .thenReturn(Product.builder().id(2L).build())
+            .thenReturn(Product.builder().id(3L).build())
+            .thenReturn(Product.builder().id(4L).build())
+            .thenReturn(Product.builder().id(5L).build());
+
+        RankCommand.PopularProducts command = RankCommand.PopularProducts.of(
             5,
             7,
             LocalDate.of(2025, 4, 30)
         );
 
         // when
-        RankInfo.PopularProducts result = rankService.getPopularSellRank(command);
+        RankInfo.PopularProducts result = rankService.getPopularProducts(command);
 
         // then
         assertThat(result.getProducts()).hasSize(5)
@@ -81,10 +89,10 @@ class RankServiceUnitTest extends MockTestSupport {
         // given
         LocalDate date = LocalDate.of(2025, 5, 16);
 
-        List<RankInfo.PopularProduct> products = List.of(
-            RankInfo.PopularProduct.of(1L, 100L),
-            RankInfo.PopularProduct.of(2L, 90L),
-            RankInfo.PopularProduct.of(3L, 80L)
+        List<RankInfo.ProductScore> products = List.of(
+            RankInfo.ProductScore.of(1L, 100L),
+            RankInfo.ProductScore.of(2L, 90L),
+            RankInfo.ProductScore.of(3L, 80L)
         );
 
         when(rankRepository.findDailyRank(any()))
@@ -104,7 +112,7 @@ class RankServiceUnitTest extends MockTestSupport {
         // given
         LocalDate date = LocalDate.of(2025, 5, 16);
 
-        List<RankInfo.PopularProduct> products = List.of();
+        List<RankInfo.ProductScore> products = List.of();
 
         when(rankRepository.findDailyRank(any()))
             .thenReturn(products);
