@@ -44,4 +44,18 @@ class StockTest {
         assertThat(stock.getQuantity()).isZero();
     }
 
+    @DisplayName("재고를 복구한다.")
+    @Test
+    void restore() {
+        // given
+        Stock stock = Stock.create(1L, 10);
+        int quantity = 5;
+
+        // when
+        stock.restore(quantity);
+
+        // then
+        assertThat(stock.getQuantity()).isEqualTo(15);
+    }
+
 }

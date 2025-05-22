@@ -55,7 +55,7 @@ class StockServiceIntegrationTest extends IntegrationTestSupport {
         Long productId = 1L;
 
         List<StockCommand.OrderProduct> orderProducts = List.of(StockCommand.OrderProduct.of(productId, 100));
-        StockCommand.OrderProducts command = StockCommand.OrderProducts.of(orderProducts);
+        StockCommand.Deduct command = StockCommand.Deduct.of(orderProducts);
 
         // when & then
         assertThatThrownBy(() -> stockService.deductStock(command))
@@ -72,7 +72,7 @@ class StockServiceIntegrationTest extends IntegrationTestSupport {
         stockRepository.save(stock);
 
         List<StockCommand.OrderProduct> orderProducts = List.of(StockCommand.OrderProduct.of(productId, 3));
-        StockCommand.OrderProducts command = StockCommand.OrderProducts.of(orderProducts);
+        StockCommand.Deduct command = StockCommand.Deduct.of(orderProducts);
 
         // when & then
         assertThatThrownBy(() -> stockService.deductStock(command))
@@ -96,7 +96,7 @@ class StockServiceIntegrationTest extends IntegrationTestSupport {
             StockCommand.OrderProduct.of(productId1, 3),
             StockCommand.OrderProduct.of(productId2, 3)
         );
-        StockCommand.OrderProducts command = StockCommand.OrderProducts.of(orderProducts);
+        StockCommand.Deduct command = StockCommand.Deduct.of(orderProducts);
 
         // when
         stockService.deductStock(command);
@@ -107,5 +107,49 @@ class StockServiceIntegrationTest extends IntegrationTestSupport {
 
         Stock updatedStock2 = stockRepository.findByProductId(productId2);
         assertThat(updatedStock2.getQuantity()).isZero();
+    }
+
+    @DisplayName("재고가 없으면 상품 ID로 재고를 복구할 수 없다.")
+    @Test
+    void restoreStockCannotDoseNotExistStock() {
+        // given
+        Long productId = 1L;
+
+        List<StockCommand.OrderProduct> orderProducts = List.of(StockCommand.OrderProduct.of(productId, 100));
+        StockCommand.Restore command = StockCommand.Restore.of(orderProducts);
+
+        // when & then
+        assertThatThrownBy(() -> stockService.restoreStock(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("재고가 존재하지 않습니다.");
+    }
+
+    @DisplayName("상품 ID 리스트로 재고를 복구할 수 있다.")
+    @Test
+    void restoreStock() {
+        // given
+        Long productId1 = 1L;
+        Long productId2 = 2L;
+        Stock stock1 = Stock.create(productId1, 10);
+        Stock stock2 = Stock.create(productId2, 3);
+
+        stockRepository.save(stock1);
+        stockRepository.save(stock2);
+
+        List<StockCommand.OrderProduct> orderProducts = List.of(
+            StockCommand.OrderProduct.of(productId1, 3),
+            StockCommand.OrderProduct.of(productId2, 3)
+        );
+        StockCommand.Restore command = StockCommand.Restore.of(orderProducts);
+
+        // when
+        stockService.restoreStock(command);
+
+        // then
+        Stock updatedStock1 = stockRepository.findByProductId(productId1);
+        assertThat(updatedStock1.getQuantity()).isEqualTo(13);
+
+        Stock updatedStock2 = stockRepository.findByProductId(productId2);
+        assertThat(updatedStock2.getQuantity()).isEqualTo(6);
     }
 }
