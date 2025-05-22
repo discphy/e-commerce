@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.interfaces.product;
+package kr.hhplus.be.ecommerce.interfaces.product.api;
 
-import kr.hhplus.be.ecommerce.application.product.ProductResult;
+import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.test.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,10 +19,10 @@ class ProductControllerTest extends ControllerTestSupport {
     @Test
     void getProducts() throws Exception {
         // given
-        when(productFacade.getProducts())
-            .thenReturn(ProductResult.Products.of(
+        when(productService.getSellingProducts())
+            .thenReturn(ProductInfo.Products.of(
                 List.of(
-                    ProductResult.Product.of(1L, "상품명", 300_000L, 3)
+                    ProductInfo.Product.of(1L, "상품명", 300_000L, 3)
                 )
             ));
 

@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.interfaces.product;
+package kr.hhplus.be.ecommerce.interfaces.product.api;
 
-import kr.hhplus.be.ecommerce.application.product.ProductResult;
+import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class ProductResponse {
             this.products = products;
         }
 
-        public static Products of(ProductResult.Products products) {
+        public static Products of(ProductInfo.Products products) {
             return new Products(products.getProducts().stream()
                 .map(Product::of)
                 .toList());
@@ -45,7 +45,7 @@ public class ProductResponse {
             this.stock = stock;
         }
 
-        public static Product of(ProductResult.Product product) {
+        public static Product of(ProductInfo.Product product) {
             return Product.builder()
                 .id(product.getProductId())
                 .name(product.getProductName())
