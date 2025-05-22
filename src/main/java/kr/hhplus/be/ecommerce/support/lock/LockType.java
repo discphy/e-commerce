@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum LockType {
 
     COUPON("쿠폰"),
+    ORDER("주문"),
     ;
 
     private final String description;

@@ -71,7 +71,7 @@ class OrderTest {
 
     @DisplayName("주문을 결제 완료한다.")
     @Test
-    void paid() {
+    void completed() {
         // given
         List<OrderProduct> orderProducts = List.of(
             OrderProduct.create(1L, "상품명1", 1000, 1),
@@ -83,11 +83,30 @@ class OrderTest {
         Order order = Order.create(1L, null, 0.0, orderProducts);
 
         // when
-        order.paid(LocalDateTime.now());
+        order.completed(LocalDateTime.now());
 
         // then
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
-        assertThat(order.getPaidAt()).isNotNull();
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETED);
+        assertThat(order.getCompletedAt()).isNotNull();
     }
 
+    @DisplayName("주문을 취소한다.")
+    @Test
+    void cancel() {
+        // given
+        List<OrderProduct> orderProducts = List.of(
+            OrderProduct.create(1L, "상품명1", 1000, 1),
+            OrderProduct.create(2L, "상품명2", 2000, 2),
+            OrderProduct.create(3L, "상품명3", 3000, 3),
+            OrderProduct.create(4L, "상품명4", 4000, 4)
+        );
+
+        Order order = Order.create(1L, null, 0.0, orderProducts);
+
+        // when
+        order.cancel();
+
+        // then
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
+    }
 }

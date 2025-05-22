@@ -1,9 +1,9 @@
 package kr.hhplus.be.ecommerce.test.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hhplus.be.ecommerce.application.order.OrderFacade;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceService;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponService;
+import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.domain.product.ProductService;
 import kr.hhplus.be.ecommerce.domain.rank.RankService;
 import kr.hhplus.be.ecommerce.interfaces.balance.api.BalanceController;
@@ -35,7 +35,7 @@ public abstract class ControllerTestSupport {
     protected BalanceService balanceService;
 
     @MockitoBean
-    protected OrderFacade orderFacade;
+    protected OrderService orderService;
 
     @MockitoBean
     protected ProductService productService;

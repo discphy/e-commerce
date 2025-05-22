@@ -1,6 +1,6 @@
 package kr.hhplus.be.ecommerce.docs.order;
 
-import kr.hhplus.be.ecommerce.application.order.OrderFacade;
+import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
 import kr.hhplus.be.ecommerce.interfaces.order.api.OrderController;
 import kr.hhplus.be.ecommerce.interfaces.order.api.OrderRequest;
@@ -21,11 +21,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class OrderControllerDocsTest extends RestDocsSupport {
 
-    private final OrderFacade orderFacade = mock(OrderFacade.class);
+    private final OrderService orderService = mock(OrderService.class);
 
     @Override
     protected Object initController() {
-        return new OrderController(orderFacade);
+        return new OrderController(orderService);
     }
 
     @DisplayName("주문/결제 완료 API")
@@ -53,7 +53,7 @@ class OrderControllerDocsTest extends RestDocsSupport {
                 preprocessResponse(prettyPrint()),
                 requestFields(
                     fieldWithPath("userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
-                    fieldWithPath("couponId").type(JsonFieldType.NUMBER).description("쿠푠 ID").optional(),
+                    fieldWithPath("userCouponId").type(JsonFieldType.NUMBER).description("사용자 쿠푠 ID").optional(),
                     fieldWithPath("products[].id").type(JsonFieldType.NUMBER).description("상품 ID"),
                     fieldWithPath("products[].quantity").type(JsonFieldType.NUMBER).description("상품 수량")
                 ),

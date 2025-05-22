@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import kr.hhplus.be.ecommerce.application.order.OrderCriteria;
+import kr.hhplus.be.ecommerce.domain.order.OrderCommand;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,15 +20,15 @@ public class OrderRequest {
 
         @NotNull(message = "사용자 ID는 필수 입니다.")
         private Long userId;
-        private Long couponId;
+        private Long userCouponId;
 
         @Valid
         @NotEmpty(message = "상품 목록은 1개 이상이여야 합니다.")
         private List<OrderProduct> products;
 
-        private OrderPayment(Long userId, Long couponId, List<OrderProduct> products) {
+        private OrderPayment(Long userId, Long userCouponId, List<OrderProduct> products) {
             this.userId = userId;
-            this.couponId = couponId;
+            this.userCouponId = userCouponId;
             this.products = products;
         }
 
@@ -36,10 +36,11 @@ public class OrderRequest {
             return new OrderPayment(userId, couponId, products);
         }
 
-        public OrderCriteria.OrderPayment toCriteria() {
-            return OrderCriteria.OrderPayment.of(userId, couponId, products.stream()
-                    .map(OrderProduct::toCriteria)
-                    .toList());
+        public OrderCommand.Create toCommand() {
+            return OrderCommand.Create.of(userId, userCouponId, products.stream()
+                .map(r -> OrderCommand.OrderProduct.of(r.getId(), r.getQuantity()))
+                .toList()
+            );
         }
     }
 
@@ -61,10 +62,6 @@ public class OrderRequest {
 
         public static OrderProduct of(Long id, Integer quantity) {
             return new OrderProduct(id, quantity);
-        }
-
-        public OrderCriteria.OrderProduct toCriteria() {
-            return OrderCriteria.OrderProduct.of(id, quantity);
         }
     }
 

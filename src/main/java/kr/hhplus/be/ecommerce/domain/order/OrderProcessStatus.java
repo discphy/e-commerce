@@ -5,13 +5,12 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum OrderStatus {
+public enum OrderProcessStatus {
 
-    CREATED("주문생성"),
-    COMPLETED("주문완료"),
-    CANCELED("주문취소"),
+    SUCCESS("성공"),
+    FAILED("실패"),
+    PENDING("대기"),
     ;
 
     private final String description;
-
 }
