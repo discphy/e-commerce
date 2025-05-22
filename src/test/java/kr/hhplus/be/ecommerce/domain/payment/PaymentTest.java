@@ -24,7 +24,7 @@ class PaymentTest {
     @ValueSource(strings = {
         "COMPLETED",
         "FAILED",
-        "CANCELLED",
+        "CANCELED",
     })
     void payWithNonPayableStatus(PaymentStatus status) {
         // given
@@ -49,6 +49,19 @@ class PaymentTest {
 
         // then
         assertThat(payment.getPaymentStatus()).isEqualTo(PaymentStatus.COMPLETED);
+    }
+
+    @DisplayName("결제 취소를 한다.")
+    @Test
+    void cancel() {
+        // given
+        Payment payment = Payment.create(1L, 100_000L);
+
+        // when
+        payment.cancel();
+
+        // then
+        assertThat(payment.getPaymentStatus()).isEqualTo(PaymentStatus.CANCELED);
     }
 
 }
