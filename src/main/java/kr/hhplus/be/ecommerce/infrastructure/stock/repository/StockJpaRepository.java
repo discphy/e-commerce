@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.infrastructure.stock;
+package kr.hhplus.be.ecommerce.infrastructure.stock.repository;
 
 import jakarta.persistence.LockModeType;
 import kr.hhplus.be.ecommerce.domain.stock.Stock;

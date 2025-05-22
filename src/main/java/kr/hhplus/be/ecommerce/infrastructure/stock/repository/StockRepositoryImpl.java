@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.infrastructure.stock;
+package kr.hhplus.be.ecommerce.infrastructure.stock.repository;
 
 import kr.hhplus.be.ecommerce.domain.stock.Stock;
 import kr.hhplus.be.ecommerce.domain.stock.StockRepository;
