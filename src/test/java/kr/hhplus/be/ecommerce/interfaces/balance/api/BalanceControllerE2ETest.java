@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.interfaces.balance;
+package kr.hhplus.be.ecommerce.interfaces.balance.api;
 
 import io.restassured.http.ContentType;
 import kr.hhplus.be.ecommerce.domain.balance.Balance;

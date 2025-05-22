@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.interfaces.balance;
+package kr.hhplus.be.ecommerce.interfaces.balance.api;
 
-import kr.hhplus.be.ecommerce.application.balance.BalanceResult;
+import kr.hhplus.be.ecommerce.domain.balance.BalanceInfo;
 import kr.hhplus.be.ecommerce.test.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ class BalanceControllerTest extends ControllerTestSupport {
     @Test
     void getBalance() throws Exception {
         // given
-        when(balanceFacade.getBalance(1L))
-            .thenReturn(BalanceResult.Balance.of(1_000L));
+        when(balanceService.getBalance(1L))
+            .thenReturn(BalanceInfo.Balance.of(1_000L));
 
         // when & then
         mockMvc.perform(

@@ -1,8 +1,8 @@
-package kr.hhplus.be.ecommerce.interfaces.balance;
+package kr.hhplus.be.ecommerce.interfaces.balance.api;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import kr.hhplus.be.ecommerce.application.balance.BalanceCriteria;
+import kr.hhplus.be.ecommerce.domain.balance.BalanceCommand;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +26,8 @@ public class BalanceRequest {
             return new Charge(amount);
         }
 
-        public BalanceCriteria.Charge toCriteria(Long userId) {
-            return BalanceCriteria.Charge.of(userId, amount);
+        public BalanceCommand.Charge toCommand(Long userId) {
+            return BalanceCommand.Charge.of(userId, amount);
         }
     }
 }

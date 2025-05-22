@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.infrastructure.balance;
+package kr.hhplus.be.ecommerce.infrastructure.balance.repository;
 
 import kr.hhplus.be.ecommerce.domain.balance.BalanceTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;

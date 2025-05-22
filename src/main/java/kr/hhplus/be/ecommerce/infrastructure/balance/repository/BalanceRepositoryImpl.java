@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.infrastructure.balance;
+package kr.hhplus.be.ecommerce.infrastructure.balance.repository;
 
 import kr.hhplus.be.ecommerce.domain.balance.Balance;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceRepository;

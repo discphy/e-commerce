@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.interfaces.balance;
+package kr.hhplus.be.ecommerce.interfaces.balance.api;
 
-import kr.hhplus.be.ecommerce.application.balance.BalanceResult;
+import kr.hhplus.be.ecommerce.domain.balance.BalanceInfo;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ public class BalanceResponse {
             this.amount = amount;
         }
 
-        public static Balance of(BalanceResult.Balance balance) {
+        public static Balance of(BalanceInfo.Balance balance) {
             return new Balance(balance.getAmount());
         }
     }
