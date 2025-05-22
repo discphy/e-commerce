@@ -98,15 +98,15 @@ class ProductServiceUnitTest extends MockTestSupport {
     @Test
     void getSellingProducts() {
         // given
-        List<Product> sellingProducts = List.of(
-            Product.create("상품명1", 10_000L, ProductSellingStatus.SELLING),
-            Product.create("상품명3", 15_000L, ProductSellingStatus.SELLING),
-            Product.create("상품명5", 30_000L, ProductSellingStatus.SELLING),
-            Product.create("상품명7", 18_000L, ProductSellingStatus.SELLING),
-            Product.create("상품명9", 35_000L, ProductSellingStatus.SELLING)
+        List<ProductInfo.Product> sellingProducts = List.of(
+            ProductInfo.Product.of(1L, "상품명1", 10_000L, 1),
+            ProductInfo.Product.of(2L, "상품명3", 15_000L, 2),
+            ProductInfo.Product.of(3L, "상품명5", 30_000L, 3),
+            ProductInfo.Product.of(4L, "상품명7", 18_000L, 4),
+            ProductInfo.Product.of(5L, "상품명9", 35_000L, 5)
         );
 
-        when(productRepository.findSellingStatusIn(anyList()))
+        when(productRepository.findBySellStatusIn(anyList()))
             .thenReturn(sellingProducts);
 
         // when
@@ -114,13 +114,13 @@ class ProductServiceUnitTest extends MockTestSupport {
 
         // then
         assertThat(products.getProducts()).hasSize(5)
-            .extracting("productName", "productPrice")
+            .extracting("productName", "productPrice", "quantity")
             .containsExactly(
-                tuple("상품명1", 10_000L),
-                tuple("상품명3", 15_000L),
-                tuple("상품명5", 30_000L),
-                tuple("상품명7", 18_000L),
-                tuple("상품명9", 35_000L)
+                tuple("상품명1", 10_000L, 1),
+                tuple("상품명3", 15_000L, 2),
+                tuple("상품명5", 30_000L, 3),
+                tuple("상품명7", 18_000L, 4),
+                tuple("상품명9", 35_000L, 5)
             );
     }
 }

@@ -11,5 +11,5 @@ public interface ProductRepository {
 
     Product findById(Long productId);
 
-    List<Product> findSellingStatusIn(List<ProductSellingStatus> statuses);
+    List<ProductInfo.Product> findBySellStatusIn(List<ProductSellingStatus> statuses);
 }

@@ -20,10 +20,7 @@ public class ProductService {
     }
 
     public ProductInfo.Products getSellingProducts() {
-        List<ProductInfo.Product> products = productRepository.findSellingStatusIn(ProductSellingStatus.forSelling()).stream()
-            .map(this::toProductInfo)
-            .toList();
-
+        List<ProductInfo.Product> products = productRepository.findBySellStatusIn(ProductSellingStatus.forSelling());
         return ProductInfo.Products.of(products);
     }
 

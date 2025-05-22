@@ -1,5 +1,7 @@
 package kr.hhplus.be.ecommerce.domain.product;
 
+import kr.hhplus.be.ecommerce.domain.stock.Stock;
+import kr.hhplus.be.ecommerce.domain.stock.StockRepository;
 import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,9 @@ class ProductServiceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private StockRepository stockRepository;
 
     @DisplayName("주문에 필요한 상품 정보를 가져올 시, 주문 불가한 상품이 있다면 예외가 발생한다.")
     @Test
@@ -85,16 +90,21 @@ class ProductServiceIntegrationTest extends IntegrationTestSupport {
         Product product3 = Product.create("상품명3", 3_000L, ProductSellingStatus.SELLING);
         List.of(product1, product2, product3).forEach(productRepository::save);
 
+        Stock stock1 = Stock.create(product1.getId(), 100);
+        Stock stock2 = Stock.create(product2.getId(), 200);
+        Stock stock3 = Stock.create(product3.getId(), 300);
+        List.of(stock1, stock2, stock3).forEach(stockRepository::save);
+
         // when
         ProductInfo.Products result = productService.getSellingProducts();
 
         // then
         assertThat(result.getProducts()).hasSize(3)
-            .extracting("productId", "productName", "productPrice")
+            .extracting("productId", "productName", "productPrice", "quantity")
             .containsExactly(
-                tuple(product1.getId(), product1.getName(), product1.getPrice()),
-                tuple(product2.getId(), product2.getName(), product2.getPrice()),
-                tuple(product3.getId(), product3.getName(), product3.getPrice())
+                tuple(product1.getId(), product1.getName(), product1.getPrice(), stock1.getQuantity()),
+                tuple(product2.getId(), product2.getName(), product2.getPrice(), stock2.getQuantity()),
+                tuple(product3.getId(), product3.getName(), product3.getPrice(), stock3.getQuantity())
             );
     }
 

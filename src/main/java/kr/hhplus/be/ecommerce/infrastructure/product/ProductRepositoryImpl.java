@@ -1,6 +1,7 @@
 package kr.hhplus.be.ecommerce.infrastructure.product;
 
 import kr.hhplus.be.ecommerce.domain.product.Product;
+import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.domain.product.ProductRepository;
 import kr.hhplus.be.ecommerce.domain.product.ProductSellingStatus;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.List;
 public class ProductRepositoryImpl implements ProductRepository {
 
     private final ProductJpaRepository productJpaRepository;
+    private final ProductQueryDslRepository productQueryDslRepository;
 
     @Override
     public Product save(Product product) {
@@ -26,7 +28,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> findSellingStatusIn(List<ProductSellingStatus> statuses) {
-        return productJpaRepository.findBySellStatusIn(statuses);
+    public List<ProductInfo.Product> findBySellStatusIn(List<ProductSellingStatus> statuses) {
+        return productQueryDslRepository.findBySellStatusIn(statuses);
     }
 }
