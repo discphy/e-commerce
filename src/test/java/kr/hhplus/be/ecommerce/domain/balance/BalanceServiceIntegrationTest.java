@@ -203,6 +203,59 @@ class BalanceServiceIntegrationTest extends IntegrationTestSupport {
             .hasMessage("잔액이 부족합니다.");
     }
 
+    @DisplayName("잔고 환불 시, 잔고가 없으면 예외를 발생시킨다.")
+    @Test
+    void refundBalanceWhenBalanceDoesNotExist() {
+        // given
+        Long userId = 1L;
+        BalanceCommand.Refund command = BalanceCommand.Refund.of(userId, 5_000L);
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.refundBalance(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("잔고가 존재하지 않습니다.");
+    }
+
+    @DisplayName("잔고 환불 시, 환불 금액은 양수여야 한다.")
+    @Test
+    void refundBalanceWhenAmountIsNotPositive() {
+        // given
+        Long userId = 1L;
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(10_000L)
+            .build();
+        balanceRepository.save(existingBalance);
+
+        BalanceCommand.Refund command = BalanceCommand.Refund.of(userId, -5_000L);
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.refundBalance(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("환불 금액은 0보다 커야 합니다.");
+    }
+
+    @DisplayName("잔고를 환불 시, 잔고 금액을 환불한다.")
+    @Test
+    void refundBalanceWhenBalanceExists() {
+        // given
+        Long userId = 1L;
+        Balance existingBalance = Balance.builder()
+            .userId(userId)
+            .amount(10_000L)
+            .build();
+        balanceRepository.save(existingBalance);
+
+        BalanceCommand.Refund command = BalanceCommand.Refund.of(userId, 5_000L);
+
+        // when
+        balanceService.refundBalance(command);
+
+        // then
+        Balance updatedBalance = balanceRepository.findOptionalByUserId(userId).orElseThrow();
+        assertThat(updatedBalance.getAmount()).isEqualTo(15_000L);
+    }
+
     @DisplayName("잔고 충전 & 사용 시, 트랜잭션 내역을 저장한다.")
     @Test
     void saveBalanceTransactionAfterChargeBalanceAndUseBalance() {

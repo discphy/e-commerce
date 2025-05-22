@@ -215,6 +215,40 @@ class BalanceServiceUnitTest extends MockTestSupport {
         assertThat(balance.getAmount()).isZero();
     }
 
+    @DisplayName("잔고가 없으면, 잔고를 차감하지 못한다.")
+    @Test
+    void refundBalanceIfNotExist() {
+        // given
+        BalanceCommand.Refund command = BalanceCommand.Refund.of(1L, 10_000L);
+
+        when(balanceRepository.findOptionalByUserId(anyLong()))
+            .thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.refundBalance(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("잔고가 존재하지 않습니다.");
+    }
+
+    @DisplayName("환불 금액이 0이면 잔고를 차감하지 못한다.")
+    @Test
+    void refundBalanceWithZeroAmount() {
+        // given
+        BalanceCommand.Refund command = BalanceCommand.Refund.of(1L, 0L);
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(10_000L)
+            .build();
+
+        when(balanceRepository.findOptionalByUserId(anyLong()))
+            .thenReturn(Optional.of(balance));
+
+        // when & then
+        assertThatThrownBy(() -> balanceService.refundBalance(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("환불 금액은 0보다 커야 합니다.");
+    }
+
     @DisplayName("잔고 조회 시, 사용자가 존재해야 한다.")
     @Test
     void getBalanceShouldUser() {

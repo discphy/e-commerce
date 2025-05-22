@@ -66,4 +66,12 @@ public class Balance {
 
         this.amount -= amount;
     }
+
+    public void refund(long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("환불 금액은 0보다 커야 합니다.");
+        }
+
+        this.amount += amount;
+    }
 }

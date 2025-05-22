@@ -36,6 +36,17 @@ public class BalanceService {
         balanceRepository.saveTransaction(transaction);
     }
 
+    @Transactional
+    public void refundBalance(BalanceCommand.Refund command) {
+        Balance balance = balanceRepository.findOptionalByUserId(command.getUserId())
+            .orElseThrow(() -> new IllegalArgumentException("잔고가 존재하지 않습니다."));
+
+        balance.refund(command.getAmount());
+
+        BalanceTransaction transaction = BalanceTransaction.ofRefund(balance, command.getAmount());
+        balanceRepository.saveTransaction(transaction);
+    }
+
     @Transactional(readOnly = true)
     public BalanceInfo.Balance getBalance(Long userId) {
         balanceClient.getUser(userId);
