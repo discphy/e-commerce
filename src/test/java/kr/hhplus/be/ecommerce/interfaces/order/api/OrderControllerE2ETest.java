@@ -3,9 +3,7 @@ package kr.hhplus.be.ecommerce.interfaces.order.api;
 import io.restassured.http.ContentType;
 import kr.hhplus.be.ecommerce.domain.balance.Balance;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceRepository;
-import kr.hhplus.be.ecommerce.domain.coupon.Coupon;
-import kr.hhplus.be.ecommerce.domain.coupon.CouponRepository;
-import kr.hhplus.be.ecommerce.domain.coupon.CouponStatus;
+import kr.hhplus.be.ecommerce.domain.coupon.*;
 import kr.hhplus.be.ecommerce.domain.product.Product;
 import kr.hhplus.be.ecommerce.domain.product.ProductRepository;
 import kr.hhplus.be.ecommerce.domain.product.ProductSellingStatus;
@@ -37,9 +35,6 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
 
     @Autowired
     private BalanceRepository balanceRepository;
-
-    @Autowired
-    private UserCouponRepository userCouponRepository;
 
     @Autowired
     private CouponRepository couponRepository;
@@ -145,7 +140,7 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
             .usedStatus(UserCouponUsedStatus.USED)
             .build();
 
-        userCouponRepository.save(userCoupon);
+        couponRepository.save(userCoupon);
 
         Balance balance = Balance.create(user.getId());
         balance.charge(1_000_000L);

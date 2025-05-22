@@ -1,12 +1,10 @@
 package kr.hhplus.be.ecommerce.application.order;
 
+import kr.hhplus.be.ecommerce.domain.coupon.*;
 import kr.hhplus.be.ecommerce.domain.rank.*;
 import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import kr.hhplus.be.ecommerce.domain.balance.Balance;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceRepository;
-import kr.hhplus.be.ecommerce.domain.coupon.Coupon;
-import kr.hhplus.be.ecommerce.domain.coupon.CouponRepository;
-import kr.hhplus.be.ecommerce.domain.coupon.CouponStatus;
 import kr.hhplus.be.ecommerce.domain.order.Order;
 import kr.hhplus.be.ecommerce.domain.order.OrderRepository;
 import kr.hhplus.be.ecommerce.domain.order.OrderStatus;
@@ -48,9 +46,6 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private UserCouponRepository userCouponRepository;
 
     @Autowired
     private CouponRepository couponRepository;
@@ -121,7 +116,7 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
         Coupon coupon = Coupon.create("쿠폰명", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
         couponRepository.save(coupon);
 
-        userCouponRepository.save(UserCoupon.create(user.getId(), coupon.getId()));
+        couponRepository.save(UserCoupon.create(user.getId(), coupon.getId()));
 
         OrderCriteria.OrderPayment criteria = OrderCriteria.OrderPayment.of(user.getId(), coupon.getId(),
             List.of(OrderCriteria.OrderProduct.of(product.getId(), 2))
@@ -134,7 +129,7 @@ class OrderFacadeIntegrationTest extends IntegrationTestSupport {
         Balance balance = balanceRepository.findOptionalByUserId(user.getId()).orElseThrow();
         assertThat(balance.getAmount()).isEqualTo(320_000L);
 
-        UserCoupon userCoupon = userCouponRepository.findByUserIdAndCouponId(user.getId(), coupon.getId());
+        UserCoupon userCoupon = couponRepository.findByUserIdAndCouponId(user.getId(), coupon.getId());
         assertThat(userCoupon.getUsedAt()).isNotNull();
         assertThat(userCoupon.getUsedStatus()).isEqualTo(UserCouponUsedStatus.USED);
 

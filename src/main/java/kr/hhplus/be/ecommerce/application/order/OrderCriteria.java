@@ -8,7 +8,7 @@ import kr.hhplus.be.ecommerce.domain.product.ProductCommand;
 import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.domain.rank.RankCommand;
 import kr.hhplus.be.ecommerce.domain.stock.StockCommand;
-import kr.hhplus.be.ecommerce.domain.user.UserCouponCommand;
+import kr.hhplus.be.ecommerce.domain.coupon.CouponCommand;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,8 +57,8 @@ public class OrderCriteria {
             return OrderCommand.Create.of(userId, userCouponId, discountRage, orderProducts);
         }
 
-        public UserCouponCommand.UsableCoupon toCouponCommand() {
-            return UserCouponCommand.UsableCoupon.of(userId, couponId);
+        public CouponCommand.UsableCoupon toCouponCommand() {
+            return CouponCommand.UsableCoupon.of(userId, couponId);
         }
 
         public BalanceCommand.Use toBalanceCommand(long totalPrice) {
