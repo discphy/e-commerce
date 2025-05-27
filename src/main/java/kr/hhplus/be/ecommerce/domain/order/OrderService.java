@@ -2,6 +2,7 @@ package kr.hhplus.be.ecommerce.domain.order;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderExternalClient orderExternalClient;
+    private final OrderEventPublisher orderEventPublisher;
 
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
         List<OrderProduct> orderProducts = command.getProducts().stream()
@@ -24,18 +25,12 @@ public class OrderService {
         return OrderInfo.Order.of(order.getId(), order.getTotalPrice(), order.getDiscountPrice());
     }
 
+    @Transactional
     public void paidOrder(Long orderId) {
         Order order = orderRepository.findById(orderId);
         order.paid(LocalDateTime.now());
 
-        orderExternalClient.sendOrderMessage(order);
-    }
-
-    public OrderInfo.PaidProducts getPaidProducts(OrderCommand.DateQuery command) {
-        OrderCommand.PaidProducts queryCommand = command.toPaidProductsQuery(OrderStatus.PAID);
-        List<OrderInfo.PaidProduct> paidProducts = orderRepository.findPaidProducts(queryCommand);
-
-        return OrderInfo.PaidProducts.of(paidProducts);
+        orderEventPublisher.paid(OrderEvent.Paid.of(order));
     }
 
     private OrderProduct createOrderProduct(OrderCommand.OrderProduct product) {

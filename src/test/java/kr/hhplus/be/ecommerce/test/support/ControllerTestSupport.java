@@ -7,7 +7,7 @@ import kr.hhplus.be.ecommerce.application.product.ProductFacade;
 import kr.hhplus.be.ecommerce.application.rank.RankFacade;
 import kr.hhplus.be.ecommerce.application.user.UserCouponFacade;
 import kr.hhplus.be.ecommerce.interfaces.balance.BalanceController;
-import kr.hhplus.be.ecommerce.interfaces.order.OrderController;
+import kr.hhplus.be.ecommerce.interfaces.order.api.OrderController;
 import kr.hhplus.be.ecommerce.interfaces.product.ProductController;
 import kr.hhplus.be.ecommerce.interfaces.rank.RankController;
 import kr.hhplus.be.ecommerce.interfaces.user.UserCouponController;

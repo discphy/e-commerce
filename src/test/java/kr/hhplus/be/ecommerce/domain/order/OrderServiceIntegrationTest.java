@@ -4,16 +4,21 @@ import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
 @Transactional
+@RecordApplicationEvents
 class OrderServiceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
@@ -21,6 +26,12 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ApplicationEvents events;
+
+    @MockitoSpyBean
+    private OrderEventPublisher orderEventPublisher;
 
     @DisplayName("주문을 생성한다.")
     @Test
@@ -58,41 +69,37 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.PAID);
     }
 
-    @DisplayName("결제 완료 된 상품을 요청한 날짜에 조회한다.")
+    @DisplayName("주문을 결제 시, 이벤트를 발행한다.")
     @Test
-    void getPaidProducts() {
+    void publishEventAfterPaidOrder() {
         // given
-        Order order1 = Order.create(1L, 1L, 0.1, List.of(
+        Order order = Order.create(1L, 1L, 0.1, List.of(
             OrderProduct.create(1L, "상품1", 10_000L, 2),
             OrderProduct.create(2L, "상품2", 20_000L, 3)
         ));
-        Order order2 = Order.create(1L, 1L, 0.1, List.of(
-            OrderProduct.create(1L, "상품1", 10_000L, 2),
-            OrderProduct.create(3L, "상품3", 30_000L, 4)
-        ));
-        Order order3 = Order.create(1L, 1L, 0.1, List.of(
-            OrderProduct.create(2L, "상품2", 20_000L, 3),
-            OrderProduct.create(3L, "상품3", 30_000L, 4)
-        ));
-
-        List.of(order1, order2, order3)
-            .forEach(order -> {
-                order.paid(LocalDateTime.of(2025, 4, 22, 12, 0, 0));
-                orderRepository.save(order);
-            });
-
-        OrderCommand.DateQuery command = OrderCommand.DateQuery.of(LocalDate.of(2025, 4, 23));
+        orderRepository.save(order);
 
         // when
-        OrderInfo.PaidProducts result = orderService.getPaidProducts(command);
+        orderService.paidOrder(order.getId());
 
         // then
-        assertThat(result.getProducts()).hasSize(3)
-            .extracting("productId", "quantity")
-            .containsExactlyInAnyOrder(
-                tuple(1L, 4),
-                tuple(2L, 6),
-                tuple(3L, 8)
-            );
+        verify(orderEventPublisher, times(1)).paid(any(OrderEvent.Paid.class));
+        assertThat(events.stream(OrderEvent.Paid.class).count()).isEqualTo(1);
+    }
+
+    @DisplayName("주문을 결제 시, 실패하면 이벤트를 발행하지 않는다.")
+    @Test
+    void notPublishEventAfterFailedPaidOrder() {
+        // given
+        Long notExistOrderId = -1L;
+
+        // when
+        assertThatThrownBy(() -> orderService.paidOrder(notExistOrderId))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("주문이 존재하지 않습니다.");
+
+        // then
+        verify(orderEventPublisher, never()).paid(any(OrderEvent.Paid.class));
+        assertThat(events.stream(OrderEvent.Paid.class).count()).isZero();
     }
 }

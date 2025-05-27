@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.interfaces.order;
+package kr.hhplus.be.ecommerce.interfaces.order.api;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;

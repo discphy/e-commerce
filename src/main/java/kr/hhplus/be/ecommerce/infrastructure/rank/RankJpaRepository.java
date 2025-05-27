@@ -8,5 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RankJpaRepository extends JpaRepository<Rank, Long> {
+    
     List<Rank> findByRankTypeAndRankDate(RankType rankType, LocalDate rankDate);
 }
