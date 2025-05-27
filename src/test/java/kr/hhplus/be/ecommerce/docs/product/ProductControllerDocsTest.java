@@ -1,8 +1,8 @@
 package kr.hhplus.be.ecommerce.docs.product;
 
-import kr.hhplus.be.ecommerce.application.product.ProductFacade;
-import kr.hhplus.be.ecommerce.application.product.ProductResult;
-import kr.hhplus.be.ecommerce.interfaces.product.ProductController;
+import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
+import kr.hhplus.be.ecommerce.domain.product.ProductService;
+import kr.hhplus.be.ecommerce.interfaces.product.api.ProductController;
 import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,23 +22,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class ProductControllerDocsTest extends RestDocsSupport {
 
-    private final ProductFacade productFacade = mock(ProductFacade.class);
+    private final ProductService productService = mock(ProductService.class);
 
     @Override
     protected Object initController() {
-        return new ProductController(productFacade);
+        return new ProductController(productService);
     }
 
     @DisplayName("상품 목록 조회 API")
     @Test
     void getProducts() throws Exception {
         // given
-        when(productFacade.getProducts())
-            .thenReturn(ProductResult.Products.of(
-                List.of(
-                    ProductResult.Product.of(1L, "상품명", 300_000L, 3)
+        when(productService.getSellingProducts())
+            .thenReturn(
+                ProductInfo.Products.of(
+                    List.of(
+                        ProductInfo.Product.of(1L, "상품명", 300_000L, 3)
+                    )
                 )
-            ));
+            );
 
         // when & then
         mockMvc.perform(

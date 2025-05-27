@@ -61,12 +61,18 @@ public class ProductInfo {
         private final Long productId;
         private final String productName;
         private final Long productPrice;
+        private final int quantity;
 
         @Builder
-        private Product(Long productId, String productName, Long productPrice) {
+        public Product(Long productId, String productName, Long productPrice, int quantity) {
             this.productId = productId;
             this.productName = productName;
             this.productPrice = productPrice;
+            this.quantity = quantity;
+        }
+
+        public static Product of(Long productId, String productName, Long productPrice, int quantity) {
+            return new Product(productId, productName, productPrice, quantity);
         }
     }
 }

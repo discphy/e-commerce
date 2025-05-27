@@ -1,8 +1,8 @@
 package kr.hhplus.be.ecommerce.docs.rank;
 
-import kr.hhplus.be.ecommerce.application.rank.RankFacade;
-import kr.hhplus.be.ecommerce.application.rank.RankResult;
-import kr.hhplus.be.ecommerce.interfaces.rank.RankController;
+import kr.hhplus.be.ecommerce.domain.rank.RankInfo;
+import kr.hhplus.be.ecommerce.domain.rank.RankService;
+import kr.hhplus.be.ecommerce.interfaces.rank.api.RankController;
 import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,21 +23,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class RankControllerDocsTest extends RestDocsSupport {
 
-    private final RankFacade rankFacade = mock(RankFacade.class);
+    private final RankService rankService = mock(RankService.class);
 
     @Override
     protected Object initController() {
-        return new RankController(rankFacade);
+        return new RankController(rankService);
     }
 
     @DisplayName("상위 상품 Top5 목록 조회 API")
     @Test
     void getRanks() throws Exception {
         // given
-        when(rankFacade.getPopularProducts(any()))
-            .thenReturn(RankResult.PopularProducts.of(
+        when(rankService.cachedPopularProducts(any()))
+            .thenReturn(RankInfo.PopularProducts.of(
                 List.of(
-                    RankResult.PopularProduct.of(1L, "상품명", 300_000L)
+                    RankInfo.PopularProduct.builder()
+                        .productId(1L)
+                        .productName("상품명")
+                        .productPrice(300_000L)
+                        .build()
                 )
             ));
 

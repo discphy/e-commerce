@@ -26,7 +26,7 @@ class StockServiceUnitTest extends MockTestSupport {
     @Test
     void deductStockWithInvalidId() {
         // given
-        StockCommand.OrderProducts command = mock(StockCommand.OrderProducts.class);
+        StockCommand.Deduct command = mock(StockCommand.Deduct.class);
         StockCommand.OrderProduct orderProduct = mock(StockCommand.OrderProduct.class);
 
         when(command.getProducts())
@@ -45,7 +45,7 @@ class StockServiceUnitTest extends MockTestSupport {
     @Test
     void deductStockWithInsufficientStock() {
         // given
-        StockCommand.OrderProducts command = mock(StockCommand.OrderProducts.class);
+        StockCommand.Deduct command = mock(StockCommand.Deduct.class);
         StockCommand.OrderProduct orderProduct = mock(StockCommand.OrderProduct.class);
 
         when(orderProduct.getQuantity())
@@ -67,7 +67,7 @@ class StockServiceUnitTest extends MockTestSupport {
     @Test
     void deductStock() {
         // given
-        StockCommand.OrderProducts command = mock(StockCommand.OrderProducts.class);
+        StockCommand.Deduct command = mock(StockCommand.Deduct.class);
         StockCommand.OrderProduct orderProduct = mock(StockCommand.OrderProduct.class);
 
         when(orderProduct.getQuantity())
@@ -78,13 +78,56 @@ class StockServiceUnitTest extends MockTestSupport {
 
         Stock stock = Stock.create(1L, 10);
         when(stockRepository.findByProductIdWithLock(anyLong()))
-            .thenReturn(stock, stock);
+            .thenReturn(stock);
 
         // when
         stockService.deductStock(command);
 
         // then
         assertThat(stock.getQuantity()).isZero();
+    }
+
+    @DisplayName("유효한 ID로 재고를 복구해야 한다.")
+    @Test
+    void restoreStockWithInvalidId() {
+        // given
+        StockCommand.Restore command = mock(StockCommand.Restore.class);
+        StockCommand.OrderProduct orderProduct = mock(StockCommand.OrderProduct.class);
+
+        when(command.getProducts())
+            .thenReturn(List.of(orderProduct, orderProduct));
+
+        when(stockRepository.findByProductIdWithLock(anyLong()))
+            .thenThrow(new IllegalArgumentException("재고가 존재하지 않습니다."));
+
+        // when & then
+        assertThatThrownBy(() -> stockService.restoreStock(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("재고가 존재하지 않습니다.");
+    }
+
+    @DisplayName("재고를 복구한다.")
+    @Test
+    void restoreStock() {
+        // given
+        StockCommand.Restore command = mock(StockCommand.Restore.class);
+        StockCommand.OrderProduct orderProduct = mock(StockCommand.OrderProduct.class);
+
+        when(orderProduct.getQuantity())
+            .thenReturn(10);
+
+        when(command.getProducts())
+            .thenReturn(List.of(orderProduct));
+
+        Stock stock = Stock.create(1L, 0);
+        when(stockRepository.findByProductIdWithLock(anyLong()))
+            .thenReturn(stock);
+
+        // when
+        stockService.restoreStock(command);
+
+        // then
+        assertThat(stock.getQuantity()).isEqualTo(10);
     }
 
     @DisplayName("상품 ID로 재고를 조회한다.")

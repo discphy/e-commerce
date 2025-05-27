@@ -1,5 +1,7 @@
 package kr.hhplus.be.ecommerce.domain.product;
 
+import kr.hhplus.be.ecommerce.domain.stock.Stock;
+import kr.hhplus.be.ecommerce.domain.stock.StockRepository;
 import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,9 @@ class ProductRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private StockRepository stockRepository;
 
     @DisplayName("상품 ID로 상품 조회시 존재해야 한다.")
     @Test
@@ -47,23 +52,26 @@ class ProductRepositoryTest extends IntegrationTestSupport {
 
     @DisplayName("상품 판매상태로 상품들을 조회한다.")
     @Test
-    void findSellingStatusIn() {
+    void findBySellStatusIn() {
         // given
         Product product1 = Product.create("상품명1", 1_000L, ProductSellingStatus.SELLING);
         Product targetProduct = Product.create("상품명2", 2_000L, ProductSellingStatus.HOLD);
         Product product3 = Product.create("상품명3", 3_000L, ProductSellingStatus.STOP_SELLING);
         List.of(product1, targetProduct, product3).forEach(productRepository::save);
 
+        Stock targetStock = Stock.create(targetProduct.getId(), 100);
+        stockRepository.save(targetStock);
+
         List<ProductSellingStatus> holdStatus = List.of(ProductSellingStatus.HOLD);
 
         // when
-        List<Product> results = productRepository.findSellingStatusIn(holdStatus);
+        List<ProductInfo.Product> results = productRepository.findBySellStatusIn(holdStatus);
 
         // then
         assertThat(results).hasSize(1)
-            .extracting("name", "sellStatus")
+            .extracting("productName", "productPrice", "quantity")
             .containsExactlyInAnyOrder(
-                tuple(targetProduct.getName(), targetProduct.getSellStatus())
+                tuple(targetProduct.getName(), targetProduct.getPrice(), targetStock.getQuantity())
             );
     }
 }

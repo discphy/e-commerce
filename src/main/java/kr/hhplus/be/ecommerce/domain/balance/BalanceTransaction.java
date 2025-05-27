@@ -46,4 +46,12 @@ public class BalanceTransaction {
             .amount(-amount)
             .build();
     }
+
+    public static BalanceTransaction ofRefund(Balance balance, long amount) {
+        return BalanceTransaction.builder()
+            .balanceId(balance.getId())
+            .transactionType(BalanceTransactionType.REFUND)
+            .amount(amount)
+            .build();
+    }
 }

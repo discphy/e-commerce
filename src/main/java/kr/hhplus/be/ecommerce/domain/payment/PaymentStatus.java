@@ -13,12 +13,12 @@ public enum PaymentStatus {
     WAITING("결제 대기"),
     COMPLETED("결제 완료"),
     FAILED("결제 실패"),
-    CANCELLED("결제 취소"),
+    CANCELED("결제 취소"),
     ;
 
     private final String description;
 
-    private static final List<PaymentStatus> CANNOT_PAYABLE_STATUSES = List.of(COMPLETED, FAILED, CANCELLED);
+    private static final List<PaymentStatus> CANNOT_PAYABLE_STATUSES = List.of(COMPLETED, FAILED, CANCELED);
 
     public boolean cannotPayable() {
         return CANNOT_PAYABLE_STATUSES.contains(this);

@@ -96,4 +96,35 @@ class BalanceTest {
         // then
         assertThat(balance.getAmount()).isZero();
     }
+
+    @DisplayName("환불 금액은 0보다 커야한다.")
+    @Test
+    void refundWithNotPositiveAmount() {
+        // given
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(1_000_000L)
+            .build();
+
+        // when & then
+        assertThatThrownBy(() -> balance.refund(0L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("환불 금액은 0보다 커야 합니다.");
+    }
+
+    @DisplayName("잔고를 환불한다.")
+    @Test
+    void refund() {
+        // given
+        Balance balance = Balance.builder()
+            .userId(1L)
+            .amount(1_000_000L)
+            .build();
+
+        // when
+        balance.refund(1_000_000L);
+
+        // then
+        assertThat(balance.getAmount()).isEqualTo(2_000_000L);
+    }
 }

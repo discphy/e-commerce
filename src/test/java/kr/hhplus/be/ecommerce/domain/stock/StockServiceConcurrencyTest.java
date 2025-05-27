@@ -25,7 +25,7 @@ class StockServiceConcurrencyTest extends ConcurrencyTestSupport {
         Stock stock = Stock.create(1L, 10);
         stockRepository.save(stock);
 
-        StockCommand.OrderProducts command = StockCommand.OrderProducts.of(
+        StockCommand.Deduct command = StockCommand.Deduct.of(
             List.of(
                 StockCommand.OrderProduct.of(1L, 1)
             )
@@ -59,7 +59,7 @@ class StockServiceConcurrencyTest extends ConcurrencyTestSupport {
         Stock stock = Stock.create(1L, 1);
         stockRepository.save(stock);
 
-        StockCommand.OrderProducts command = StockCommand.OrderProducts.of(
+        StockCommand.Deduct command = StockCommand.Deduct.of(
             List.of(
                 StockCommand.OrderProduct.of(1L, 1)
             )

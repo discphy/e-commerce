@@ -5,54 +5,88 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CouponInfo {
 
     @Getter
-    public static class Coupon {
+    public static class UsableCoupon {
 
-        private final Long couponId;
-        private final String name;
-        private final double discountRate;
+        private final Long userCouponId;
 
-        @Builder
-        private Coupon(Long couponId, String name, double discountRate) {
-            this.couponId = couponId;
-            this.name = name;
-            this.discountRate = discountRate;
+        private UsableCoupon(Long userCouponId) {
+            this.userCouponId = userCouponId;
+        }
+
+        public static UsableCoupon of(Long userCouponId) {
+            return new UsableCoupon(userCouponId);
         }
     }
 
     @Getter
-    public static class PublishableCoupons {
+    public static class Coupons {
 
-        private final List<PublishableCoupon> coupons;
+        private final List<Coupon> coupons;
 
-        private PublishableCoupons(List<PublishableCoupon> coupons) {
+        private Coupons(List<Coupon> coupons) {
             this.coupons = coupons;
         }
 
-        public static PublishableCoupons of(List<PublishableCoupon> coupons) {
-            return new PublishableCoupons(coupons);
+        public static Coupons of(List<Coupon> coupons) {
+            return new Coupons(coupons);
         }
     }
 
     @Getter
-    public static class PublishableCoupon {
+    public static class Coupon {
 
+        private final Long userCouponId;
         private final Long couponId;
-        private final int quantity;
+        private final String couponName;
+        private final double discountRate;
+        private final LocalDateTime issuedAt;
 
         @Builder
-        private PublishableCoupon(Long couponId, int quantity) {
+        public Coupon(Long userCouponId, Long couponId, String couponName, double discountRate, LocalDateTime issuedAt) {
+            this.userCouponId = userCouponId;
             this.couponId = couponId;
-            this.quantity = quantity;
+            this.couponName = couponName;
+            this.discountRate = discountRate;
+            this.issuedAt = issuedAt;
+        }
+    }
+
+    @Getter
+    public static class Candidates {
+
+        private final Long userId;
+        private final LocalDateTime issuedAt;
+
+        private Candidates(Long userId, LocalDateTime issuedAt) {
+            this.userId = userId;
+            this.issuedAt = issuedAt;
         }
 
-        public static PublishableCoupon of(Long couponId, int quantity) {
-            return new PublishableCoupon(couponId, quantity);
+        public static Candidates of(Long userId, LocalDateTime issuedAt) {
+            return new Candidates(userId, issuedAt);
+        }
+    }
+
+    @Getter
+    public static class User {
+
+        private final Long id;
+        private final String userName;
+
+        private User(Long id, String userName) {
+            this.id = id;
+            this.userName = userName;
+        }
+
+        public static User of(Long userId, String userName) {
+            return new User(userId, userName);
         }
     }
 }

@@ -46,6 +46,10 @@ public class Stock {
         this.quantity -= quantity;
     }
 
+    public void restore(int quantity) {
+        this.quantity += quantity;
+    }
+
     private static void validateQuantity(int quantity) {
         if (quantity < 0) {
             throw new IllegalArgumentException("재고 수량은 0 이상이어야 합니다.");

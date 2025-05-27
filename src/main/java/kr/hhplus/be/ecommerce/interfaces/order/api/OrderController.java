@@ -1,7 +1,7 @@
 package kr.hhplus.be.ecommerce.interfaces.order.api;
 
 import jakarta.validation.Valid;
-import kr.hhplus.be.ecommerce.application.order.OrderFacade;
+import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.interfaces.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderFacade orderFacade;
+    private final OrderService orderService;
 
     @PostMapping("/api/v1/orders")
     public ApiResponse<Void> orderPayment(@Valid @RequestBody OrderRequest.OrderPayment request) {
-        orderFacade.orderPayment(request.toCriteria());
+        orderService.createOrder(request.toCommand());
         return ApiResponse.success();
     }
 }

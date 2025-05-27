@@ -38,4 +38,20 @@ public class BalanceCommand {
             return new Use(userId, amount);
         }
     }
+
+    @Getter
+    public static class Refund {
+
+        private final Long userId;
+        private final Long amount;
+
+        private Refund(Long userId, Long amount) {
+            this.userId = userId;
+            this.amount = amount;
+        }
+
+        public static Refund of(Long userId, Long amount) {
+            return new Refund(userId, amount);
+        }
+    }
 }

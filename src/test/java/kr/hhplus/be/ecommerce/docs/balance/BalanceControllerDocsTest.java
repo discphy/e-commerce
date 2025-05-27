@@ -1,10 +1,10 @@
 package kr.hhplus.be.ecommerce.docs.balance;
 
-import kr.hhplus.be.ecommerce.application.balance.BalanceFacade;
-import kr.hhplus.be.ecommerce.application.balance.BalanceResult;
-import kr.hhplus.be.ecommerce.interfaces.balance.BalanceController;
+import kr.hhplus.be.ecommerce.domain.balance.BalanceInfo;
+import kr.hhplus.be.ecommerce.domain.balance.BalanceService;
+import kr.hhplus.be.ecommerce.interfaces.balance.api.BalanceController;
+import kr.hhplus.be.ecommerce.interfaces.balance.api.BalanceRequest;
 import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
-import kr.hhplus.be.ecommerce.interfaces.balance.BalanceRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -24,19 +24,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class BalanceControllerDocsTest extends RestDocsSupport {
 
-    private final BalanceFacade balanceFacade = mock(BalanceFacade.class);
+    private final BalanceService balanceService = mock(BalanceService.class);
 
     @Override
     protected Object initController() {
-        return new BalanceController(balanceFacade);
+        return new BalanceController(balanceService);
     }
 
     @DisplayName("잔액 조회 API")
     @Test
     void getBalance() throws Exception {
         // given
-        when(balanceFacade.getBalance(1L))
-            .thenReturn(BalanceResult.Balance.of(1_000L));
+        when(balanceService.getBalance(1L))
+            .thenReturn(BalanceInfo.Balance.of(1_000L));
 
         // when & then
         mockMvc.perform(

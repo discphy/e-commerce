@@ -24,7 +24,7 @@ public class RankRedisRepository {
         return rank;
     }
 
-    public List<RankInfo.PopularProduct> findPopularSellRanks(RankCommand.Query command) {
+    public List<RankInfo.ProductScore> findPopularSellRanks(RankCommand.Query command) {
         String targetKey = command.getTarget().generate();
         RankKeys sources = command.getSources();
 
@@ -36,7 +36,7 @@ public class RankRedisRepository {
             .orElse(new ArrayList<>());
     }
 
-    public List<RankInfo.PopularProduct> findDailyRank(RankKey key) {
+    public List<RankInfo.ProductScore> findDailyRank(RankKey key) {
         Set<TypedTuple<Long>> tuples = redisTemplate.opsForZSet().rangeWithScores(key.generate(), 0, -1);
         return Optional.ofNullable(tuples)
             .map(this::getList)
@@ -47,16 +47,16 @@ public class RankRedisRepository {
         return redisTemplate.delete(key.generate());
     }
 
-    private List<RankInfo.PopularProduct> getList(Set<TypedTuple<Long>> set) {
+    private List<RankInfo.ProductScore> getList(Set<TypedTuple<Long>> set) {
         return set.stream()
             .map(this::toPopularProduct)
             .toList();
     }
 
-    private RankInfo.PopularProduct toPopularProduct(TypedTuple<Long> tuple) {
+    private RankInfo.ProductScore toPopularProduct(TypedTuple<Long> tuple) {
         Long productId = tuple.getValue();
         Long score = Optional.ofNullable(tuple.getScore()).map(Double::longValue).orElse(0L);
 
-        return RankInfo.PopularProduct.of(productId, score);
+        return RankInfo.ProductScore.of(productId, score);
     }
 }
