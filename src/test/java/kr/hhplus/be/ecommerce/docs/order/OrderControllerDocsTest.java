@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.docs.order;
 
+import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
 import kr.hhplus.be.ecommerce.domain.order.OrderService;
 import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
 import kr.hhplus.be.ecommerce.interfaces.order.api.OrderController;
@@ -11,7 +12,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -40,6 +43,13 @@ class OrderControllerDocsTest extends RestDocsSupport {
             )
         );
 
+        when(orderService.createOrder(any()))
+            .thenReturn(OrderInfo.Order.builder()
+                .orderId(1L)
+                .totalPrice(10000L)
+                .discountPrice(2000L)
+                .build());
+
         // when & then
         mockMvc.perform(
                 post("/api/v1/orders")
@@ -59,7 +69,11 @@ class OrderControllerDocsTest extends RestDocsSupport {
                 ),
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
-                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메세지")
+                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메세지"),
+                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.orderId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                    fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
+                    fieldWithPath("data.discountPrice").type(JsonFieldType.NUMBER).description("할인 금액")
                 )
             ));
     }

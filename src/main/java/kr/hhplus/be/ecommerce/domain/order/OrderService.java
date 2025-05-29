@@ -3,6 +3,7 @@ package kr.hhplus.be.ecommerce.domain.order;
 import kr.hhplus.be.ecommerce.support.lock.DistributedLock;
 import kr.hhplus.be.ecommerce.support.lock.LockType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -20,45 +22,55 @@ public class OrderService {
 
     @Transactional
     public OrderInfo.Order createOrder(OrderCommand.Create command) {
-        validateUser(command.getUserId());
         List<OrderProduct> products = getProducts(command);
         Optional<OrderInfo.Coupon> coupon = getUsableCoupon(command.getUserCouponId());
 
-        Order order = Order.create(
-            command.getUserId(),
-            coupon.map(OrderInfo.Coupon::getUserCouponId).orElse(null),
-            coupon.map(OrderInfo.Coupon::getDiscountRate).orElse(OrderConstant.NOT_DISCOUNT_RATE),
-            products
-        );
+        Order order = createOrder(command.getUserId(), coupon, products);
         orderRepository.save(order);
+
+        orderClient.deductStock(command.getProducts());
+
         orderEventPublisher.created(OrderEvent.Created.of(order));
 
         return OrderInfo.Order.of(order);
     }
 
     @Transactional
-    public OrderInfo.Completed completedOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId);
-        order.completed(LocalDateTime.now());
+    public void completedOrder(Long orderId) {
+        try {
+            Order order = orderRepository.findById(orderId);
+            order.completed(LocalDateTime.now());
 
-        return OrderInfo.Completed.of(order);
+            orderEventPublisher.completed(OrderEvent.Completed.of(order));
+        } catch (Exception e) {
+            orderEventPublisher.completeFailed(OrderEvent.CompleteFailed.of(orderId));
+            throw e;
+        }
     }
 
     @Transactional
     public void cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId);
-        order.cancel();
+        try {
+            Order order = orderRepository.findById(orderId);
+
+            orderClient.restoreStock(order.getOrderProducts().stream()
+                .map(op -> OrderCommand.OrderProduct.of(op.getProductId(), op.getQuantity()))
+                .toList());
+
+            order.cancel();
+        } catch (Exception e) {
+            log.error("주문 취소 실패 - orderId: {}", orderId, e);
+            throw e;
+        }
     }
 
-    @Transactional(readOnly = true)
-    @DistributedLock(type = LockType.ORDER, key = "#command.orderId")
-    public void updateProcess(OrderCommand.Process command) {
-        orderRepository.updateProcess(command);
-        tryCompletedProcess(command.getOrderId());
-    }
-
-    private void validateUser(Long userId) {
-        orderClient.getUser(userId);
+    private Order createOrder(Long userId, Optional<OrderInfo.Coupon> coupon, List<OrderProduct> products) {
+        return Order.create(
+            userId,
+            coupon.map(OrderInfo.Coupon::getUserCouponId).orElse(null),
+            coupon.map(OrderInfo.Coupon::getDiscountRate).orElse(OrderConstant.NOT_DISCOUNT_RATE),
+            products
+        );
     }
 
     private List<OrderProduct> getProducts(OrderCommand.Create command) {
