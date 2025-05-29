@@ -1,10 +1,11 @@
 package kr.hhplus.be.ecommerce.interfaces.order.api;
 
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import kr.hhplus.be.ecommerce.domain.balance.Balance;
 import kr.hhplus.be.ecommerce.domain.balance.BalanceRepository;
-import kr.hhplus.be.ecommerce.domain.order.OrderClient;
-import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
+import kr.hhplus.be.ecommerce.domain.order.*;
+import kr.hhplus.be.ecommerce.domain.payment.PaymentRepository;
 import kr.hhplus.be.ecommerce.domain.product.Product;
 import kr.hhplus.be.ecommerce.domain.product.ProductRepository;
 import kr.hhplus.be.ecommerce.domain.product.ProductSellingStatus;
@@ -12,18 +13,24 @@ import kr.hhplus.be.ecommerce.domain.stock.Stock;
 import kr.hhplus.be.ecommerce.domain.stock.StockRepository;
 import kr.hhplus.be.ecommerce.domain.user.User;
 import kr.hhplus.be.ecommerce.domain.user.UserRepository;
+import kr.hhplus.be.ecommerce.interfaces.ApiResponse;
 import kr.hhplus.be.ecommerce.test.support.E2EControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 class OrderControllerE2ETest extends E2EControllerTestSupport {
 
@@ -38,6 +45,12 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
 
     @Autowired
     private BalanceRepository balanceRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @MockitoBean
     private OrderClient orderClient;
@@ -71,7 +84,7 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
             )
         );
 
-        Mockito.when(orderClient.getProducts(Mockito.any()))
+        when(orderClient.getProducts(any()))
             .thenReturn(
                 List.of(
                     OrderInfo.Product.of(product1.getId(), product1.getName(), product1.getPrice(), 1),
@@ -122,7 +135,7 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
             )
         );
 
-        Mockito.when(orderClient.getProducts(Mockito.any()))
+        when(orderClient.getProducts(any()))
             .thenReturn(
                 List.of(
                     OrderInfo.Product.of(product1.getId(), product1.getName(), product1.getPrice(), 1),
@@ -172,7 +185,7 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
             )
         );
 
-        Mockito.when(orderClient.getProducts(Mockito.any()))
+        when(orderClient.getProducts(any()))
             .thenReturn(
                 List.of(
                     OrderInfo.Product.of(product1.getId(), product1.getName(), product1.getPrice(), 1),
@@ -223,7 +236,7 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
             )
         );
 
-        Mockito.when(orderClient.getProducts(Mockito.any()))
+        when(orderClient.getProducts(any()))
             .thenReturn(
                 List.of(
                     OrderInfo.Product.of(product1.getId(), product1.getName(), product1.getPrice(), 1),
@@ -232,7 +245,7 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
             );
 
         // when & then
-        given()
+        ApiResponse<OrderResponse.Order> response = given()
             .contentType(ContentType.JSON)
             .body(request)
         .when()
@@ -241,6 +254,18 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
             .log().all()
             .statusCode(HttpStatus.OK.value())
             .body("code", equalTo(200))
-            .body("message", equalTo("OK"));
+            .body("message", equalTo("OK"))
+            .extract()
+            .as(new TypeRef<>() {});
+
+        await()
+            .atMost(30, TimeUnit.SECONDS)
+            .pollInterval(Duration.ofMillis(500))
+            .untilAsserted(() -> {
+                Order order = orderRepository.findById(response.getData().getOrderId());
+                assertThat(order.getUserId()).isEqualTo(user.getId());
+                assertThat(order.getTotalPrice()).isEqualTo(500_000L);
+                assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETED);
+            });
     }
 }
