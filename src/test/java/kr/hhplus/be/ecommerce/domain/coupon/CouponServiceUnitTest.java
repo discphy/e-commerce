@@ -8,8 +8,8 @@ import org.mockito.Mock;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import static kr.hhplus.be.ecommerce.domain.coupon.CouponConstant.MAX_PUBLISH_COUNT_PER_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +25,9 @@ class CouponServiceUnitTest extends MockTestSupport {
 
     @Mock
     private CouponClient couponClient;
+
+    @Mock
+    private CouponEventPublisher couponEventPublisher;
 
     @DisplayName("유효한 ID로 쿠폰을 조회해야 한다.")
     @Test
@@ -88,7 +91,7 @@ class CouponServiceUnitTest extends MockTestSupport {
             .build();
 
         when(couponRepository.findByUserIdAndCouponId(anyLong(), anyLong()))
-            .thenReturn(usedUserCoupon);
+            .thenReturn(Optional.of(usedUserCoupon));
 
         // when
         assertThatThrownBy(() -> couponService.getUsableCoupon(command))
@@ -108,7 +111,7 @@ class CouponServiceUnitTest extends MockTestSupport {
             .build();
 
         when(couponRepository.findByUserIdAndCouponId(anyLong(), anyLong()))
-            .thenReturn(userCoupon);
+            .thenReturn(Optional.of(userCoupon));
 
         // when
         CouponInfo.UsableCoupon usableCoupon = couponService.getUsableCoupon(command);
@@ -266,144 +269,128 @@ class CouponServiceUnitTest extends MockTestSupport {
     @Test
     void failedRequestPublishUserCoupon() {
         // given
-        CouponCommand.PublishRequest command = mock(CouponCommand.PublishRequest.class);
+        CouponCommand.Publish command = mock(CouponCommand.Publish.class);
 
-        when(couponRepository.save(command))
+        when(couponRepository.findPublishableCouponById(command.getCouponId()))
             .thenReturn(false);
 
         // when & then
         assertThatThrownBy(() -> couponService.requestPublishUserCoupon(command))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("쿠폰 발급 요청에 실패했습니다.");
+            .hasMessage("발급 불가한 쿠폰입니다.");
     }
 
     @DisplayName("쿠폰 발급 요청에 성공한다.")
     @Test
     void requestPublishUserCoupon() {
         // given
-        CouponCommand.PublishRequest command = mock(CouponCommand.PublishRequest.class);
+        CouponCommand.Publish command = mock(CouponCommand.Publish.class);
 
-        when(couponRepository.save(command))
+        when(couponRepository.findPublishableCouponById(anyLong()))
             .thenReturn(true);
 
         // when
-        boolean result = couponService.requestPublishUserCoupon(command);
+        couponService.requestPublishUserCoupon(command);
 
         // then
-        assertThat(result).isTrue();
+        verify(couponEventPublisher).publishRequested(any(CouponEvent.PublishRequested.class));
     }
 
-    @DisplayName("발급 가능한 쿠폰이 없으면 발급하지 않는다.")
+    @DisplayName("발급된 쿠폰이 없으면 발급되지 않는다.")
     @Test
-    void publishUserCouponsWithEmptyCoupon() {
+    void publishUserCouponWithAlreadyPublished() {
         // given
-        when(couponRepository.findByStatus(any()))
-            .thenReturn(List.of());
+        CouponCommand.Publish command = mock(CouponCommand.Publish.class);
+
+        when(couponRepository.findByUserIdAndCouponId(anyLong(), anyLong()))
+            .thenReturn(Optional.of(UserCoupon.builder().id(1L).build()));
+
+        // when & then
+        assertThatThrownBy(() -> couponService.publishUserCoupon(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 발급된 쿠폰입니다.");
+    }
+
+    @DisplayName("발급할 쿠폰이 없으면 발급하지 않는다.")
+    @Test
+    void publishUserCouponWithNoAvailableCoupons() {
+        // given
+        CouponCommand.Publish command = mock(CouponCommand.Publish.class);
+
+        when(couponRepository.findByUserIdAndCouponId(anyLong(), anyLong()))
+            .thenReturn(Optional.empty());
+
+        when(couponRepository.findCouponById(anyLong()))
+            .thenThrow(new IllegalArgumentException("쿠폰을 찾을 수 없습니다."));
+
+        // when & then
+        assertThatThrownBy(() -> couponService.publishUserCoupon(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("쿠폰을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("쿠폰을 발급한다.")
+    @Test
+    void publishUserCouponWithEmptyCoupon() {
+        // given
+        CouponCommand.Publish command = mock(CouponCommand.Publish.class);
+
+        when(couponRepository.findByUserIdAndCouponId(anyLong(), anyLong()))
+            .thenReturn(Optional.empty());
+
+        when(couponRepository.findCouponById(anyLong()))
+            .thenReturn(Coupon.builder()
+                .name("쿠폰명")
+                .status(CouponStatus.PUBLISHABLE)
+                .discountRate(0.1)
+                .quantity(1)
+                .expiredAt(LocalDateTime.now().plusDays(1))
+                .build()
+            );
 
         // when
-        couponService.publishUserCoupons(CouponCommand.PublishCoupons.of(MAX_PUBLISH_COUNT_PER_REQUEST));
+        couponService.publishUserCoupon(command);
 
         // then
-        verify(couponRepository, never()).saveAll(any());
+        verify(couponRepository).save(any(UserCoupon.class));
+        verify(couponEventPublisher).published(any(CouponEvent.Published.class));
     }
 
-    @DisplayName("사용자 쿠폰을 발급한다.")
+    @DisplayName("쿠폰이 발급 가능하지 않으면 발급 가능 상태를 변경한다.")
     @Test
-    void publishUserCoupons() {
-        // given
-        CouponCommand.PublishCoupons command = CouponCommand.PublishCoupons.of(MAX_PUBLISH_COUNT_PER_REQUEST);
-
-        when(couponRepository.findByStatus(any()))
-            .thenReturn(List.of(
-                Coupon.builder()
-                    .id(1L)
-                    .quantity(10)
-                    .build()
-            ));
-
-
-        when(couponRepository.countByCouponId(anyLong()))
-            .thenReturn(0);
-
-        List<CouponInfo.Candidates> users = List.of(
-            CouponInfo.Candidates.of(1L, LocalDateTime.of(2025, 4, 1, 12, 0)),
-            CouponInfo.Candidates.of(2L, LocalDateTime.of(2025, 4, 1, 12, 0))
-        );
-
-        when(couponRepository.findPublishCandidates(any()))
-            .thenReturn(users);
-
-        // when
-        couponService.publishUserCoupons(command);
-
-        // then
-        verify(couponRepository, times(1)).saveAll(anyList());
-    }
-
-    @DisplayName("발급할 쿠폰 수량이 없는 경우 발급이 진행되지 않는다.")
-    @Test
-    void publishUserCouponsWithNotRemainCoupon() {
-        // given
-        CouponCommand.PublishCoupons command = CouponCommand.PublishCoupons.of(MAX_PUBLISH_COUNT_PER_REQUEST);
-
-        when(couponRepository.findByStatus(any()))
-            .thenReturn(List.of(
-                Coupon.builder()
-                    .id(1L)
-                    .quantity(10)
-                    .build()
-            ));
-
-        when(couponRepository.countByCouponId(anyLong()))
-            .thenReturn(10);
-
-        // when
-        couponService.publishUserCoupons(command);
-
-        // then
-        verify(couponRepository, never()).saveAll(any());
-    }
-
-    @DisplayName("발급 쿠폰 수가 남아 있으면 발급이 진행 중이다.")
-    @Test
-    void notFinishedPublishCoupons() {
+    void stopPublishCoupon() {
         // given
         Coupon coupon = mock(Coupon.class);
 
-        when(coupon.getQuantity())
-            .thenReturn(10);
+        when(couponRepository.findCouponById(anyLong()))
+            .thenReturn(coupon);
 
-        when(couponRepository.findByStatus(any()))
-            .thenReturn(List.of(coupon));
-
-        when(couponRepository.countByCouponId(anyLong()))
-            .thenReturn(5);
+        when(coupon.isNotPublishable())
+            .thenReturn(true);
 
         // when
-        couponService.finishedPublishCoupons();
+        couponService.stopPublishCoupon(1L);
 
         // then
-        verify(coupon, never()).finish();
+        verify(couponRepository).updateAvailableCoupon(anyLong(), eq(false));
     }
 
-    @DisplayName("발급 쿠폰 수가 모두 발급되면 발급이 완료된다.")
+    @DisplayName("쿠폰이 발급 가능하면 발급 가능 상태를 변경하지 않는다.")
     @Test
-    void finishedPublishCoupons() {
+    void stopPublishCouponWithPublishable() {
         // given
         Coupon coupon = mock(Coupon.class);
 
-        when(couponRepository.findByStatus(any()))
-            .thenReturn(List.of(
-                coupon
-            ));
+        when(couponRepository.findCouponById(anyLong()))
+            .thenReturn(coupon);
 
-        when(couponRepository.countByCouponId(anyLong()))
-            .thenReturn(10);
+        when(coupon.isNotPublishable())
+            .thenReturn(false);
 
         // when
-        couponService.finishedPublishCoupons();
+        couponService.stopPublishCoupon(1L);
 
         // then
-        verify(coupon, times(1)).finish();
+        verify(couponRepository, never()).updateAvailableCoupon(anyLong(), eq(false));
     }
 }

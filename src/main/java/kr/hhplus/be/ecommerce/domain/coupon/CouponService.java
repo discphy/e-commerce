@@ -5,15 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CouponService {
 
-    private final CouponRepository couponRepository;
     private final CouponClient couponClient;
+    private final CouponRepository couponRepository;
+    private final CouponEventPublisher couponEventPublisher;
 
     @Transactional(readOnly = true)
     public CouponInfo.Coupon getCoupon(Long couponId) {
@@ -36,6 +35,34 @@ public class CouponService {
         return CouponInfo.UsableCoupon.of(userCoupon.getId());
     }
 
+    public void requestPublishUserCoupon(CouponCommand.Publish command) {
+        boolean publishable = couponRepository.findPublishableCouponById(command.getCouponId());
+
+        if (!publishable) {
+            throw new IllegalArgumentException("발급 불가한 쿠폰입니다.");
+        }
+
+        CouponEvent.PublishRequested event = CouponEvent.PublishRequested.of(command.getUserId(), command.getCouponId());
+        couponEventPublisher.publishRequested(event);
+    }
+
+    @Transactional
+    public void publishUserCoupon(CouponCommand.Publish command) {
+        couponRepository.findByUserIdAndCouponId(command.getUserId(), command.getCouponId())
+            .ifPresent(coupon -> {
+                throw new IllegalArgumentException("이미 발급된 쿠폰입니다.");
+            });
+
+        Coupon coupon = couponRepository.findCouponById(command.getCouponId());
+        coupon.publish();
+
+        UserCoupon userCoupon = UserCoupon.create(command.getUserId(), command.getCouponId());
+        couponRepository.save(userCoupon);
+
+        CouponEvent.Published event = CouponEvent.Published.of(coupon);
+        couponEventPublisher.published(event);
+    }
+
     @Transactional
     public void useUserCoupon(Long userCouponId) {
         UserCoupon userCoupon = couponRepository.findUserCouponById(userCouponId);
@@ -49,61 +76,11 @@ public class CouponService {
     }
 
     @Transactional(readOnly = true)
-    public CouponInfo.Coupons getUserCoupons(Long userId) {
-        couponClient.getUser(userId);
-        return CouponInfo.Coupons.of(couponRepository.findByUserId(userId));
-    }
+    public void stopPublishCoupon(Long couponId) {
+        Coupon coupon = couponRepository.findCouponById(couponId);
 
-    public boolean requestPublishUserCoupon(CouponCommand.PublishRequest command) {
-        boolean isSuccess = couponRepository.save(command);
-
-        if (!isSuccess) {
-            throw new IllegalArgumentException("쿠폰 발급 요청에 실패했습니다.");
+        if (coupon.isNotPublishable()) {
+            couponRepository.updateAvailableCoupon(couponId, false);
         }
-
-        return true;
-    }
-
-    @Transactional
-    public void publishUserCoupons(CouponCommand.PublishCoupons command) {
-        couponRepository.findByStatus(CouponStatus.PUBLISHABLE).stream()
-            .map(c -> CouponCommand.PublishCoupon.of(c.getId(), c.getQuantity(), command.getMaxPublishCount()))
-            .forEach(this::publishUserCoupons);
-    }
-
-    @Transactional
-    public void finishedPublishCoupons() {
-        couponRepository.findByStatus(CouponStatus.PUBLISHABLE).stream()
-            .filter(this::isPublishFinished)
-            .forEach(Coupon::finish);
-    }
-
-    private boolean isPublishFinished(Coupon coupon) {
-        int publishedCount = couponRepository.countByCouponId(coupon.getId());
-
-        if (publishedCount > coupon.getQuantity()) {
-            log.error("발급된 쿠폰 개수가 발급 가능 개수를 초과했습니다. 쿠폰 ID: {}", coupon.getId());
-        }
-
-        return publishedCount >= coupon.getQuantity();
-    }
-
-    private void publishUserCoupons(CouponCommand.PublishCoupon command) {
-        int start = couponRepository.countByCouponId(command.getCouponId());
-        int end = Math.min(command.getQuantity(), start + command.getMaxPublishCount());
-
-        if (start >= command.getQuantity()) {
-            log.info("발급할 쿠폰 수량이 없습니다. 쿠폰 ID : {}", command.getCouponId());
-            return;
-        }
-
-        List<CouponInfo.Candidates> candidates = couponRepository
-            .findPublishCandidates(CouponCommand.Candidates.of(command.getCouponId(), start, end));
-
-        List<UserCoupon> coupons = candidates.stream()
-            .map(uc -> UserCoupon.create(uc.getUserId(), command.getCouponId(), uc.getIssuedAt()))
-            .toList();
-
-        couponRepository.saveAll(coupons);
     }
 }

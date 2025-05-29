@@ -1,100 +1,38 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 public class CouponEvent {
 
     @Getter
-    public static class Used {
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PublishRequested {
 
-        private final Long orderId;
-        private final Long userId;
-        private final Long userCouponId;
-        private final long totalPrice;
-        private final long discountPrice;
-        private final List<OrderProduct> orderProducts;
+        private Long userId;
+        private Long couponId;
 
-        @Builder
-        private Used(Long orderId,
-                     Long userId,
-                     Long userCouponId,
-                     long totalPrice,
-                     long discountPrice,
-                     List<OrderProduct> orderProducts) {
-            this.orderId = orderId;
-            this.userId = userId;
-            this.userCouponId = userCouponId;
-            this.totalPrice = totalPrice;
-            this.discountPrice = discountPrice;
-            this.orderProducts = orderProducts;
+        public static PublishRequested of(Long userId, Long couponId) {
+            return PublishRequested.builder()
+                .userId(userId)
+                .couponId(couponId)
+                .build();
         }
     }
 
     @Getter
-    public static class UseFailed {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Published {
 
-        private final Long orderId;
-        private final Long userId;
-        private final Long userCouponId;
-        private final long totalPrice;
-        private final long discountPrice;
+        private Long id;
 
-        @Builder
-        private UseFailed(Long orderId,
-                          Long userId,
-                          Long userCouponId,
-                          long totalPrice,
-                          long discountPrice) {
-            this.orderId = orderId;
-            this.userId = userId;
-            this.userCouponId = userCouponId;
-            this.totalPrice = totalPrice;
-            this.discountPrice = discountPrice;
-        }
-    }
-
-    @Getter
-    public static class Canceled {
-
-        private final Long orderId;
-        private final Long userId;
-        private final Long userCouponId;
-        private final long totalPrice;
-        private final long discountPrice;
-
-        @Builder
-        private Canceled(Long orderId,
-                         Long userId,
-                         Long userCouponId,
-                         long totalPrice,
-                         long discountPrice) {
-            this.orderId = orderId;
-            this.userId = userId;
-            this.userCouponId = userCouponId;
-            this.totalPrice = totalPrice;
-            this.discountPrice = discountPrice;
-        }
-    }
-
-    @Getter
-    public static class OrderProduct {
-
-        private final Long orderProductId;
-        private final Long productId;
-        private final String productName;
-        private final long unitPrice;
-        private final int quantity;
-
-        @Builder
-        private OrderProduct(Long orderProductId, Long productId, String productName, long unitPrice, int quantity) {
-            this.orderProductId = orderProductId;
-            this.productId = productId;
-            this.productName = productName;
-            this.unitPrice = unitPrice;
-            this.quantity = quantity;
+        public static Published of(Coupon coupon) {
+            return new Published(coupon.getId());
         }
     }
 }

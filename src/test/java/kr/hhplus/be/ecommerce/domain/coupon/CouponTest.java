@@ -142,5 +142,70 @@ class CouponTest {
         // then
         assertThat(coupon.getStatus()).isEqualTo(CouponStatus.FINISHED);
     }
-  
+
+    @DisplayName("쿠폰이 발급 불가능 상태인지 확인한다.")
+    @Test
+    void isNotPublishable() {
+        // given
+        Coupon coupon = Coupon.builder()
+            .name("쿠폰명")
+            .status(CouponStatus.PUBLISHABLE)
+            .expiredAt(LocalDateTime.now().plusDays(1))
+            .quantity(1)
+            .build();
+
+        // when & then
+        assertThat(coupon.isNotPublishable()).isFalse();
+
+        // when
+        coupon.publish();
+
+        // then
+        assertThat(coupon.isNotPublishable()).isTrue();
+    }
+
+    @DisplayName("쿠폰이 발급 불가능 상태인지 확인한다. - 만료된 쿠폰")
+    @Test
+    void isNotPublishableWithExpiredCoupon() {
+        // given
+        Coupon coupon = Coupon.builder()
+            .name("쿠폰명")
+            .status(CouponStatus.PUBLISHABLE)
+            .expiredAt(LocalDateTime.now().minusDays(1))
+            .quantity(1)
+            .build();
+
+        // when & then
+        assertThat(coupon.isNotPublishable()).isTrue();
+    }
+
+    @DisplayName("쿠폰이 발급 불가능 상태인지 확인한다. - 수량이 부족한 쿠폰")
+    @Test
+    void isNotPublishableWithInsufficientQuantity() {
+        // given
+        Coupon coupon = Coupon.builder()
+            .name("쿠폰명")
+            .status(CouponStatus.PUBLISHABLE)
+            .expiredAt(LocalDateTime.now().plusDays(1))
+            .quantity(0)
+            .build();
+
+        // when & then
+        assertThat(coupon.isNotPublishable()).isTrue();
+    }
+
+    @DisplayName("쿠폰이 발급 불가능 상태인지 확인한다. - 상태가 발급 불가능한 쿠폰")
+    @Test
+    void isNotPublishableWithNonPublishableStatus() {
+        // given
+        Coupon coupon = Coupon.builder()
+            .name("쿠폰명")
+            .status(CouponStatus.CANCELED)
+            .expiredAt(LocalDateTime.now().plusDays(1))
+            .quantity(1)
+            .build();
+
+        // when & then
+        assertThat(coupon.isNotPublishable()).isTrue();
+    }
 }

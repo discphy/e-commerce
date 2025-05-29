@@ -2,9 +2,7 @@ package kr.hhplus.be.ecommerce.domain.coupon;
 
 public interface CouponEventPublisher {
 
-    void used(CouponEvent.Used event);
+    void publishRequested(CouponEvent.PublishRequested event);
 
-    void useFailed(CouponEvent.UseFailed event);
-
-    void canceled(CouponEvent.Canceled event);
+    void published(CouponEvent.Published event);
 }
