@@ -1,7 +1,5 @@
 package kr.hhplus.be.ecommerce.domain.order;
 
-import kr.hhplus.be.ecommerce.support.lock.DistributedLock;
-import kr.hhplus.be.ecommerce.support.lock.LockType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -89,23 +87,5 @@ public class OrderService {
         }
 
         return Optional.of(orderClient.getUsableCoupon(userCouponId));
-    }
-
-    private void tryCompletedProcess(Long orderId) {
-        OrderKey key = OrderKey.of(orderId);
-        OrderProcesses processes = OrderProcesses.of(orderRepository.getProcess(key));
-
-        if (processes.existPending()) {
-            return;
-        }
-
-        Order order = orderRepository.findById(orderId);
-
-        if (processes.existFailed()) {
-            orderEventPublisher.failed(OrderEvent.Failed.of(order, processes));
-            return;
-        }
-
-        orderEventPublisher.paymentWaited(OrderEvent.PaymentWaited.of(order));
     }
 }

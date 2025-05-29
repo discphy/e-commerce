@@ -52,43 +52,4 @@ public class OrderCommand {
                 .build();
         }
     }
-
-    @Getter
-    public static class Process {
-
-        private final Long orderId;
-        private final OrderProcessTask process;
-        private final OrderProcessStatus status;
-
-        @Builder
-        private Process(Long orderId, OrderProcessTask process, OrderProcessStatus status) {
-            this.orderId = orderId;
-            this.process = process;
-            this.status = status;
-        }
-
-        public static Process ofCouponUsed(Long orderId, OrderProcessStatus status) {
-            return Process.builder()
-                .orderId(orderId)
-                .process(OrderProcessTask.COUPON_USED)
-                .status(status)
-                .build();
-        }
-
-        public static Process ofUsedBalance(Long orderId, OrderProcessStatus status) {
-            return Process.builder()
-                .orderId(orderId)
-                .process(OrderProcessTask.BALANCE_USED)
-                .status(status)
-                .build();
-        }
-
-        public static Process ofStockDeducted(Long orderId, OrderProcessStatus status) {
-            return Process.builder()
-                .orderId(orderId)
-                .process(OrderProcessTask.STOCK_DEDUCTED)
-                .status(status)
-                .build();
-        }
-    }
 }

@@ -15,7 +15,6 @@ public class CouponRepositoryImpl implements CouponRepository {
     private final UserCouponJpaRepository userCouponJpaRepository;
     private final UserCouponRedisRepository userCouponRedisRepository;
     private final UserCouponQueryDslRepository userCouponQueryDslRepository;
-    private final UserCouponJdbcTemplateRepository userCouponJdbcTemplateRepository;
 
     @Override
     public Coupon save(Coupon coupon) {

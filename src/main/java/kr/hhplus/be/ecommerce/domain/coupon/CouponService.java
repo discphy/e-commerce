@@ -25,8 +25,15 @@ public class CouponService {
     }
 
     @Transactional(readOnly = true)
+    public CouponInfo.Coupons getUserCoupons(Long userId) {
+        couponClient.getUser(userId);
+        return CouponInfo.Coupons.of(couponRepository.findByUserId(userId));
+    }
+
+    @Transactional(readOnly = true)
     public CouponInfo.UsableCoupon getUsableCoupon(CouponCommand.UsableCoupon command) {
-        UserCoupon userCoupon = couponRepository.findByUserIdAndCouponId(command.getUserId(), command.getCouponId());
+        UserCoupon userCoupon = couponRepository.findByUserIdAndCouponId(command.getUserId(), command.getCouponId())
+            .orElseThrow(() -> new IllegalArgumentException("보유한 쿠폰을 찾을 수 없습니다."));
 
         if (userCoupon.cannotUse()) {
             throw new IllegalStateException("사용할 수 없는 쿠폰입니다.");
