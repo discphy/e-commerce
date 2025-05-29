@@ -2,9 +2,9 @@ package kr.hhplus.be.ecommerce.interfaces.coupon.api;
 
 import io.restassured.http.ContentType;
 import kr.hhplus.be.ecommerce.domain.coupon.Coupon;
+import kr.hhplus.be.ecommerce.domain.coupon.CouponRepository;
 import kr.hhplus.be.ecommerce.domain.coupon.CouponStatus;
 import kr.hhplus.be.ecommerce.domain.coupon.UserCoupon;
-import kr.hhplus.be.ecommerce.domain.coupon.CouponRepository;
 import kr.hhplus.be.ecommerce.domain.user.User;
 import kr.hhplus.be.ecommerce.domain.user.UserRepository;
 import kr.hhplus.be.ecommerce.test.support.E2EControllerTestSupport;
@@ -14,10 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 class CouponControllerE2ETest extends E2EControllerTestSupport {
 
@@ -70,8 +75,9 @@ class CouponControllerE2ETest extends E2EControllerTestSupport {
     @Test
     void publishCoupon() {
         // given
-        Coupon coupon = Coupon.create("쿠폰명1", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
+        Coupon coupon = Coupon.create("쿠폰명1", 0.1, 1, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
         couponRepository.save(coupon);
+        couponRepository.updateAvailableCoupon(coupon.getId(), true);
 
         CouponRequest.Publish request = CouponRequest.Publish.of(coupon.getId());
 
@@ -86,5 +92,16 @@ class CouponControllerE2ETest extends E2EControllerTestSupport {
             .statusCode(HttpStatus.OK.value())
             .body("code", equalTo(200))
             .body("message", equalTo("OK"));
+
+        await()
+            .atMost(30, TimeUnit.SECONDS)
+            .pollInterval(Duration.ofMillis(500))
+            .untilAsserted(() -> {
+                Optional<UserCoupon> result = couponRepository.findByUserIdAndCouponId(user.getId(), coupon.getId());
+                assertThat(result).isPresent();
+
+                boolean publishable = couponRepository.findPublishableCouponById(coupon.getId());
+                assertThat(publishable).isFalse();
+            });
     }
 }
