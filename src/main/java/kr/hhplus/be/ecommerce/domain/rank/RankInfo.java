@@ -28,9 +28,10 @@ public class RankInfo {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class PopularProducts {
 
-        private final List<PopularProduct> products;
+        private List<PopularProduct> products;
 
         private PopularProducts(List<PopularProduct> products) {
             this.products = products;
@@ -42,11 +43,12 @@ public class RankInfo {
     }
 
     @Getter
+    @NoArgsConstructor
     public static class PopularProduct {
 
-        private final Long productId;
-        private final String productName;
-        private final Long productPrice;
+        private Long productId;
+        private String productName;
+        private Long productPrice;
 
         @Builder
         private PopularProduct(Long productId, String productName, Long productPrice) {

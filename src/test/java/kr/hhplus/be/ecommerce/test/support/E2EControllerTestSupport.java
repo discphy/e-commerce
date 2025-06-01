@@ -18,5 +18,6 @@ public abstract class E2EControllerTestSupport extends IntegrationTestSupport {
     void setUp() {
         RestAssured.port = port;
         databaseCleaner.clean();
+        redisCacheCleaner.clean();
     }
 }
