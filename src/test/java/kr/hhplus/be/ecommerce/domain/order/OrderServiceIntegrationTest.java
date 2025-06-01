@@ -100,7 +100,7 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         assertThat(order.getDiscountPrice()).isEqualTo(400L);
         verify(orderClient).deductStock(anyList());
         verify(orderEventPublisher, times(1)).created(any(OrderEvent.Created.class));
-        assertThat(events.stream(OutboxEvent.Auto.class).count()).isEqualTo(1);
+        assertThat(events.stream(OutboxEvent.class).count()).isEqualTo(1);
     }
 
     @DisplayName("주문 완료 시, 주문이 존재해야 한다.")
@@ -132,7 +132,7 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         Order result = orderRepository.findById(order.getId());
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COMPLETED);
         verify(orderEventPublisher, times(1)).completed(any(OrderEvent.Completed.class));
-        assertThat(events.stream(OutboxEvent.Auto.class).count()).isEqualTo(1);
+        assertThat(events.stream(OutboxEvent.class).count()).isEqualTo(1);
     }
 
     @DisplayName("주문 취소 시, 주문이 존재해야 한다.")

@@ -44,7 +44,7 @@ class PaymentServiceIntegrationTest extends IntegrationTestSupport {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("잔액 사용에 실패했습니다.");
         verify(paymentEventPublisher).payFailed(any(PaymentEvent.PayFailed.class));
-        assertThat(events.stream(OutboxEvent.Auto.class).count()).isEqualTo(1);
+        assertThat(events.stream(OutboxEvent.class).count()).isEqualTo(1);
     }
 
     @DisplayName("결제 시, 쿠폰 사용에 실패하면 예외가 발생한다.")
@@ -61,7 +61,7 @@ class PaymentServiceIntegrationTest extends IntegrationTestSupport {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("쿠폰 사용에 실패했습니다.");
         verify(paymentEventPublisher).payFailed(any(PaymentEvent.PayFailed.class));
-        assertThat(events.stream(OutboxEvent.Auto.class).count()).isEqualTo(1);
+        assertThat(events.stream(OutboxEvent.class).count()).isEqualTo(1);
     }
 
     @DisplayName("결제 시, 쿠폰이 없으면 쿠폰 사용을 시도하지 않는다.")
@@ -75,7 +75,7 @@ class PaymentServiceIntegrationTest extends IntegrationTestSupport {
 
         // then
         verify(paymentClient, never()).useCoupon(anyLong(), anyLong());
-        assertThat(events.stream(OutboxEvent.Auto.class).count()).isEqualTo(1);
+        assertThat(events.stream(OutboxEvent.class).count()).isEqualTo(1);
     }
 
     @DisplayName("결제에 성공하면 결제 이벤트가 발행된다.")
@@ -89,7 +89,7 @@ class PaymentServiceIntegrationTest extends IntegrationTestSupport {
 
         // then
         verify(paymentEventPublisher).paid(any(PaymentEvent.Paid.class));
-        assertThat(events.stream(OutboxEvent.Auto.class).count()).isEqualTo(1);
+        assertThat(events.stream(OutboxEvent.class).count()).isEqualTo(1);
     }
 
     @DisplayName("결제 취소 시, 결제가 존재해야 한다.")
@@ -193,6 +193,6 @@ class PaymentServiceIntegrationTest extends IntegrationTestSupport {
         Payment result = paymentRepository.findById(payment.getId());
         assertThat(result.getPaymentStatus()).isEqualTo(PaymentStatus.CANCELED);
         verify(paymentEventPublisher).canceled(any(PaymentEvent.Canceled.class));
-        assertThat(events.stream(OutboxEvent.Auto.class).count()).isEqualTo(1);
+        assertThat(events.stream(OutboxEvent.class).count()).isEqualTo(1);
     }
 }

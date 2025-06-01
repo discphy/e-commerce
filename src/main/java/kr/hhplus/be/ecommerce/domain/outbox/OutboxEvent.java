@@ -3,33 +3,16 @@ package kr.hhplus.be.ecommerce.domain.outbox;
 import lombok.Getter;
 
 
+@Getter
 public class OutboxEvent {
 
-    @Getter
-    public static class Auto {
+    private final Outbox outbox;
 
-        private final Outbox outbox;
-
-        private Auto(Outbox outbox) {
-            this.outbox = outbox;
-        }
-
-        public static Auto of(Outbox outbox) {
-            return new Auto(outbox);
-        }
+    private OutboxEvent(Outbox outbox) {
+        this.outbox = outbox;
     }
 
-    @Getter
-    public static class Manual {
-
-        private final Outbox outbox;
-
-        private Manual(Outbox outbox) {
-            this.outbox = outbox;
-        }
-
-        public static Manual of(Outbox outbox) {
-            return new Manual(outbox);
-        }
+    public static OutboxEvent of(Outbox outbox) {
+        return new OutboxEvent(outbox);
     }
 }

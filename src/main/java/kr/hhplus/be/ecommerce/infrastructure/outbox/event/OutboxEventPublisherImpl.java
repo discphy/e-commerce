@@ -19,27 +19,14 @@ public class OutboxEventPublisherImpl implements OutboxEventPublisher {
 
     @Override
     public <T> void publishEvent(EventType type, Long partitionKey, T payload) {
-        Outbox outbox = create(type, partitionKey, payload);
-        OutboxEvent.Auto event = OutboxEvent.Auto.of(outbox);
-
-        eventPublisher.publishEvent(event);
-    }
-
-    @Override
-    public <T> void publishManualEvent(EventType type, Long partitionKey, T payload) {
-        Outbox outbox = create(type, partitionKey, payload);
-        OutboxEvent.Manual event = OutboxEvent.Manual.of(outbox);
-
-        eventPublisher.publishEvent(event);
-    }
-
-    private <T> Outbox create(EventType type, Long partitionKey, T payload) {
         String eventId = UUID.randomUUID().toString();
-        return Outbox.create(
+        Outbox outbox = Outbox.create(
             eventId,
             type,
             partitionKey,
             Event.of(eventId, type, payload).toJson()
         );
+
+        eventPublisher.publishEvent(OutboxEvent.of(outbox));
     }
 }
