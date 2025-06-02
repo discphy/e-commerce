@@ -7,8 +7,4 @@ public interface OrderEventPublisher {
     void completed(OrderEvent.Completed event);
 
     void completeFailed(OrderEvent.CompleteFailed event);
-
-    void paymentWaited(OrderEvent.PaymentWaited event);
-
-    void failed(OrderEvent.Failed event);
 }
