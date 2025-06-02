@@ -22,7 +22,7 @@ class UserServiceIntegrationTest extends IntegrationTestSupport {
     @Test
     void getUserWithEmptyUser() {
         // given
-        Long userId = 1L;
+        Long userId = 999L;
 
         // when & then
         assertThatThrownBy(() -> userService.getUser(userId))

@@ -7,8 +7,6 @@ import kr.hhplus.be.ecommerce.interfaces.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @RestController
 @RequiredArgsConstructor
 public class CouponController {
@@ -24,7 +22,7 @@ public class CouponController {
     @PostMapping("/api/v1/users/{id}/coupons/publish")
     public ApiResponse<Void> publishCoupon(@PathVariable("id") Long id,
                                            @Valid @RequestBody CouponRequest.Publish request) {
-        couponService.requestPublishUserCoupon(request.toCommand(id, LocalDateTime.now()));
+        couponService.requestPublishUserCoupon(request.toCommand(id));
         return ApiResponse.success();
     }
 }

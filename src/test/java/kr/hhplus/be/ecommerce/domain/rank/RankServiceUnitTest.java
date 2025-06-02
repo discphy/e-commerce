@@ -22,6 +22,9 @@ class RankServiceUnitTest extends MockTestSupport {
     @Mock
     private RankRepository rankRepository;
 
+    @Mock
+    private RankEventPublisher rankEventPublisher;
+
     @DisplayName("판매 랭크를 생성한다.")
     @Test
     void createSellRank() {
@@ -44,6 +47,7 @@ class RankServiceUnitTest extends MockTestSupport {
 
         // then
         verify(rankRepository, times(3)).save(any());
+        verify(rankEventPublisher).created(any(RankEvent.Created.class));
     }
 
     @DisplayName("인기 판매 랭크를 조회한다.")

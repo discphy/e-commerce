@@ -1,21 +1,23 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
+import kr.hhplus.be.ecommerce.support.message.Message;
+import kr.hhplus.be.ecommerce.support.message.MessageProducer;
 import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.LongStream;
 
-import static kr.hhplus.be.ecommerce.domain.coupon.CouponConstant.MAX_PUBLISH_COUNT_PER_REQUEST;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Transactional
 class CouponServiceIntegrationTest extends IntegrationTestSupport {
@@ -28,6 +30,12 @@ class CouponServiceIntegrationTest extends IntegrationTestSupport {
 
     @MockitoBean
     private CouponClient couponClient;
+
+    @MockitoSpyBean
+    private CouponEventPublisher couponEventPublisher;
+
+    @MockitoSpyBean
+    private MessageProducer messageProducer;
 
     private CouponInfo.User user;
 
@@ -284,115 +292,109 @@ class CouponServiceIntegrationTest extends IntegrationTestSupport {
             );
     }
 
-    @DisplayName("중복된 요청을 보냈을 시, 쿠폰 발급 요청에 실패한다.")
+    @DisplayName("쿠폰 발급 요청을 실패한다.")
     @Test
     void failedRequestPublishUserCoupon() {
         // given
-        CouponCommand.PublishRequest command = CouponCommand.PublishRequest.of(1L, 1L, LocalDateTime.now());
-        couponRepository.save(command);
+        Long userId = 1L;
+        Long couponId = 2L;
+        CouponCommand.Publish command = CouponCommand.Publish.of(userId, couponId);
 
         // when & then
         assertThatThrownBy(() -> couponService.requestPublishUserCoupon(command))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("쿠폰 발급 요청에 실패했습니다.");
+            .hasMessage("발급 불가한 쿠폰입니다.");
     }
 
-    @DisplayName("쿠폰 발급 요청을 한다.")
+    @DisplayName("쿠폰을 발급 요청한다.")
     @Test
     void requestPublishUserCoupon() {
         // given
-        CouponCommand.PublishRequest command = CouponCommand.PublishRequest.of(1L, 1L, LocalDateTime.now());
+        Long userId = 1L;
 
-        // when
-        boolean result = couponService.requestPublishUserCoupon(command);
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @DisplayName("사용자 쿠폰을 발급한다.")
-    @Test
-    void publishUserCoupons() {
-        // given
-        Coupon coupon = Coupon.create("쿠폰명", 0.1, 5, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
-        couponRepository.save(coupon);
-
-        UserCoupon userCoupon1 = UserCoupon.create(1L, coupon.getId(), LocalDateTime.now().minusDays(1));
-        UserCoupon userCoupon2 = UserCoupon.create(2L, coupon.getId(), LocalDateTime.now().minusDays(1));
-
-        couponRepository.saveAll(List.of(userCoupon1, userCoupon2));
-
-        LongStream.rangeClosed(1, 10)
-            .mapToObj(l -> CouponCommand.PublishRequest.of(l, coupon.getId(), LocalDateTime.now().plusSeconds(l)))
-            .forEach(couponService::requestPublishUserCoupon);
-
-        CouponCommand.PublishCoupons command = CouponCommand.PublishCoupons.of(MAX_PUBLISH_COUNT_PER_REQUEST);
-
-        // when
-        couponService.publishUserCoupons(command);
-
-        // then
-        int count = couponRepository.countByCouponId(coupon.getId());
-        assertThat(count).isEqualTo(5);
-    }
-
-    @DisplayName("사용자 쿠폰 발급 시, 발급 수량이 최대 발급 개수를 초과하면 최대 발급 개수만큼 발급한다.")
-    @Test
-    void publishUserCouponExceedMaxPublishCountPerRequest() {
-        // given
-        Coupon coupon = Coupon.create("쿠폰명", 0.1, 1000, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
-        couponRepository.save(coupon);
-
-        LongStream.rangeClosed(1, 1000)
-            .mapToObj(l -> CouponCommand.PublishRequest.of(l, coupon.getId(), LocalDateTime.now().plusSeconds(l)))
-            .forEach(couponService::requestPublishUserCoupon);
-
-        CouponCommand.PublishCoupons command = CouponCommand.PublishCoupons.of(MAX_PUBLISH_COUNT_PER_REQUEST);
-
-        // when
-        couponService.publishUserCoupons(command);
-
-        // then
-        assertThat(couponRepository.countByCouponId(coupon.getId())).isEqualTo(MAX_PUBLISH_COUNT_PER_REQUEST);
-    }
-
-    @DisplayName("발급 쿠폰 수가 남아 있으면 발급이 진행 중이다.")
-    @Test
-    void notFinishedPublishCoupons() {
-        // given
         Coupon coupon = Coupon.create("쿠폰명", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
         couponRepository.save(coupon);
 
-        UserCoupon userCoupon1 = UserCoupon.create(1L, coupon.getId());
-        UserCoupon userCoupon2 = UserCoupon.create(2L, coupon.getId());
+        couponRepository.updateAvailableCoupon(coupon.getId(), true);
 
-        couponRepository.saveAll(List.of(userCoupon1, userCoupon2));
+        CouponCommand.Publish command = CouponCommand.Publish.of(userId, coupon.getId());
 
         // when
-        couponService.finishedPublishCoupons();
+        couponService.requestPublishUserCoupon(command);
 
         // then
-        Coupon result = couponRepository.findCouponById(coupon.getId());
-        assertThat(result.getStatus()).isEqualTo(CouponStatus.PUBLISHABLE);
+        verify(couponEventPublisher, times(1)).publishRequested(any(CouponEvent.PublishRequested.class));
+        verify(messageProducer, times(1)). send(any(Message.class));
     }
 
-    @DisplayName("발급 쿠폰 수가 모두 발급되면 발급이 완료된다.")
+    @DisplayName("발급된 쿠폰이 없으면 발급되지 않는다.")
     @Test
-    void finishedPublishCoupons() {
+    void publishUserCouponWithAlreadyPublished() {
         // given
-        Coupon coupon = Coupon.create("쿠폰명", 0.1, 2, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
+        Long userId = 1L;
+        Long couponId = 1L;
+
+        couponRepository.save(UserCoupon.create(userId, couponId));
+
+        CouponCommand.Publish command = CouponCommand.Publish.of(userId, couponId);
+
+        // when & then
+        assertThatThrownBy(() -> couponService.publishUserCoupon(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 발급된 쿠폰입니다.");
+    }
+
+    @DisplayName("발급할 쿠폰이 없으면 발급하지 않는다.")
+    @Test
+    void publishUserCouponWithNoAvailableCoupons() {
+        // given
+        Long userId = 1L;
+        Long couponId = 1L;
+
+        CouponCommand.Publish command = CouponCommand.Publish.of(userId, couponId);
+
+        // when & then
+        assertThatThrownBy(() -> couponService.publishUserCoupon(command))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("쿠폰을 찾을 수 없습니다.");
+    }
+
+    @DisplayName("쿠폰을 발급한다.")
+    @Test
+    void publishUserCouponWithEmptyCoupon() {
+        // given
+        Long userId = 1L;
+        Coupon coupon = Coupon.create("쿠폰명", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
         couponRepository.save(coupon);
 
-        UserCoupon userCoupon1 = UserCoupon.create(1L, coupon.getId());
-        UserCoupon userCoupon2 = UserCoupon.create(2L, coupon.getId());
-
-        couponRepository.saveAll(List.of(userCoupon1, userCoupon2));
+        CouponCommand.Publish command = CouponCommand.Publish.of(userId, coupon.getId());
 
         // when
-        couponService.finishedPublishCoupons();
+        couponService.publishUserCoupon(command);
 
         // then
-        Coupon result = couponRepository.findCouponById(coupon.getId());
-        assertThat(result.getStatus()).isEqualTo(CouponStatus.FINISHED);
+        UserCoupon userCoupon = couponRepository.findByUserIdAndCouponId(userId, coupon.getId()).orElseThrow();
+        assertThat(userCoupon.getUserId()).isEqualTo(userId);
+        assertThat(userCoupon.getCouponId()).isEqualTo(coupon.getId());
+
+        verify(couponEventPublisher, times(1)).published(any(CouponEvent.Published.class));
+        assertThat(events.stream(CouponEvent.Published.class).count()).isEqualTo(1);
+    }
+
+    @DisplayName("쿠폰이 발급 가능하지 않으면 발급 가능 상태를 변경한다.")
+    @Test
+    void stopPublishCoupon() {
+        // given
+        Coupon coupon = Coupon.create("쿠폰명", 0.1, 0, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
+        couponRepository.save(coupon);
+
+        couponRepository.updateAvailableCoupon(coupon.getId(), true);
+
+        // when
+        couponService.stopPublishCoupon(coupon.getId());
+
+        // then
+        boolean available = couponRepository.findPublishableCouponById(coupon.getId());
+        assertThat(available).isFalse();
     }
 }

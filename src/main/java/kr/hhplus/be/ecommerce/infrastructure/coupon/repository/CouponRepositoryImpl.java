@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -14,7 +15,6 @@ public class CouponRepositoryImpl implements CouponRepository {
     private final UserCouponJpaRepository userCouponJpaRepository;
     private final UserCouponRedisRepository userCouponRedisRepository;
     private final UserCouponQueryDslRepository userCouponQueryDslRepository;
-    private final UserCouponJdbcTemplateRepository userCouponJdbcTemplateRepository;
 
     @Override
     public Coupon save(Coupon coupon) {
@@ -38,9 +38,8 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
-    public UserCoupon findByUserIdAndCouponId(Long userId, Long couponId) {
-        return userCouponJpaRepository.findByUserIdAndCouponId(userId, couponId)
-            .orElseThrow(() -> new IllegalArgumentException("보유한 쿠폰을 찾을 수 없습니다."));
+    public Optional<UserCoupon> findByUserIdAndCouponId(Long userId, Long couponId) {
+        return userCouponJpaRepository.findByUserIdAndCouponId(userId, couponId);
     }
 
     @Override
@@ -55,22 +54,12 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
-    public boolean save(CouponCommand.PublishRequest command) {
-        return userCouponRedisRepository.save(command);
+    public boolean findPublishableCouponById(Long couponId) {
+        return userCouponRedisRepository.findPublishableCouponById(couponId);
     }
 
     @Override
-    public int countByCouponId(Long couponId) {
-        return userCouponJpaRepository.countByCouponId(couponId);
-    }
-
-    @Override
-    public List<CouponInfo.Candidates> findPublishCandidates(CouponCommand.Candidates command) {
-        return userCouponRedisRepository.findPublishCandidates(command);
-    }
-
-    @Override
-    public void saveAll(List<UserCoupon> userCoupons) {
-        userCouponJdbcTemplateRepository.batchInsert(userCoupons);
+    public void updateAvailableCoupon(Long couponId, boolean available) {
+        userCouponRedisRepository.updateAvailable(couponId, available);
     }
 }

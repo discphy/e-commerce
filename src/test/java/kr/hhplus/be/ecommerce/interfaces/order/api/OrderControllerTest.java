@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.interfaces.order.api;
 
+import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
 import kr.hhplus.be.ecommerce.test.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,8 @@ import org.springframework.http.MediaType;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -145,6 +148,13 @@ class OrderControllerTest extends ControllerTestSupport {
             )
         );
 
+        when(orderService.createOrder(any()))
+            .thenReturn(OrderInfo.Order.builder()
+                .orderId(1L)
+                .totalPrice(10000L)
+                .discountPrice(2000L)
+                .build());
+
         // when & then
         mockMvc.perform(
                 post("/api/v1/orders")
@@ -154,6 +164,10 @@ class OrderControllerTest extends ControllerTestSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.code").value(200))
-            .andExpect(jsonPath("$.message").value("OK"));
+            .andExpect(jsonPath("$.message").value("OK"))
+            .andExpect(jsonPath("$.data.orderId").value(1L))
+            .andExpect(jsonPath("$.data.totalPrice").value(10000L))
+            .andExpect(jsonPath("$.data.discountPrice").value(2000L))
+        ;
     }
 }

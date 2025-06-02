@@ -76,6 +76,10 @@ public class Coupon {
         this.status = CouponStatus.FINISHED;
     }
 
+    public boolean isNotPublishable() {
+        return status.cannotPublishable() || expiredAt.isBefore(LocalDateTime.now()) || quantity <= 0;
+    }
+
     private static void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("쿠폰 이름은 필수입니다.");

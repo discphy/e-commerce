@@ -8,16 +8,22 @@ import lombok.NoArgsConstructor;
 public class PaymentInfo {
 
     @Getter
-    public static class Payment {
+    public static class Order {
 
-        private final Long paymentId;
+        private final Long orderId;
+        private final Long userId;
+        private final Long userCouponId;
+        private final long totalPrice;
 
-        private Payment(Long paymentId) {
-            this.paymentId = paymentId;
+        private Order(Long orderId, Long userId, Long userCouponId, long totalPrice) {
+            this.orderId = orderId;
+            this.userId = userId;
+            this.userCouponId = userCouponId;
+            this.totalPrice = totalPrice;
         }
 
-        public static Payment of(Long paymentId) {
-            return new Payment(paymentId);
+        public static Order of(Long orderId, Long userId, Long userCouponId, long totalPrice) {
+            return new Order(orderId, userId, userCouponId, totalPrice);
         }
     }
 }

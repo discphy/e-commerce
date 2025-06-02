@@ -1,9 +1,10 @@
 package kr.hhplus.be.ecommerce.domain.rank;
 
 import kr.hhplus.be.ecommerce.domain.product.Product;
-import kr.hhplus.be.ecommerce.support.cache.CacheType;
+import kr.hhplus.be.ecommerce.support.cache.CacheType.CacheName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,17 +18,29 @@ import java.util.List;
 public class RankService {
 
     private final RankRepository rankRepository;
+    private final RankEventPublisher rankEventPublisher;
 
     public List<Rank> createSellRank(RankCommand.CreateList command) {
-        return command.getRanks().stream()
+        List<Rank> ranks = command.getRanks().stream()
             .map(this::createSell)
             .map(rankRepository::save)
             .toList();
+
+        RankEvent.Created event = RankEvent.Created.of(ranks);
+        rankEventPublisher.created(event);
+
+        return ranks;
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = CacheType.CacheName.POPULAR_PRODUCT, key = "'top:' + #command.top + ':days:' + #command.days")
+    @Cacheable(value = CacheName.POPULAR_PRODUCT, key = "'top:' + #command.top + ':days:' + #command.days")
     public RankInfo.PopularProducts cachedPopularProducts(RankCommand.PopularProducts command) {
+        return getPopularProducts(command);
+    }
+
+    @Transactional(readOnly = true)
+    @CachePut(value = CacheName.POPULAR_PRODUCT, key = "'top:' + #command.top + ':days:' + #command.days")
+    public RankInfo.PopularProducts updatedPopularProducts(RankCommand.PopularProducts command) {
         return getPopularProducts(command);
     }
 

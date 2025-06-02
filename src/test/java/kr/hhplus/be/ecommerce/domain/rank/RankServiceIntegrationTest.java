@@ -7,12 +7,15 @@ import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
 @Transactional
 class RankServiceIntegrationTest extends IntegrationTestSupport {
@@ -25,6 +28,9 @@ class RankServiceIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @MockitoSpyBean
+    private RankEventPublisher rankEventPublisher;
 
     @DisplayName("판매 랭크를 생성한다.")
     @Test
@@ -45,6 +51,8 @@ class RankServiceIntegrationTest extends IntegrationTestSupport {
         assertThat(results).hasSize(3)
             .extracting(Rank::getProductId)
             .containsExactly(1L, 2L, 3L);
+        verify(rankEventPublisher).created(any(RankEvent.Created.class));
+        assertThat(events.stream(RankEvent.Created.class).count()).isEqualTo(1);
     }
 
     @DisplayName("인기 판매 랭크를 조회한다.")

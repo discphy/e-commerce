@@ -59,22 +59,6 @@ public class CouponInfo {
     }
 
     @Getter
-    public static class Candidates {
-
-        private final Long userId;
-        private final LocalDateTime issuedAt;
-
-        private Candidates(Long userId, LocalDateTime issuedAt) {
-            this.userId = userId;
-            this.issuedAt = issuedAt;
-        }
-
-        public static Candidates of(Long userId, LocalDateTime issuedAt) {
-            return new Candidates(userId, issuedAt);
-        }
-    }
-
-    @Getter
     public static class User {
 
         private final Long id;
