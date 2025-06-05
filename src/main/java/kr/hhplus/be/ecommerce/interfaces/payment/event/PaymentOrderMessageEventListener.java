@@ -19,7 +19,7 @@ public class PaymentOrderMessageEventListener {
 
     private final PaymentService paymentService;
 
-    @KafkaListener(topics = Topic.ORDER_CREATED, groupId = GroupId.PAYMENT)
+    @KafkaListener(topics = Topic.ORDER_CREATED, groupId = GroupId.PAYMENT, concurrency = "3")
     public void handleOrderCreated(String message, Acknowledgment ack) {
         log.info("주문 생성 이벤트 수신 {}", message);
 

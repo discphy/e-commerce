@@ -21,7 +21,7 @@ public class RankOrderMessageEventListener {
 
     private final RankService rankService;
 
-    @KafkaListener(topics = Topic.ORDER_COMPLETED, groupId = GroupId.ORDER)
+    @KafkaListener(topics = Topic.ORDER_COMPLETED, groupId = GroupId.ORDER, concurrency = "3")
     public void handleOrderCompleted(String message, Acknowledgment ack) {
         log.info("주문 완료 이벤트 수신 {}", message);
 
