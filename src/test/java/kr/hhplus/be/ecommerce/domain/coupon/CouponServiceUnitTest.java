@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
+import kr.hhplus.be.ecommerce.support.exception.CoreException;
 import kr.hhplus.be.ecommerce.test.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -312,7 +313,7 @@ class CouponServiceUnitTest extends MockTestSupport {
 
         // when & then
         assertThatThrownBy(() -> couponService.publishUserCoupon(command))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(CoreException.class)
             .hasMessage("이미 발급된 쿠폰입니다.");
     }
 
