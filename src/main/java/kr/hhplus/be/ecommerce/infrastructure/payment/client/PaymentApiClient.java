@@ -13,7 +13,7 @@ public class PaymentApiClient implements PaymentClient {
     }
 
     @Override
-    public void useCoupon(Long userId, Long userCouponId) {
+    public void useCoupon(Long userCouponId) {
 
     }
 
