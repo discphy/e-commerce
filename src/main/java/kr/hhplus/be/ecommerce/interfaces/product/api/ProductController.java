@@ -1,10 +1,12 @@
 package kr.hhplus.be.ecommerce.interfaces.product.api;
 
+import kr.hhplus.be.ecommerce.domain.product.ProductCommand;
 import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
 import kr.hhplus.be.ecommerce.domain.product.ProductService;
 import kr.hhplus.be.ecommerce.interfaces.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,6 +18,15 @@ public class ProductController {
     @GetMapping("/api/v1/products")
     public ApiResponse<ProductResponse.Products> getProducts() {
         ProductInfo.Products products = productService.getSellingProducts();
+        return ApiResponse.success(ProductResponse.Products.of(products));
+    }
+
+    @GetMapping("/api/v2/products")
+    public ApiResponse<ProductResponse.Products> getProducts(
+        @RequestParam("pageSize") Long pageSize,
+        @RequestParam(value = "cursor", required = false) Long cursor
+    ) {
+        ProductInfo.Products products = productService.getProducts(ProductCommand.Query.of(pageSize, cursor));
         return ApiResponse.success(ProductResponse.Products.of(products));
     }
 }

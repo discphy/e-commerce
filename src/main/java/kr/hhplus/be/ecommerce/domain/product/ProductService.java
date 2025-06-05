@@ -37,6 +37,12 @@ public class ProductService {
         return ProductInfo.Products.of(products);
     }
 
+    @Transactional(readOnly = true)
+    public ProductInfo.Products getProducts(ProductCommand.Query command) {
+        List<ProductInfo.Product> products = productRepository.findAll(command);
+        return ProductInfo.Products.of(products);
+    }
+
     private ProductInfo.OrderProduct toOrderProductInfo(ProductCommand.OrderProduct command) {
         Product product = getProduct(command);
 

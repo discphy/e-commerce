@@ -52,4 +52,22 @@ public class ProductCommand {
             return new Products(productIds);
         }
     }
+
+    @Getter
+    public static class Query {
+
+        private final Long pageSize;
+        private final Long cursor;
+        private final ProductSellingStatus status;
+
+        private Query(Long pageSize, Long cursor, ProductSellingStatus status) {
+            this.pageSize = pageSize;
+            this.cursor = cursor;
+            this.status = status;
+        }
+
+        public static Query of(Long pageSize, Long cursor) {
+            return new Query(pageSize, cursor, ProductSellingStatus.SELLING);
+        }
+    }
 }
