@@ -183,4 +183,34 @@ class OrderServiceIntegrationTest extends IntegrationTestSupport {
         Order result = orderRepository.findById(order.getId());
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
     }
+
+    @DisplayName("주문 조회 시, 주문이 존재해야 한다.")
+    @Test
+    void getOrderWithoutOrder() {
+        // given
+        Long orderId = -1L;
+
+        // when & then
+        assertThatThrownBy(() -> orderService.getOrder(orderId))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("주문이 존재하지 않습니다.");
+    }
+
+    @DisplayName("주문을 조회한다.")
+    @Test
+    void getOrder() {
+        // given
+        Order order = Order.create(1L, 1L, 0.1, List.of(
+            OrderProduct.create(1L, "상품1", 10_000L, 2),
+            OrderProduct.create(2L, "상품2", 20_000L, 3)
+        ));
+        orderRepository.save(order);
+
+        // when
+        OrderInfo.Order result = orderService.getOrder(order.getId());
+
+        // then
+        assertThat(result.getOrderId()).isEqualTo(order.getId());
+        assertThat(result.getTotalPrice()).isEqualTo(order.getTotalPrice());
+    }
 }

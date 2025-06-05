@@ -62,6 +62,11 @@ public class OrderService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public OrderInfo.Order getOrder(Long orderId) {
+        return OrderInfo.Order.of(orderRepository.findById(orderId));
+    }
+
     private Order createOrder(Long userId, Optional<OrderInfo.Coupon> coupon, List<OrderProduct> products) {
         return Order.create(
             userId,

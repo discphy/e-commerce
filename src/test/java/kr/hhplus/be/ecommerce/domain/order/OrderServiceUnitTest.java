@@ -181,4 +181,36 @@ class OrderServiceUnitTest extends MockTestSupport {
         // then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
     }
+
+    @DisplayName("주문 조회 시, 주문이 존재해야 한다.")
+    @Test
+    void getOrderWithoutOrder() {
+        // given
+        when(orderRepository.findById(any()))
+            .thenThrow(new IllegalArgumentException("주문이 존재하지 않습니다."));
+
+        // when & then
+        assertThatThrownBy(() -> orderService.getOrder(1L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("주문이 존재하지 않습니다.");
+    }
+
+    @DisplayName("주문을 조회한다.")
+    @Test
+    void getOrder() {
+        // given
+        Order order = Order.create(1L, 1L, 0.1, List.of(
+            OrderProduct.create(1L, "상품명", 2_000L, 2)
+        ));
+
+        when(orderRepository.findById(any()))
+            .thenReturn(order);
+
+        // when
+        OrderInfo.Order orderInfo = orderService.getOrder(1L);
+
+        // then
+        assertThat(orderInfo.getOrderId()).isEqualTo(order.getId());
+        assertThat(orderInfo.getTotalPrice()).isEqualTo(3_600L);
+    }
 }
