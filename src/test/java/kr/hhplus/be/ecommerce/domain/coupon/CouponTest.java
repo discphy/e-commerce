@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
+import kr.hhplus.be.ecommerce.support.exception.CoreException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -70,7 +71,7 @@ class CouponTest {
 
         // when & then
         assertThatThrownBy(coupon::publish)
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(CoreException.class)
             .hasMessage("쿠폰을 발급할 수 없습니다.");
     }
 
@@ -86,7 +87,7 @@ class CouponTest {
 
         // when & then
         assertThatThrownBy(coupon::publish)
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(CoreException.class)
             .hasMessage("쿠폰이 만료되었습니다.");
     }
 
@@ -103,7 +104,7 @@ class CouponTest {
 
         // when & then
         assertThatThrownBy(coupon::publish)
-            .isInstanceOf(IllegalStateException.class)
+            .isInstanceOf(CoreException.class)
             .hasMessage("쿠폰 수량이 부족합니다.");
     }
 

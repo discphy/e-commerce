@@ -1,6 +1,7 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.ecommerce.support.exception.CoreException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,15 +58,15 @@ public class Coupon {
 
     public Coupon publish() {
         if (status.cannotPublishable()) {
-            throw new IllegalStateException("쿠폰을 발급할 수 없습니다.");
+            throw new CoreException("쿠폰을 발급할 수 없습니다.");
         }
 
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("쿠폰이 만료되었습니다.");
+            throw new CoreException("쿠폰이 만료되었습니다.");
         }
 
         if (quantity <= 0) {
-            throw new IllegalStateException("쿠폰 수량이 부족합니다.");
+            throw new CoreException("쿠폰 수량이 부족합니다.");
         }
 
         this.quantity--;

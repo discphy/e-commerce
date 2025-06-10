@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
+import kr.hhplus.be.ecommerce.support.exception.CoreException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class CouponService {
     public void publishUserCoupon(CouponCommand.Publish command) {
         couponRepository.findByUserIdAndCouponId(command.getUserId(), command.getCouponId())
             .ifPresent(coupon -> {
-                throw new IllegalArgumentException("이미 발급된 쿠폰입니다.");
+                throw new CoreException("이미 발급된 쿠폰입니다.");
             });
 
         Coupon coupon = couponRepository.findCouponById(command.getCouponId());

@@ -1,5 +1,6 @@
 package kr.hhplus.be.ecommerce.domain.coupon;
 
+import kr.hhplus.be.ecommerce.support.exception.CoreException;
 import kr.hhplus.be.ecommerce.support.message.Message;
 import kr.hhplus.be.ecommerce.support.message.MessageProducer;
 import kr.hhplus.be.ecommerce.test.support.IntegrationTestSupport;
@@ -336,7 +337,7 @@ class CouponServiceIntegrationTest extends IntegrationTestSupport {
 
         // when & then
         assertThatThrownBy(() -> couponService.publishUserCoupon(command))
-            .isInstanceOf(IllegalArgumentException.class)
+            .isInstanceOf(CoreException.class)
             .hasMessage("이미 발급된 쿠폰입니다.");
     }
 
