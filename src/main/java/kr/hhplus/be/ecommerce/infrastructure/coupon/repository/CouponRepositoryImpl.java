@@ -49,6 +49,12 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
+    public CouponInfo.Coupon findById(Long userCouponId) {
+        return userCouponQueryDslRepository.findById(userCouponId)
+            .orElseThrow(() -> new IllegalArgumentException("보유한 쿠폰을 찾을 수 없습니다."));
+    }
+
+    @Override
     public List<CouponInfo.Coupon> findByUserId(Long userId) {
         return userCouponQueryDslRepository.findByUserId(userId);
     }

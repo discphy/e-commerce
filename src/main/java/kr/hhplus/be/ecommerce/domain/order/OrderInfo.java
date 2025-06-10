@@ -14,18 +14,35 @@ public class OrderInfo {
     public static class Order {
 
         private final Long orderId;
+        private final Long userId;
+        private final Long userCouponId;
         private final long totalPrice;
         private final long discountPrice;
+        private final OrderStatus status;
 
         @Builder
-        private Order(Long orderId, long totalPrice, long discountPrice) {
+        private Order(Long orderId,
+                      Long userId,
+                      Long userCouponId,
+                      long totalPrice,
+                      long discountPrice,
+                      OrderStatus status) {
             this.orderId = orderId;
+            this.userId = userId;
+            this.userCouponId = userCouponId;
             this.totalPrice = totalPrice;
             this.discountPrice = discountPrice;
+            this.status = status;
         }
 
         public static Order of(kr.hhplus.be.ecommerce.domain.order.Order order) {
-            return new Order(order.getId(), order.getTotalPrice(), order.getDiscountPrice());
+            return new Order(
+                order.getId(),
+                order.getUserId(),
+                order.getUserCouponId(),
+                order.getTotalPrice(),
+                order.getDiscountPrice(),
+                order.getOrderStatus());
         }
     }
 

@@ -132,4 +132,49 @@ class ProductServiceIntegrationTest extends IntegrationTestSupport {
             );
     }
 
+    @DisplayName("커서 없이 상품 목록을 페이징 조회한다.")
+    @Test
+    void getProductsWithoutCursor() {
+        // given
+        Product product1 = Product.create("상품명1", 1_000L, ProductSellingStatus.SELLING);
+        Product product2 = Product.create("상품명2", 2_000L, ProductSellingStatus.SELLING);
+        Product product3 = Product.create("상품명3", 3_000L, ProductSellingStatus.SELLING);
+        List.of(product1, product2, product3).forEach(productRepository::save);
+
+        ProductCommand.Query command = ProductCommand.Query.of(2L, null);
+
+        // when
+        ProductInfo.Products result = productService.getProducts(command);
+
+        // then
+        assertThat(result.getProducts()).hasSize(2)
+            .extracting("productId", "productName", "productPrice")
+            .containsExactly(
+                tuple(product3.getId(), product3.getName(), product3.getPrice()),
+                tuple(product2.getId(), product2.getName(), product2.getPrice())
+            );
+    }
+
+    @DisplayName("커서로 상품 목록을 페이징 조회한다.")
+    @Test
+    void getProductsWithCursor() {
+        // given
+        Product product1 = Product.create("상품명1", 1_000L, ProductSellingStatus.SELLING);
+        Product product2 = Product.create("상품명2", 2_000L, ProductSellingStatus.SELLING);
+        Product product3 = Product.create("상품명3", 3_000L, ProductSellingStatus.SELLING);
+        List.of(product1, product2, product3).forEach(productRepository::save);
+
+        ProductCommand.Query command = ProductCommand.Query.of(2L, product2.getId());
+
+        // when
+        ProductInfo.Products result = productService.getProducts(command);
+
+        // then
+        assertThat(result.getProducts()).hasSize(1)
+            .extracting("productId", "productName", "productPrice")
+            .containsExactly(
+                tuple(product1.getId(), product1.getName(), product1.getPrice())
+            );
+    }
+
 }

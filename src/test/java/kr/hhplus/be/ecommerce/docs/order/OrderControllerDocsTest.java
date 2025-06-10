@@ -2,6 +2,7 @@ package kr.hhplus.be.ecommerce.docs.order;
 
 import kr.hhplus.be.ecommerce.domain.order.OrderInfo;
 import kr.hhplus.be.ecommerce.domain.order.OrderService;
+import kr.hhplus.be.ecommerce.domain.order.OrderStatus;
 import kr.hhplus.be.ecommerce.test.support.RestDocsSupport;
 import kr.hhplus.be.ecommerce.interfaces.order.api.OrderController;
 import kr.hhplus.be.ecommerce.interfaces.order.api.OrderRequest;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +50,7 @@ class OrderControllerDocsTest extends RestDocsSupport {
                 .orderId(1L)
                 .totalPrice(10000L)
                 .discountPrice(2000L)
+                .status(OrderStatus.CREATED)
                 .build());
 
         // when & then
@@ -73,7 +76,44 @@ class OrderControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                     fieldWithPath("data.orderId").type(JsonFieldType.NUMBER).description("주문 ID"),
                     fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
-                    fieldWithPath("data.discountPrice").type(JsonFieldType.NUMBER).description("할인 금액")
+                    fieldWithPath("data.discountPrice").type(JsonFieldType.NUMBER).description("할인 금액"),
+                    fieldWithPath("data.status").type(JsonFieldType.STRING).description("주문 상태")
+                )
+            ));
+    }
+
+    @DisplayName("주문을 조회한다.")
+    @Test
+    void getOrder() throws Exception {
+        // given
+        Long orderId = 1L;
+
+        when(orderService.getOrder(orderId))
+            .thenReturn(OrderInfo.Order.builder()
+                .orderId(orderId)
+                .totalPrice(10000L)
+                .discountPrice(2000L)
+                .status(OrderStatus.CREATED)
+                .build());
+
+        // when & then
+        mockMvc.perform(
+                get("/api/v1/orders/{orderId}", orderId)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("get-order",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메세지"),
+                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.orderId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                    fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
+                    fieldWithPath("data.discountPrice").type(JsonFieldType.NUMBER).description("할인 금액"),
+                    fieldWithPath("data.status").type(JsonFieldType.STRING).description("주문 상태")
                 )
             ));
     }

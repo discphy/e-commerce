@@ -69,13 +69,11 @@ class CouponServiceUnitTest extends MockTestSupport {
     @Test
     void getUsableCouponWithInvalidId() {
         // given
-        CouponCommand.UsableCoupon command = mock(CouponCommand.UsableCoupon.class);
-
-        when(couponRepository.findByUserIdAndCouponId(anyLong(), anyLong()))
+        when(couponRepository.findUserCouponById(anyLong()))
             .thenThrow(new IllegalArgumentException("보유한 쿠폰을 찾을 수 없습니다."));
 
         // when & then
-        assertThatThrownBy(() -> couponService.getUsableCoupon(command))
+        assertThatThrownBy(() -> couponService.getUsableCoupon(anyLong()))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("보유한 쿠폰을 찾을 수 없습니다.");
     }
@@ -84,17 +82,15 @@ class CouponServiceUnitTest extends MockTestSupport {
     @Test
     void getUsableCouponCannotUseCoupon() {
         // given
-        CouponCommand.UsableCoupon command = mock(CouponCommand.UsableCoupon.class);
-
         UserCoupon usedUserCoupon = UserCoupon.builder()
             .usedStatus(UserCouponUsedStatus.USED)
             .build();
 
-        when(couponRepository.findByUserIdAndCouponId(anyLong(), anyLong()))
-            .thenReturn(Optional.of(usedUserCoupon));
+        when(couponRepository.findUserCouponById(anyLong()))
+            .thenReturn(usedUserCoupon);
 
         // when
-        assertThatThrownBy(() -> couponService.getUsableCoupon(command))
+        assertThatThrownBy(() -> couponService.getUsableCoupon(anyLong()))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("사용할 수 없는 쿠폰입니다.");
     }
@@ -103,18 +99,27 @@ class CouponServiceUnitTest extends MockTestSupport {
     @Test
     void getUsableCoupon() {
         // given
-        CouponCommand.UsableCoupon command = mock(CouponCommand.UsableCoupon.class);
-
         UserCoupon userCoupon = UserCoupon.builder()
             .id(1L)
             .usedStatus(UserCouponUsedStatus.UNUSED)
             .build();
 
-        when(couponRepository.findByUserIdAndCouponId(anyLong(), anyLong()))
-            .thenReturn(Optional.of(userCoupon));
+        CouponInfo.Coupon coupon = CouponInfo.Coupon.builder()
+            .userCouponId(userCoupon.getId())
+            .couponId(1L)
+            .couponName("쿠폰명")
+            .discountRate(0.2)
+            .issuedAt(LocalDateTime.of(2025, 4, 1, 12, 0))
+            .build();
+
+        when(couponRepository.findUserCouponById(anyLong()))
+            .thenReturn(userCoupon);
+
+        when(couponRepository.findById(anyLong()))
+            .thenReturn(coupon);
 
         // when
-        CouponInfo.UsableCoupon usableCoupon = couponService.getUsableCoupon(command);
+        CouponInfo.Coupon usableCoupon = couponService.getUsableCoupon(userCoupon.getId());
 
         // then
         assertThat(usableCoupon.getUserCouponId()).isNotNull();

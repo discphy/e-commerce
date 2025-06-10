@@ -20,6 +20,8 @@ public interface CouponRepository {
 
     UserCoupon findUserCouponById(Long userCouponId);
 
+    CouponInfo.Coupon findById(Long userCouponId);
+
     List<CouponInfo.Coupon> findByUserId(Long userId);
 
     boolean findPublishableCouponById(Long couponId);

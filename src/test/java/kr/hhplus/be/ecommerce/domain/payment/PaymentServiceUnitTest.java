@@ -46,7 +46,7 @@ class PaymentServiceUnitTest extends MockTestSupport {
         PaymentCommand.Payment command = PaymentCommand.Payment.of(1L, 1L, 1L, 1_000L);
 
         doThrow(new IllegalArgumentException("쿠폰 사용에 실패했습니다."))
-            .when(paymentClient).useCoupon(anyLong(), anyLong());
+            .when(paymentClient).useCoupon(anyLong());
 
         // when & then
         assertThatThrownBy(() -> paymentService.payPayment(command))
@@ -66,7 +66,7 @@ class PaymentServiceUnitTest extends MockTestSupport {
 
         // then
         verify(paymentClient).useBalance(anyLong(), anyLong());
-        verify(paymentClient, never()).useCoupon(anyLong(), anyLong());
+        verify(paymentClient, never()).useCoupon(anyLong());
         verify(paymentRepository).save(any(Payment.class));
         verify(paymentEventPublisher).paid(any(PaymentEvent.Paid.class));
     }

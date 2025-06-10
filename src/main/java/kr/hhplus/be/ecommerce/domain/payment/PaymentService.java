@@ -24,7 +24,7 @@ public class PaymentService {
 
             paymentClient.useBalance(command.getUserId(), command.getAmount());
             Optional.ofNullable(command.getUserCouponId())
-                .ifPresent(userCouponId -> paymentClient.useCoupon(command.getUserId(), userCouponId));
+                .ifPresent(paymentClient::useCoupon);
 
             paymentRepository.save(payment);
 

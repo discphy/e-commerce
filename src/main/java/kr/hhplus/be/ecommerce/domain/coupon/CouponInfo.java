@@ -12,20 +12,6 @@ import java.util.List;
 public class CouponInfo {
 
     @Getter
-    public static class UsableCoupon {
-
-        private final Long userCouponId;
-
-        private UsableCoupon(Long userCouponId) {
-            this.userCouponId = userCouponId;
-        }
-
-        public static UsableCoupon of(Long userCouponId) {
-            return new UsableCoupon(userCouponId);
-        }
-    }
-
-    @Getter
     public static class Coupons {
 
         private final List<Coupon> coupons;

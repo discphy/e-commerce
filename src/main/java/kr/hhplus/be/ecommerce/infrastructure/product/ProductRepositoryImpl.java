@@ -1,9 +1,6 @@
 package kr.hhplus.be.ecommerce.infrastructure.product;
 
-import kr.hhplus.be.ecommerce.domain.product.Product;
-import kr.hhplus.be.ecommerce.domain.product.ProductInfo;
-import kr.hhplus.be.ecommerce.domain.product.ProductRepository;
-import kr.hhplus.be.ecommerce.domain.product.ProductSellingStatus;
+import kr.hhplus.be.ecommerce.domain.product.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -30,5 +27,10 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public List<ProductInfo.Product> findBySellStatusIn(List<ProductSellingStatus> statuses) {
         return productQueryDslRepository.findBySellStatusIn(statuses);
+    }
+
+    @Override
+    public List<ProductInfo.Product> findAll(ProductCommand.Query command) {
+        return productQueryDslRepository.findAll(command);
     }
 }

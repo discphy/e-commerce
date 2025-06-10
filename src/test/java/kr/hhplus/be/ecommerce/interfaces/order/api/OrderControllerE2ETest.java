@@ -268,4 +268,29 @@ class OrderControllerE2ETest extends E2EControllerTestSupport {
                 assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETED);
             });
     }
+
+    @DisplayName("주문을 조회한다.")
+    @Test
+    void getOrder() {
+        // given
+        Order order = Order.create(1L, 1L, 0.1, List.of(
+            OrderProduct.create(1L, "상품1", 10_000L, 2),
+            OrderProduct.create(2L, "상품2", 20_000L, 3)
+        ));
+        orderRepository.save(order);
+
+        // when & then
+        given()
+            .pathParam("orderId", order.getId())
+            .when()
+            .get("/api/v1/orders/{orderId}")
+            .then()
+            .log().all()
+            .statusCode(HttpStatus.OK.value())
+            .body("code", equalTo(200))
+            .body("message", equalTo("OK"))
+            .body("data.orderId", equalTo(order.getId().intValue()))
+            .body("data.totalPrice", equalTo((int) order.getTotalPrice()))
+            .body("data.status", equalTo(order.getOrderStatus().name()));
+    }
 }

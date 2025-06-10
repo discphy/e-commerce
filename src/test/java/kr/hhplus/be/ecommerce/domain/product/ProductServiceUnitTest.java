@@ -123,4 +123,60 @@ class ProductServiceUnitTest extends MockTestSupport {
                 tuple("상품명9", 35_000L, 5)
             );
     }
+
+    @DisplayName("커서 없이 상품 목록을 페이징 조회한다.")
+    @Test
+    void getProductsWithoutCursor() {
+        // given
+        ProductCommand.Query command = ProductCommand.Query.of(5L, null);
+        List<ProductInfo.Product> products = List.of(
+            ProductInfo.Product.of(1L, "상품명1", 10_000L, 1),
+            ProductInfo.Product.of(2L, "상품명3", 15_000L, 2),
+            ProductInfo.Product.of(3L, "상품명5", 30_000L, 3),
+            ProductInfo.Product.of(4L, "상품명7", 18_000L, 4),
+            ProductInfo.Product.of(5L, "상품명9", 35_000L, 5)
+        );
+
+        when(productRepository.findAll(command))
+            .thenReturn(products);
+
+        // when
+        ProductInfo.Products result = productService.getProducts(command);
+
+        // then
+        assertThat(result.getProducts()).hasSize(5)
+            .extracting("productName", "productPrice", "quantity")
+            .containsExactly(
+                tuple("상품명1", 10_000L, 1),
+                tuple("상품명3", 15_000L, 2),
+                tuple("상품명5", 30_000L, 3),
+                tuple("상품명7", 18_000L, 4),
+                tuple("상품명9", 35_000L, 5)
+            );
+    }
+
+    @DisplayName("커서로 상품 목록을 페이징 조회한다.")
+    @Test
+    void getProductsWithCursor() {
+        // given
+        ProductCommand.Query command = ProductCommand.Query.of(5L, 3L);
+        List<ProductInfo.Product> products = List.of(
+            ProductInfo.Product.of(4L, "상품명7", 18_000L, 4),
+            ProductInfo.Product.of(5L, "상품명9", 35_000L, 5)
+        );
+
+        when(productRepository.findAll(command))
+            .thenReturn(products);
+
+        // when
+        ProductInfo.Products result = productService.getProducts(command);
+
+        // then
+        assertThat(result.getProducts()).hasSize(2)
+            .extracting("productName", "productPrice", "quantity")
+            .containsExactly(
+                tuple("상품명7", 18_000L, 4),
+                tuple("상품명9", 35_000L, 5)
+            );
+    }
 }

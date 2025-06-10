@@ -83,12 +83,10 @@ class CouponServiceIntegrationTest extends IntegrationTestSupport {
     @Test
     void getUsableCouponWhenNotFound() {
         // given
-        Long userId = 1L;
-        Long couponId = 1L;
-        CouponCommand.UsableCoupon command = CouponCommand.UsableCoupon.of(userId, couponId);
+        Long userCouponId = -1L;
 
         // when & then
-        assertThatThrownBy(() -> couponService.getUsableCoupon(command))
+        assertThatThrownBy(() -> couponService.getUsableCoupon(userCouponId))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("보유한 쿠폰을 찾을 수 없습니다.");
     }
@@ -106,10 +104,8 @@ class CouponServiceIntegrationTest extends IntegrationTestSupport {
             .build();
         couponRepository.save(userCoupon);
 
-        CouponCommand.UsableCoupon command = CouponCommand.UsableCoupon.of(userId, couponId);
-
         // when & then
-        assertThatThrownBy(() -> couponService.getUsableCoupon(command))
+        assertThatThrownBy(() -> couponService.getUsableCoupon(userCoupon.getId()))
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("사용할 수 없는 쿠폰입니다.");
     }
@@ -119,14 +115,14 @@ class CouponServiceIntegrationTest extends IntegrationTestSupport {
     void getUsableCoupon() {
         // given
         Long userId = 1L;
-        Long couponId = 1L;
-        UserCoupon userCoupon = UserCoupon.create(userId, couponId);
+        Coupon coupon = Coupon.create("쿠폰명", 0.1, 10, CouponStatus.PUBLISHABLE, LocalDateTime.now().plusDays(1));
+        couponRepository.save(coupon);
+
+        UserCoupon userCoupon = UserCoupon.create(userId, coupon.getId());
         couponRepository.save(userCoupon);
 
-        CouponCommand.UsableCoupon command = CouponCommand.UsableCoupon.of(userId, couponId);
-
         // when
-        CouponInfo.UsableCoupon usableCoupon = couponService.getUsableCoupon(command);
+        CouponInfo.Coupon usableCoupon = couponService.getUsableCoupon(userCoupon.getId());
 
         // then
         assertThat(usableCoupon.getUserCouponId()).isEqualTo(userCoupon.getId());

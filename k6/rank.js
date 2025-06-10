@@ -27,3 +27,5 @@ export default function main() {
 
     sleep(1);
 }
+
+// k6 run --out influxdb=http://localhost:8086/k6 k6/cache/rank.js --summary-trend-stats="avg,min,med,max,p(90),p(95),p(99)"
