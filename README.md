@@ -29,6 +29,13 @@
 + [🏁 동시성 이슈 분석 및 해결 보고서](docs/report/02.ConcurrencyReport.md)
 + [🧪 캐시 전략 설계](docs/report/03.CacheStrategyArchitectureReport.md)
 + [🏗️ Redis 디자인 아키텍처 보고서](docs/report/04.RedisDesignArchitectureReport.md)
++ [🛠️ MSA 이벤트 기반 아키텍처 보고서](docs/report/05.MsaEventDrivenArchitectureReport.md)
++ [⚡️ 카프카 디자인 아키텍처 보고서](docs/report/06.KafkaDesignArchitectureReport.md)
++ [🚀️ 성능 테스트 및 장애대응 보고서](docs/report/07.LoadTestReport.md)
+
+### 📚 스터디 
+
++ [⚡️카프카 스터디](docs/study/01.Kafka.md)
 
 ### 🖌️ WIL
 
