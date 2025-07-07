@@ -1,0 +1,95 @@
+version: '3'
+services:
+  balance-api:
+    build:
+      context: service/balance
+      dockerfile: Dockerfile
+    ports:
+      - "8010:8010"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ="Asia/Seoul"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  coupon-api:
+    build:
+      context: service/coupon
+      dockerfile: Dockerfile
+    ports:
+      - "8020:8020"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ="Asia/Seoul"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  order-api:
+    build:
+      context: service/order
+      dockerfile: Dockerfile
+    ports:
+      - "8030:8030"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ="Asia/Seoul"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  payment-api:
+    build:
+      context: service/payment
+      dockerfile: Dockerfile
+    ports:
+      - "8040:8040"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ="Asia/Seoul"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  product-api:
+    build:
+      context: service/product
+      dockerfile: Dockerfile
+    ports:
+      - "8050:8050"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ="Asia/Seoul"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  user-api:
+    build:
+      context: service/user
+      dockerfile: Dockerfile
+    ports:
+      - "8060:8060"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TZ="Asia/Seoul"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+networks:
+  default:
+    driver: bridge
