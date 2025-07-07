@@ -14,110 +14,47 @@ fun getGitHash(): String {
 group = "kr.hhplus.be"
 version = getGitHash()
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+allprojects {
+	repositories {
+		mavenCentral()
 	}
-}
 
-val snippetsDir by extra { file("build/generated-snippets") }
-val asciidoctorExt: Configuration by configurations.creating
+	apply(plugin = "java")
+	apply(plugin = "org.springframework.boot")
+	apply(plugin = "io.spring.dependency-management")
+	apply(plugin = "org.asciidoctor.jvm.convert")
 
-repositories {
-	mavenCentral()
-}
-
-dependencyManagement {
-	imports {
-		mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0")
-	}
-}
-
-val querydslVersion = "5.0.0"
-val restAssuredVersion = "5.3.2"
-val redissonVersion = "3.27.1"
-
-dependencies {
-    // Spring
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-data-redis")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.springframework.kafka:spring-kafka")
-
-	// QueryDSL
-	implementation("com.querydsl:querydsl-jpa:${querydslVersion}:jakarta")
-	annotationProcessor("com.querydsl:querydsl-apt:${querydslVersion}:jakarta")
-	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
-	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
-
-	// Redisson
-	implementation("org.redisson:redisson-spring-boot-starter:${redissonVersion}")
-
-	// lombok
-	compileOnly("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
-
-    // DB
-	runtimeOnly("com.mysql:mysql-connector-j")
-
-	// Actuator
-	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("io.micrometer:micrometer-registry-prometheus")
-
-    // Test
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.boot:spring-boot-testcontainers")
-	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("org.testcontainers:mysql")
-	testImplementation("org.testcontainers:kafka:1.19.1")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-	// RestDocs
-	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
-	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-
-	// RestAssured
-	testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
-	testImplementation("io.rest-assured:json-path:${restAssuredVersion}")
-	testImplementation("io.rest-assured:json-schema-validator:${restAssuredVersion}")
-}
-
-val querydslDir = "$buildDir/generated/querydsl"
-
-sourceSets {
-	main {
-		java {
-			srcDir(querydslDir)
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(17)
 		}
 	}
-}
 
-tasks.withType<JavaCompile> {
-	options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
-	systemProperty("user.timezone", "UTC")
-	outputs.dir(snippetsDir)
-}
-
-tasks {
-	asciidoctor {
-		dependsOn(test)
-		configurations("asciidoctorExt")
-		sources {
-			include("**/index.adoc")
+	dependencyManagement {
+		imports {
+			mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0")
 		}
-		baseDirFollowsSourceFile()
-		inputs.dir(snippetsDir)
 	}
-	bootJar {
-		dependsOn(asciidoctor)
-		from("build/docs/asciidoc") {
-			into("static/docs")
-		}
+
+	dependencies {
+		// Log
+		implementation("ch.qos.logback:logback-classic")
+
+		// lombok
+		compileOnly("org.projectlombok:lombok")
+		annotationProcessor("org.projectlombok:lombok")
+		testCompileOnly("org.projectlombok:lombok")
+		testAnnotationProcessor("org.projectlombok:lombok")
+
+		// Test
+		testImplementation("org.springframework.boot:spring-boot-starter-test")
+		testImplementation("org.springframework.boot:spring-boot-testcontainers")
+		testImplementation("org.testcontainers:junit-jupiter")
+		testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	}
+
+	tasks.withType<Test> {
+		useJUnitPlatform()
+		systemProperty("user.timezone", "UTC")
 	}
 }
