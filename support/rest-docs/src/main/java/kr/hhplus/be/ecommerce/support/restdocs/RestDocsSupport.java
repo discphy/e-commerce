@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.test.support;
+package kr.hhplus.be.ecommerce.support.restdocs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
