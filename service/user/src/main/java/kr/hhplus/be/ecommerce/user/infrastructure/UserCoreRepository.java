@@ -1,13 +1,14 @@
-package kr.hhplus.be.ecommerce.infrastructure.user;
+package kr.hhplus.be.ecommerce.user.infrastructure;
 
-import kr.hhplus.be.ecommerce.domain.user.User;
-import kr.hhplus.be.ecommerce.domain.user.UserRepository;
+import kr.hhplus.be.ecommerce.user.domain.User;
+import kr.hhplus.be.ecommerce.user.domain.UserRepository;
+import kr.hhplus.be.ecommerce.user.infrastructure.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepository {
+public class UserCoreRepository implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
 

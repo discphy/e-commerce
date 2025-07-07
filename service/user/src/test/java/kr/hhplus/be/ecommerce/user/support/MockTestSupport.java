@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.test.support;
+package kr.hhplus.be.ecommerce.user.support;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

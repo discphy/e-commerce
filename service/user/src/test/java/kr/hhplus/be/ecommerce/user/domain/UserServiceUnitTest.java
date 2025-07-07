@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.domain.user;
+package kr.hhplus.be.ecommerce.user.domain;
 
-import kr.hhplus.be.ecommerce.test.support.MockTestSupport;
+import kr.hhplus.be.ecommerce.user.support.MockTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

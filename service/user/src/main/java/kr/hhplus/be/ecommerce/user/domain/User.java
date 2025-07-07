@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.domain.user;
+package kr.hhplus.be.ecommerce.user.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.interfaces;
+package kr.hhplus.be.ecommerce.user.interfaces;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;

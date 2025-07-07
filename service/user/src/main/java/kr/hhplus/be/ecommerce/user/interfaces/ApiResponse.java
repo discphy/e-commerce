@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.interfaces;
+package kr.hhplus.be.ecommerce.user.interfaces;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
