@@ -37,4 +37,4 @@ out/
 .vscode/
 
 data
-/src/main/generated/
+**/src/main/generated/
