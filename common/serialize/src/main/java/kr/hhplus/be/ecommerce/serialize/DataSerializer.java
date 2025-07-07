@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.serialize;
+package kr.hhplus.be.ecommerce.serialize;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
