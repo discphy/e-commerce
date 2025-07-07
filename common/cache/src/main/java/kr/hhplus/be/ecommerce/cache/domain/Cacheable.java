@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.cache;
+package kr.hhplus.be.ecommerce.cache.domain;
 
 import java.time.Duration;
 
