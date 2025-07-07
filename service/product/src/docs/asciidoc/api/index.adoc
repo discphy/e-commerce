@@ -1,0 +1,24 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= 이커머스 REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== 응답 코드
+
+[%header%autowidth]
+|===
+|Code|Message|Description
+|200|SUCCESS|성공
+|400|BAD_REQUEST|잘못된 요청
+|===
+
+[[Product-API]]
+== 상품 API
+
+include::product/product.adoc[]
