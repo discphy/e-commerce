@@ -1,14 +1,16 @@
-package kr.hhplus.be.ecommerce.config;
+package kr.hhplus.be.ecommerce.lock;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RedisRedissonConfig {
+@ComponentScan("kr.hhplus.be.ecommerce.lock")
+public class LockConfig {
 
     @Value("${spring.data.redis.host}")
     private String redisHost;

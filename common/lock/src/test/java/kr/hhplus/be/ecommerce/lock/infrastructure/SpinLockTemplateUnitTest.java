@@ -1,12 +1,13 @@
-package kr.hhplus.be.ecommerce.infrastructure.lock;
+package kr.hhplus.be.ecommerce.lock.infrastructure;
 
-import kr.hhplus.be.ecommerce.test.support.MockTestSupport;
-import kr.hhplus.be.ecommerce.support.lock.LockCallback;
-import kr.hhplus.be.ecommerce.support.lock.LockIdHolder;
+import kr.hhplus.be.ecommerce.lock.domain.LockCallback;
+import kr.hhplus.be.ecommerce.lock.domain.LockIdHolder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -19,7 +20,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-class SpinLockTemplateUnitTest extends MockTestSupport {
+@ExtendWith(MockitoExtension.class)
+class SpinLockTemplateUnitTest {
 
     @InjectMocks
     private SpinLockTemplate lockTemplate;

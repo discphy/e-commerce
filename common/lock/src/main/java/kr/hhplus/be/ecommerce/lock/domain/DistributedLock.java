@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.lock;
+package kr.hhplus.be.ecommerce.lock.domain;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

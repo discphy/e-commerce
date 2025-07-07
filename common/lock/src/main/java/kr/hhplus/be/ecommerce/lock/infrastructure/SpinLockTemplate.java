@@ -1,6 +1,8 @@
-package kr.hhplus.be.ecommerce.infrastructure.lock;
+package kr.hhplus.be.ecommerce.lock.infrastructure;
 
-import kr.hhplus.be.ecommerce.support.lock.*;
+import kr.hhplus.be.ecommerce.lock.domain.DefaultLockTemplate;
+import kr.hhplus.be.ecommerce.lock.domain.LockIdHolder;
+import kr.hhplus.be.ecommerce.lock.domain.LockStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;

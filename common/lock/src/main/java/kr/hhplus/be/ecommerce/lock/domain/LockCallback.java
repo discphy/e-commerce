@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.lock;
+package kr.hhplus.be.ecommerce.lock.domain;
 
 @FunctionalInterface
 public interface LockCallback<T> {

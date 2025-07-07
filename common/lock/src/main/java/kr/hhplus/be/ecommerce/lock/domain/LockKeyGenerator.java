@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.lock;
+package kr.hhplus.be.ecommerce.lock.domain;
 
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;

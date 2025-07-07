@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.lock;
+package kr.hhplus.be.ecommerce.lock.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class DistributedLockAspect {
     private final LockKeyGenerator generator;
     private final LockStrategyRegistry registry;
 
-    @Around("@annotation(kr.hhplus.be.ecommerce.support.lock.DistributedLock)")
+    @Around("@annotation(kr.hhplus.be.ecommerce.lock.domain.DistributedLock)")
     public Object lock(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         DistributedLock lock = signature.getMethod().getAnnotation(DistributedLock.class);

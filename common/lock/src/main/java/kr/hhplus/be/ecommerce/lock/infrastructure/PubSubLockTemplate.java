@@ -1,7 +1,7 @@
-package kr.hhplus.be.ecommerce.infrastructure.lock;
+package kr.hhplus.be.ecommerce.lock.infrastructure;
 
-import kr.hhplus.be.ecommerce.support.lock.DefaultLockTemplate;
-import kr.hhplus.be.ecommerce.support.lock.LockStrategy;
+import kr.hhplus.be.ecommerce.lock.domain.DefaultLockTemplate;
+import kr.hhplus.be.ecommerce.lock.domain.LockStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
