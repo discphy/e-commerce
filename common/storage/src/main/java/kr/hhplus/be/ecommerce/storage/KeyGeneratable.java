@@ -1,10 +1,12 @@
-package kr.hhplus.be.ecommerce.support.key;
+package kr.hhplus.be.ecommerce.storage;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static kr.hhplus.be.ecommerce.support.key.KeyConstant.KEY_NAMESPACE_SEPARATOR;
+import static kr.hhplus.be.ecommerce.storage.KeyConstant.KEY_NAMESPACE_SEPARATOR;
+
 
 public interface KeyGeneratable {
 

@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.key;
+package kr.hhplus.be.ecommerce.storage;
 
 public class KeyConstant {
 
