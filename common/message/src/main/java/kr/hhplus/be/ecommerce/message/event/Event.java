@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.support.event;
+package kr.hhplus.be.ecommerce.message.event;
 
-import kr.hhplus.be.ecommerce.support.serialize.DataSerializer;
+import kr.hhplus.be.ecommerce.serialize.DataSerializer;
 import lombok.Getter;
 
 import java.util.Optional;

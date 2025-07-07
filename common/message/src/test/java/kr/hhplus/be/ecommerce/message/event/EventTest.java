@@ -1,6 +1,6 @@
-package kr.hhplus.be.ecommerce.support.event;
+package kr.hhplus.be.ecommerce.message.event;
 
-import kr.hhplus.be.ecommerce.domain.order.OrderEvent;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,19 +31,17 @@ class EventTest {
         // given
         String eventId = "event-id";
         EventType eventType = EventType.ORDER_COMPLETED;
-        OrderEvent.Completed payload = OrderEvent.Completed.builder()
-            .orderId(1L)
-            .build();
+        TestPayload payload = new TestPayload("test data");
         String json = Event.of(eventId, eventType, payload).toJson();
 
         // when
-        Event<OrderEvent.Completed> event = Event.of(json, OrderEvent.Completed.class);
+        Event<TestPayload> event = Event.of(json, TestPayload.class);
 
         // then
-        OrderEvent.Completed resultPayload = event.getPayload();
+        TestPayload resultPayload = event.getPayload();
         assertThat(event.getEventId()).isEqualTo(eventId);
         assertThat(event.getEventType()).isEqualTo(eventType);
-        assertThat(resultPayload.getOrderId()).isEqualTo(payload.getOrderId());
+        assertThat(resultPayload.data).isEqualTo("test data");
     }
 
     @DisplayName("이벤트 객체를 JSON 문자열로 변환한다.")
@@ -63,6 +61,7 @@ class EventTest {
         assertThat(json).contains(eventId, eventType.name(), "test data");
     }
 
+    @NoArgsConstructor
     static class TestPayload {
         private String data;
 

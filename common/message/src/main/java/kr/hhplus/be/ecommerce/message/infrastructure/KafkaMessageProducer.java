@@ -1,7 +1,7 @@
-package kr.hhplus.be.ecommerce.infrastructure.message;
+package kr.hhplus.be.ecommerce.message.infrastructure;
 
-import kr.hhplus.be.ecommerce.support.message.Message;
-import kr.hhplus.be.ecommerce.support.message.MessageProducer;
+import kr.hhplus.be.ecommerce.message.Message;
+import kr.hhplus.be.ecommerce.message.MessageProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

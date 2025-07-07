@@ -1,4 +1,5 @@
-package kr.hhplus.be.ecommerce.support.message;
+package kr.hhplus.be.ecommerce.message;
+
 
 public interface MessageProducer {
 

@@ -1,7 +1,7 @@
-package kr.hhplus.be.ecommerce.support.message;
+package kr.hhplus.be.ecommerce.message;
 
-import kr.hhplus.be.ecommerce.support.event.Event;
-import kr.hhplus.be.ecommerce.support.event.EventType;
+import kr.hhplus.be.ecommerce.message.event.Event;
+import kr.hhplus.be.ecommerce.message.event.EventType;
 import lombok.Getter;
 
 import java.util.UUID;

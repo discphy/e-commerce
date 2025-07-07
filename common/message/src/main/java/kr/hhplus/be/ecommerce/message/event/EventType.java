@@ -1,4 +1,4 @@
-package kr.hhplus.be.ecommerce.support.event;
+package kr.hhplus.be.ecommerce.message.event;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
