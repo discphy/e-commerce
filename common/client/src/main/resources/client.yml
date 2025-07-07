@@ -1,0 +1,13 @@
+endpoints:
+  balance-service:
+    url: http://localhost:8010
+  coupon-service:
+    url: http://localhost:8020
+  order-service:
+    url: http://localhost:8030
+  payment-service:
+    url: http://localhost:8040
+  product-service:
+    url: http://localhost:8050
+  user-service:
+    url: http://localhost:8060
